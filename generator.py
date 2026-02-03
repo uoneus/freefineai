@@ -108,6 +108,10 @@ def generate():
         </div>
         <p class="text-[10px] tracking-[0.5em] text-zinc-800 uppercase italic">&copy; 2026 FreeFineAI / Digital Asset Authority</p>
     </footer>
+    <script>
+        window.si = window.si || function () {{ (window.siq = window.siq || []).push(arguments); }};
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
 </html>
 '''
