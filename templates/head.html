@@ -1,12 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FreeFineAI | Premium Flux.1 Digital Assets</title>
+    <meta name="description" content="Curated, high-fidelity AI assets. Free for the community, designed for the visionaries.">
+    
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: 6, 182, 212;
+            --accent-color: 147, 51, 234;
+        }
         body { background-color: #050505; color: #a1a1aa; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
         .masonry { column-count: 1; column-gap: 1.5rem; }
         @media (min-width: 768px) { .masonry { column-count: 2; } }
@@ -16,16 +23,44 @@
         nav, header, main, footer { position: relative; z-index: 10; }
         .hero-title { -webkit-text-stroke: 1px rgba(255,255,255,0.1); color: transparent; transition: all 0.5s; }
         .hero-title:hover { color: white; -webkit-text-stroke: 1px transparent; }
+        .notification { position: fixed; top: 100px; right: 20px; z-index: 1000; transform: translateX(400px); transition: transform 0.3s ease; }
+        .notification.show { transform: translateX(0); }
+        .streak-badge { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .primary-color { color: rgb(var(--primary-color)); }
+        .accent-color { color: rgb(var(--accent-color)); }
+        .bg-primary { background-color: rgb(var(--primary-color)); }
+        .bg-accent { background-color: rgb(var(--accent-color)); }
+        .border-primary { border-color: rgb(var(--primary-color)); }
+        .border-accent { border-color: rgb(var(--accent-color)); }
     </style>
 </head>
 <body>
     <canvas id="particle-canvas"></canvas>
+    
+    <div id="notification" class="notification bg-gradient-to-r from-primary to-accent text-white p-4 rounded-2xl shadow-2xl max-w-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                <span class="text-sm">🎉</span>
+            </div>
+            <div>
+                <div class="font-bold text-sm" id="notificationTitle">Congratulations!</div>
+                <div class="text-xs opacity-90" id="notificationText">You earned a new achievement</div>
+            </div>
+        </div>
+    </div>
+    
     <script>
+        window.SITE_CONFIG = {"ENABLE_ACHIEVEMENTS": true, "ENABLE_DAILY_CHALLENGE": true, "ENABLE_FAVORITES": true, "ENABLE_USER_STATS": true, "ENABLE_NOTIFICATIONS": true, "PRIMARY_COLOR": "cyan", "ACCENT_COLOR": "purple", "DEBUG_MODE": false};
+        
         window.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('particle-canvas');
+            if (!canvas) return;
+            
             const ctx = canvas.getContext('2d');
             let particles = [];
             const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+            
             class Particle {
                 constructor() { this.init(); }
                 init() {
@@ -46,21 +81,159 @@
                     ctx.fillStyle = `rgba(6, 182, 212, ${this.opacity})`; ctx.fill();
                 }
             }
+            
             const animate = () => {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 particles.forEach(p => { p.update(); p.draw(); });
                 requestAnimationFrame(animate);
             };
+            
             window.addEventListener('resize', resize);
             resize();
             for(let i=0; i<100; i++) particles.push(new Particle());
             animate();
         });
+        
+        
+        class UserProgress {
+            constructor() {
+                this.data = JSON.parse(localStorage.getItem('freefineai_progress') || '{}');
+                this.initDefaults();
+            }
+            
+            initDefaults() {
+                if (!this.data.visits) this.data.visits = 0;
+                if (!this.data.downloads) this.data.downloads = 0;
+                if (!this.data.promptsGenerated) this.data.promptsGenerated = 0;
+                if (!this.data.lastVisit) this.data.lastVisit = null;
+                if (!this.data.streak) this.data.streak = 0;
+                if (!this.data.achievements) this.data.achievements = [];
+                if (!this.data.favoriteImages) this.data.favoriteImages = [];
+                this.save();
+            }
+            
+            save() {
+                localStorage.setItem('freefineai_progress', JSON.stringify(this.data));
+                if (window.SITE_CONFIG.DEBUG_MODE) {
+                    console.log('User data saved:', this.data);
+                }
+            }
+            
+            addVisit() {
+                const today = new Date().toDateString();
+                if (this.data.lastVisit !== today) {
+                    this.data.visits++;
+                    if (this.data.lastVisit === new Date(Date.now() - 86400000).toDateString()) {
+                        this.data.streak++;
+                    } else {
+                        this.data.streak = 1;
+                    }
+                    this.data.lastVisit = today;
+                    if (window.SITE_CONFIG.ENABLE_ACHIEVEMENTS) this.checkAchievements();
+                    this.save();
+                }
+            }
+            
+            addDownload() {
+                this.data.downloads++;
+                if (window.SITE_CONFIG.ENABLE_ACHIEVEMENTS) this.checkAchievements();
+                this.save();
+            }
+            
+            addPromptGeneration() {
+                this.data.promptsGenerated++;
+                if (window.SITE_CONFIG.ENABLE_ACHIEVEMENTS) this.checkAchievements();
+                this.save();
+            }
+            
+            checkAchievements() {
+                const achievements = [
+                    { id: 'first_visit', name: 'First Visit', desc: 'Welcome to FreeFineAI!', condition: () => this.data.visits >= 1 },
+                    { id: 'regular_visitor', name: 'Regular Visitor', desc: 'Visit the site 5 times', condition: () => this.data.visits >= 5 },
+                    { id: 'download_master', name: 'Download Master', desc: 'Download 10 images', condition: () => this.data.downloads >= 10 },
+                    { id: 'prompt_creator', name: 'Prompt Creator', desc: 'Generate 20 prompts', condition: () => this.data.promptsGenerated >= 20 },
+                    { id: 'streak_week', name: 'Week Streak', desc: 'Visit for 7 consecutive days', condition: () => this.data.streak >= 7 }
+                ];
+                
+                achievements.forEach(achievement => {
+                    if (achievement.condition() && !this.data.achievements.includes(achievement.id)) {
+                        this.data.achievements.push(achievement.id);
+                        if (window.SITE_CONFIG.ENABLE_NOTIFICATIONS) {
+                            this.showNotification(achievement.name, achievement.desc);
+                        }
+                    }
+                });
+            }
+            
+            showNotification(title, text) {
+                if (!window.SITE_CONFIG.ENABLE_NOTIFICATIONS) return;
+                
+                const notification = document.getElementById('notification');
+                const titleEl = document.getElementById('notificationTitle');
+                const textEl = document.getElementById('notificationText');
+                
+                if (notification && titleEl && textEl) {
+                    titleEl.textContent = title;
+                    textEl.textContent = text;
+                    notification.classList.add('show');
+                    
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 4000);
+                }
+            }
+        }
+        
+        const userProgress = new UserProgress();
+        userProgress.addVisit();
+        
+        function showNotification(title, text) {
+            if (window.userProgress) {
+                userProgress.showNotification(title, text);
+            }
+        }
+        
+        function updateUserStats() {
+            const stats = document.getElementById('userStats');
+            const streakBadge = document.getElementById('streakBadge');
+            const streakCount = document.getElementById('streakCount');
+            
+            if (stats) {
+                stats.textContent = `Visits: ${userProgress.data.visits} | Downloads: ${userProgress.data.downloads}`;
+            }
+            
+            if (userProgress.data.streak > 0 && streakBadge && streakCount) {
+                streakBadge.style.display = 'flex';
+                streakCount.textContent = userProgress.data.streak;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', updateUserStats);
+    
     </script>
+    
     <nav class="fixed top-0 w-full z-50 nav-glass px-8 py-5 flex justify-between items-center">
-        <span class="text-white font-black text-xl tracking-tighter italic italic">FREEFINE<span class="text-cyan-500 text-cyan-500">AI</span></span>
+        <span class="text-white font-black text-xl tracking-tighter italic">FREEFINE<span class="primary-color">AI</span></span>
         <div class="flex items-center gap-6">
+            
+            <div class="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-widest">
+                <a href="index.html" class="text-zinc-400 hover:text-white transition">Home</a>
+                <a href="gallery.html" class="text-zinc-400 hover:text-white transition">Gallery</a>
+                <a href="tools.html" class="text-zinc-400 hover:text-white transition">Tools</a>
+                <a href="about.html" class="text-zinc-400 hover:text-white transition">About</a>
+            </div>
+        
+            <div class="hidden md:flex items-center gap-4 text-xs">
+                <div class="flex items-center gap-1">
+                    <span class="primary-color">📊</span>
+                    <span class="text-zinc-400" id="userStats">Visits: 0 | Downloads: 0</span>
+                </div>
+                <div class="flex items-center gap-1 streak-badge" id="streakBadge" style="display: none;">
+                    <span class="text-yellow-400">🔥</span>
+                    <span class="text-yellow-400" id="streakCount">0</span>
+                </div>
+            </div>
             <a href="https://www.paypal.com/ncp/payment/ZRQDBKWE7VBSU" target="_blank" class="hidden sm:block text-[10px] font-bold text-zinc-500 hover:text-white uppercase tracking-widest">Support</a>
-            <a href="https://www.paypal.com/ncp/payment/AQSGVVXLW69GJ" target="_blank" class="bg-white text-black text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-tighter hover:bg-cyan-400 transition">Get Bundle $9.99</a>
+            <a href="https://www.paypal.com/ncp/payment/AQSGVVXLW69GJ" target="_blank" class="bg-white text-black text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-tighter hover:bg-primary transition">Get Bundle $9.99</a>
         </div>
     </nav>
