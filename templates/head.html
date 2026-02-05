@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeFineAI | Premium Flux.1 Digital Assets</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #050505; color: #a1a1aa; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+        .masonry { column-count: 1; column-gap: 1.5rem; }
+        @media (min-width: 768px) { .masonry { column-count: 2; } }
+        @media (min-width: 1280px) { .masonry { column-count: 3; } }
+        .nav-glass { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        nav, header, main, footer { position: relative; z-index: 10; }
+        .hero-title { -webkit-text-stroke: 1px rgba(255,255,255,0.1); color: transparent; transition: all 0.5s; }
+        .hero-title:hover { color: white; -webkit-text-stroke: 1px transparent; }
+    </style>
+</head>
+<body>
+    <canvas id="particle-canvas"></canvas>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+            class Particle {
+                constructor() { this.init(); }
+                init() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 1.5 + 0.5;
+                    this.speedX = Math.random() * 0.4 - 0.2;
+                    this.speedY = Math.random() * 0.4 - 0.2;
+                    this.opacity = Math.random() * 0.5 + 0.1;
+                }
+                update() {
+                    this.x += this.speedX; this.y += this.speedY;
+                    if(this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                    if(this.y > canvas.height || this.y < 0) this.speedY *= -1;
+                }
+                draw() {
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+                    ctx.fillStyle = `rgba(6, 182, 212, ${this.opacity})`; ctx.fill();
+                }
+            }
+            const animate = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(animate);
+            };
+            window.addEventListener('resize', resize);
+            resize();
+            for(let i=0; i<100; i++) particles.push(new Particle());
+            animate();
+        });
+    </script>
+    <nav class="fixed top-0 w-full z-50 nav-glass px-8 py-5 flex justify-between items-center">
+        <span class="text-white font-black text-xl tracking-tighter italic italic">FREEFINE<span class="text-cyan-500 text-cyan-500">AI</span></span>
+        <div class="flex items-center gap-6">
+            <a href="https://www.paypal.com/ncp/payment/ZRQDBKWE7VBSU" target="_blank" class="hidden sm:block text-[10px] font-bold text-zinc-500 hover:text-white uppercase tracking-widest">Support</a>
+            <a href="https://www.paypal.com/ncp/payment/AQSGVVXLW69GJ" target="_blank" class="bg-white text-black text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-tighter hover:bg-cyan-400 transition">Get Bundle $9.99</a>
+        </div>
+    </nav>
