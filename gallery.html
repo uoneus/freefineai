@@ -9,6 +9,7 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="premium-features.js" defer></script>
     <style>
         :root {
             --primary-color: 6, 182, 212;
@@ -51,7 +52,7 @@
     </div>
     
     <script>
-        window.SITE_CONFIG = {"ENABLE_ACHIEVEMENTS": true, "ENABLE_DAILY_CHALLENGE": true, "ENABLE_FAVORITES": true, "ENABLE_USER_STATS": true, "ENABLE_NOTIFICATIONS": true, "PRIMARY_COLOR": "cyan", "ACCENT_COLOR": "purple", "DEBUG_MODE": false};
+        window.SITE_CONFIG = {"ENABLE_ACHIEVEMENTS": true, "ENABLE_DAILY_CHALLENGE": true, "ENABLE_FAVORITES": true, "ENABLE_USER_STATS": true, "ENABLE_NOTIFICATIONS": true, "ENABLE_SOCIAL_SHARE": true, "ENABLE_EMAIL_POPUP": true, "ENABLE_TRENDING": true, "ENABLE_LIVE_STATS": true, "ENABLE_MEMBERSHIP": true, "PRIMARY_COLOR": "cyan", "ACCENT_COLOR": "purple", "DEBUG_MODE": false};
         
         window.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('particle-canvas');
@@ -220,6 +221,7 @@
                 <a href="index.html" class="text-zinc-400 hover:text-white transition">Home</a>
                 <a href="gallery.html" class="text-zinc-400 hover:text-white transition">Gallery</a>
                 <a href="tools.html" class="text-zinc-400 hover:text-white transition">Tools</a>
+                <a href="membership.html" class="text-zinc-400 hover:text-white transition">Membership</a>
                 <a href="about.html" class="text-zinc-400 hover:text-white transition">About</a>
             </div>
         
@@ -468,7 +470,7 @@
         }
         
         function generateRandomPrompt() {
-            const prompts = ["Golden deer in a library of pure earth, ethereal glow, fantasy art", "Surreal ocean with floating clocks, steampunk aesthetic, dramatic rain", "A transparent butterfly drifting through a neon-lit Tokyo street, cinematic bokeh, 8k raw photo", "Macro shot of an iridescent crystal with water wings, hyper-detailed, candlelight lighting", "An ancient angel covered in blooming lotus flowers, weathered metal texture, masterpiece", "An ancient demon covered in blooming roses, weathered stone texture, masterpiece", "Surreal ocean with floating clocks, baroque aesthetic, dramatic storm", "Architectural render of a floating monastery made of marble, extreme minimalism, noon lighting", "A transparent unicorn drifting through a neon-lit ancient ruins, cinematic bokeh, 8k raw photo", "A transparent dragon drifting through a neon-lit ancient ruins, cinematic bokeh, 8k raw photo"];
+            const prompts = ["Surreal desert with floating clocks, futuristic aesthetic, dramatic storm", "Macro shot of an iridescent leaf with frost wings, hyper-detailed, neon lighting", "Surreal desert with floating spheres, cyberpunk aesthetic, dramatic fog", "A transparent butterfly drifting through a neon-lit Tokyo street, cinematic bokeh, 8k raw photo", "Azure lion in a garden of pure earth, ethereal glow, fantasy art", "Surreal tundra with floating mirrors, art deco aesthetic, dramatic lightning", "Architectural render of a floating bridge made of gold, extreme minimalism, twilight lighting", "Surreal mountain with floating islands, cyberpunk aesthetic, dramatic fog", "Architectural render of a floating bridge made of gold, extreme minimalism, noon lighting", "Macro shot of an iridescent feather with rainbow wings, hyper-detailed, aurora lighting"];
             const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
             
             document.getElementById('promptInput').value = randomPrompt;
@@ -520,7 +522,7 @@
         }
         
         function getBlindBox() {
-            const prompts = ["Architectural render of a floating temple made of marble, extreme minimalism, noon lighting", "A transparent wolf drifting through a neon-lit forest path, cinematic bokeh, 8k raw photo", "Surreal desert with floating crystals, futuristic aesthetic, dramatic rain", "Surreal tundra with floating clocks, cyberpunk aesthetic, dramatic lightning", "A transparent butterfly drifting through a neon-lit mountain peak, cinematic bokeh, 8k raw photo", "Surreal city with floating crystals, baroque aesthetic, dramatic snow", "Architectural render of a floating palace made of marble, extreme minimalism, twilight lighting", "Architectural render of a floating palace made of ice, extreme minimalism, twilight lighting", "Macro shot of an iridescent feather with frost wings, hyper-detailed, neon lighting", "Azure fox in a arena of pure light, ethereal glow, fantasy art", "Macro shot of an iridescent flower with rainbow wings, hyper-detailed, moonlight lighting", "A transparent butterfly drifting through a neon-lit mountain peak, cinematic bokeh, 8k raw photo", "Macro shot of an iridescent flower with electric wings, hyper-detailed, golden hour lighting", "A transparent dragon drifting through a neon-lit Tokyo street, cinematic bokeh, 8k raw photo", "Emerald lion in a garden of pure light, ethereal glow, fantasy art", "Macro shot of an iridescent leaf with galaxy wings, hyper-detailed, aurora lighting", "Azure lion in a library of pure light, ethereal glow, fantasy art", "Emerald eagle in a maze of pure shadow, ethereal glow, fantasy art", "Surreal city with floating books, cyberpunk aesthetic, dramatic storm", "Surreal ocean with floating mirrors, art deco aesthetic, dramatic snow"];
+            const prompts = ["A transparent wolf drifting through a neon-lit mountain peak, cinematic bokeh, 8k raw photo", "Macro shot of an iridescent flower with rainbow wings, hyper-detailed, neon lighting", "Surreal city with floating islands, cyberpunk aesthetic, dramatic lightning", "Surreal mountain with floating mirrors, cyberpunk aesthetic, dramatic rain", "A transparent phoenix drifting through a neon-lit ancient ruins, cinematic bokeh, 8k raw photo", "An ancient mecha knight covered in blooming sunflowers, weathered wood texture, masterpiece", "Surreal forest with floating islands, futuristic aesthetic, dramatic fog", "Macro shot of an iridescent flower with rainbow wings, hyper-detailed, golden hour lighting", "Silver deer in a cathedral of pure light, ethereal glow, fantasy art", "Macro shot of an iridescent feather with water wings, hyper-detailed, moonlight lighting", "Architectural render of a floating tower made of gold, extreme minimalism, dawn lighting", "Surreal mountain with floating crystals, baroque aesthetic, dramatic wind", "Macro shot of an iridescent leaf with rainbow wings, hyper-detailed, candlelight lighting", "An ancient samurai covered in blooming orchids, weathered ceramic texture, masterpiece", "Surreal ocean with floating clocks, art deco aesthetic, dramatic snow", "Architectural render of a floating bridge made of crystal, extreme minimalism, dawn lighting", "A transparent jellyfish drifting through a neon-lit Tokyo street, cinematic bokeh, 8k raw photo", "An ancient angel covered in blooming roses, weathered ceramic texture, masterpiece", "Architectural render of a floating monastery made of gold, extreme minimalism, storm lighting", "Surreal desert with floating books, futuristic aesthetic, dramatic snow"];
             const random = prompts[Math.floor(Math.random() * prompts.length)];
             const display = document.getElementById('blindBoxResult');
             

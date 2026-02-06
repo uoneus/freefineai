@@ -9,6 +9,7 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="premium-features.js" defer></script>
     <style>
         :root {
             --primary-color: 6, 182, 212;
@@ -51,7 +52,7 @@
     </div>
     
     <script>
-        window.SITE_CONFIG = {"ENABLE_ACHIEVEMENTS": true, "ENABLE_DAILY_CHALLENGE": true, "ENABLE_FAVORITES": true, "ENABLE_USER_STATS": true, "ENABLE_NOTIFICATIONS": true, "PRIMARY_COLOR": "cyan", "ACCENT_COLOR": "purple", "DEBUG_MODE": false};
+        window.SITE_CONFIG = {"ENABLE_ACHIEVEMENTS": true, "ENABLE_DAILY_CHALLENGE": true, "ENABLE_FAVORITES": true, "ENABLE_USER_STATS": true, "ENABLE_NOTIFICATIONS": true, "ENABLE_SOCIAL_SHARE": true, "ENABLE_EMAIL_POPUP": true, "ENABLE_TRENDING": true, "ENABLE_LIVE_STATS": true, "ENABLE_MEMBERSHIP": true, "PRIMARY_COLOR": "cyan", "ACCENT_COLOR": "purple", "DEBUG_MODE": false};
         
         window.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('particle-canvas');
@@ -220,6 +221,7 @@
                 <a href="index.html" class="text-zinc-400 hover:text-white transition">Home</a>
                 <a href="gallery.html" class="text-zinc-400 hover:text-white transition">Gallery</a>
                 <a href="tools.html" class="text-zinc-400 hover:text-white transition">Tools</a>
+                <a href="membership.html" class="text-zinc-400 hover:text-white transition">Membership</a>
                 <a href="about.html" class="text-zinc-400 hover:text-white transition">About</a>
             </div>
         
@@ -255,12 +257,12 @@
             </div>
             <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div>
-                    <h3 class="text-white font-black text-base mb-1">🎯 Daily Challenge #88291</h3>
-                    <p class="text-zinc-300 text-sm mb-1">"Cyber-organic growth on a porcelain skull"</p>
-                    <span class="text-xs text-purple-400 font-bold">Difficulty: Medium</span>
+                    <h3 class="text-white font-black text-base mb-1">🎯 Daily Challenge #77432</h3>
+                    <p class="text-zinc-300 text-sm mb-1">"Holographic butterfly in a crystal cave"</p>
+                    <span class="text-xs text-purple-400 font-bold">Difficulty: Easy</span>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="copyChallenge('88291', 'Cyber-organic growth on a porcelain skull')" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest transition">
+                    <button onclick="copyChallenge('77432', 'Holographic butterfly in a crystal cave')" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest transition">
                         Accept Challenge
                     </button>
                     <button onclick="shareChallenge()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-xl transition">
@@ -597,8 +599,8 @@
         <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 gap-4">
             <p class="text-[10px] tracking-[0.5em] text-zinc-800 uppercase italic font-black">&copy; 2026 FREEFINEAI</p>
             <div class="flex gap-6">
-                <a href="#" class="text-zinc-800 hover:text-white text-[9px] font-black uppercase transition">Twitter</a>
-                <a href="#" class="text-zinc-800 hover:text-white text-[9px] font-black uppercase transition">GitHub</a>
+                <a href="https://twitter.com/freefineai" class="text-zinc-800 hover:text-white text-[9px] font-black uppercase transition">Twitter</a>
+                <a href="https://github.com/freefineai" class="text-zinc-800 hover:text-white text-[9px] font-black uppercase transition">GitHub</a>
             </div>
         </div>
     </footer>
@@ -634,7 +636,7 @@
         }
         
         function generateRandomPrompt() {
-            const prompts = ["Architectural render of a floating temple made of gold, extreme minimalism, midnight lighting", "A transparent wolf drifting through a neon-lit mountain peak, cinematic bokeh, 8k raw photo", "Architectural render of a floating monastery made of ice, extreme minimalism, midnight lighting", "Architectural render of a floating temple made of glass, extreme minimalism, noon lighting", "Violet lion in a cathedral of pure fire, ethereal glow, fantasy art", "Crimson whale in a laboratory of pure water, ethereal glow, fantasy art", "Surreal desert with floating islands, minimalist aesthetic, dramatic storm", "An ancient mecha knight covered in blooming peonies, weathered leather texture, masterpiece", "An ancient wizard covered in blooming orchids, weathered stone texture, masterpiece", "Macro shot of an iridescent shell with frost wings, hyper-detailed, synthwave lighting"];
+            const prompts = ["Architectural render of a floating temple made of marble, extreme minimalism, storm lighting", "A transparent dragon drifting through a neon-lit ancient ruins, cinematic bokeh, 8k raw photo", "Surreal desert with floating crystals, cyberpunk aesthetic, dramatic rain", "Silver whale in a cathedral of pure earth, ethereal glow, fantasy art", "Surreal ocean with floating crystals, futuristic aesthetic, dramatic wind", "A transparent jellyfish drifting through a neon-lit Tokyo street, cinematic bokeh, 8k raw photo", "Architectural render of a floating bridge made of mercury, extreme minimalism, dawn lighting", "Emerald lion in a cathedral of pure shadow, ethereal glow, fantasy art", "Surreal ocean with floating spheres, baroque aesthetic, dramatic fog", "Architectural render of a floating monastery made of mercury, extreme minimalism, sunset lighting"];
             const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
             
             document.getElementById('promptInput').value = randomPrompt;
@@ -686,7 +688,7 @@
         }
         
         function getBlindBox() {
-            const prompts = ["A transparent dragon drifting through a neon-lit mountain peak, cinematic bokeh, 8k raw photo", "Architectural render of a floating palace made of crystal, extreme minimalism, noon lighting", "An ancient robot covered in blooming sunflowers, weathered stone texture, masterpiece", "Golden tiger in a arena of pure light, ethereal glow, fantasy art", "A transparent phoenix drifting through a neon-lit ocean depth, cinematic bokeh, 8k raw photo", "Architectural render of a floating monastery made of ice, extreme minimalism, sunset lighting", "Macro shot of an iridescent flower with rainbow wings, hyper-detailed, golden hour lighting", "Emerald fox in a laboratory of pure water, ethereal glow, fantasy art", "An ancient wizard covered in blooming sunflowers, weathered stone texture, masterpiece", "Silver deer in a cathedral of pure earth, ethereal glow, fantasy art", "Crimson lion in a cathedral of pure air, ethereal glow, fantasy art", "Surreal desert with floating crystals, baroque aesthetic, dramatic lightning", "An ancient robot covered in blooming roses, weathered metal texture, masterpiece", "An ancient demon covered in blooming roses, weathered stone texture, masterpiece", "Architectural render of a floating monastery made of crystal, extreme minimalism, twilight lighting", "Architectural render of a floating tower made of gold, extreme minimalism, noon lighting", "Surreal forest with floating crystals, baroque aesthetic, dramatic rain", "Surreal mountain with floating crystals, cyberpunk aesthetic, dramatic wind", "A transparent wolf drifting through a neon-lit forest path, cinematic bokeh, 8k raw photo", "A transparent jellyfish drifting through a neon-lit forest path, cinematic bokeh, 8k raw photo"];
+            const prompts = ["An ancient wizard covered in blooming orchids, weathered ceramic texture, masterpiece", "Architectural render of a floating palace made of mercury, extreme minimalism, twilight lighting", "A transparent dragon drifting through a neon-lit Tokyo street, cinematic bokeh, 8k raw photo", "Emerald lion in a library of pure fire, ethereal glow, fantasy art", "A transparent phoenix drifting through a neon-lit Tokyo street, cinematic bokeh, 8k raw photo", "An ancient demon covered in blooming orchids, weathered leather texture, masterpiece", "Surreal city with floating spheres, art deco aesthetic, dramatic storm", "Architectural render of a floating bridge made of crystal, extreme minimalism, dawn lighting", "Golden tiger in a maze of pure light, ethereal glow, fantasy art", "An ancient wizard covered in blooming roses, weathered metal texture, masterpiece", "A transparent dragon drifting through a neon-lit space station, cinematic bokeh, 8k raw photo", "Macro shot of an iridescent insect with fire wings, hyper-detailed, golden hour lighting", "Macro shot of an iridescent crystal with galaxy wings, hyper-detailed, synthwave lighting", "Violet tiger in a maze of pure earth, ethereal glow, fantasy art", "Crimson eagle in a garden of pure water, ethereal glow, fantasy art", "Architectural render of a floating bridge made of glass, extreme minimalism, twilight lighting", "An ancient mecha knight covered in blooming sunflowers, weathered ceramic texture, masterpiece", "Architectural render of a floating tower made of marble, extreme minimalism, midnight lighting", "Macro shot of an iridescent flower with frost wings, hyper-detailed, aurora lighting", "Macro shot of an iridescent crystal with galaxy wings, hyper-detailed, golden hour lighting"];
             const random = prompts[Math.floor(Math.random() * prompts.length)];
             const display = document.getElementById('blindBoxResult');
             

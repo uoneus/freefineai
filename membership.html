@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership Plans | FreeFineAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #050505; color: #a1a1aa; font-family: 'Inter', sans-serif; }
+        .pricing-card { transition: transform 0.3s, box-shadow 0.3s; }
+        .pricing-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(6, 182, 212, 0.3); }
+        .popular-badge { animation: pulse 2s infinite; }
+    </style>
+</head>
+<body>
+    <nav class="fixed top-0 w-full z-50 bg-black/85 backdrop-blur-md border-b border-white/5 px-8 py-5">
+        <div class="max-w-[1400px] mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-white font-black text-xl tracking-tighter italic">
+                FREEFINE<span class="text-cyan-500">AI</span>
+            </a>
+            <a href="index.html" class="text-zinc-400 hover:text-white text-sm">← Back to Home</a>
+        </div>
+    </nav>
+
+    <main class="pt-32 pb-20 px-6">
+        <div class="max-w-[1400px] mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-16">
+                <h1 class="text-6xl md:text-8xl font-black text-white mb-6">Choose Your Plan</h1>
+                <p class="text-zinc-400 text-lg max-w-2xl mx-auto">
+                    Unlock premium features and support the development of FreeFineAI
+                </p>
+            </div>
+
+            <!-- Pricing Cards -->
+            <div class="grid md:grid-cols-4 gap-8 mb-20">
+                <!-- Free Tier -->
+                <div class="pricing-card bg-zinc-900/50 border border-white/5 rounded-3xl p-8">
+                    <div class="text-4xl mb-4">🆓</div>
+                    <h3 class="text-2xl font-black text-white mb-2">Free</h3>
+                    <div class="text-4xl font-black text-white mb-6">
+                        $0<span class="text-lg text-zinc-500">/month</span>
+                    </div>
+                    
+                    <ul class="space-y-3 mb-8 text-sm">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">Standard quality downloads</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">Basic prompt tools</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">Community access</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-zinc-600">✗</span>
+                            <span class="text-zinc-600">High-res downloads</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-zinc-600">✗</span>
+                            <span class="text-zinc-600">Prompt metadata</span>
+                        </li>
+                    </ul>
+                    
+                    <button class="w-full bg-zinc-800 text-white font-bold py-3 rounded-xl hover:bg-zinc-700 transition">
+                        Current Plan
+                    </button>
+                </div>
+
+                <!-- Silver Tier -->
+                <div class="pricing-card bg-zinc-900/50 border border-white/5 rounded-3xl p-8">
+                    <div class="text-4xl mb-4">🥈</div>
+                    <h3 class="text-2xl font-black text-white mb-2">Silver</h3>
+                    <div class="text-4xl font-black text-white mb-6">
+                        $4.99<span class="text-lg text-zinc-500">/month</span>
+                    </div>
+                    
+                    <ul class="space-y-3 mb-8 text-sm">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">Everything in Free</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">High-res downloads (2K)</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">No watermarks</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">Priority support</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-zinc-600">✗</span>
+                            <span class="text-zinc-600">4K downloads</span>
+                        </li>
+                    </ul>
+                    
+                    <button class="w-full bg-gradient-to-r from-gray-400 to-gray-600 text-white font-bold py-3 rounded-xl hover:from-gray-300 hover:to-gray-500 transition">
+                        Upgrade to Silver
+                    </button>
+                </div>
+
+                <!-- Gold Tier (Popular) -->
+                <div class="pricing-card bg-gradient-to-br from-yellow-900/30 to-zinc-900/50 border-2 border-yellow-500/50 rounded-3xl p-8 relative">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <span class="popular-badge bg-yellow-500 text-black text-xs font-black px-4 py-1 rounded-full uppercase">
+                            Most Popular
+                        </span>
+                    </div>
+                    
+                    <div class="text-4xl mb-4">🥇</div>
+                    <h3 class="text-2xl font-black text-white mb-2">Gold</h3>
+                    <div class="text-4xl font-black text-white mb-6">
+                        $9.99<span class="text-lg text-zinc-500">/month</span>
+                    </div>
+                    
+                    <ul class="space-y-3 mb-8 text-sm">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">Everything in Silver</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">4K downloads</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">Prompt metadata (JSON)</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">Commercial license</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">Early access to new features</span>
+                        </li>
+                    </ul>
+                    
+                    <button class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-black py-3 rounded-xl hover:from-yellow-400 hover:to-yellow-500 transition uppercase">
+                        Upgrade to Gold
+                    </button>
+                </div>
+
+                <!-- Platinum Tier -->
+                <div class="pricing-card bg-gradient-to-br from-cyan-900/30 to-zinc-900/50 border-2 border-cyan-500/50 rounded-3xl p-8">
+                    <div class="text-4xl mb-4">💎</div>
+                    <h3 class="text-2xl font-black text-white mb-2">Platinum</h3>
+                    <div class="text-4xl font-black text-white mb-6">
+                        $19.99<span class="text-lg text-zinc-500">/month</span>
+                    </div>
+                    
+                    <ul class="space-y-3 mb-8 text-sm">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">Everything in Gold</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">8K downloads</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">Custom prompt generation</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">API access</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">1-on-1 support</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span class="text-zinc-300">Exclusive Discord channel</span>
+                        </li>
+                    </ul>
+                    
+                    <button class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-black py-3 rounded-xl hover:from-cyan-400 hover:to-blue-400 transition uppercase">
+                        Upgrade to Platinum
+                    </button>
+                </div>
+            </div>
+
+            <!-- Feature Comparison Table -->
+            <div class="bg-zinc-900/50 border border-white/5 rounded-3xl p-8 mb-20">
+                <h2 class="text-3xl font-black text-white mb-8 text-center">Feature Comparison</h2>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-white/10">
+                                <th class="text-left py-4 px-4 text-zinc-400 font-bold">Feature</th>
+                                <th class="text-center py-4 px-4 text-zinc-400 font-bold">Free</th>
+                                <th class="text-center py-4 px-4 text-zinc-400 font-bold">Silver</th>
+                                <th class="text-center py-4 px-4 text-yellow-400 font-bold">Gold</th>
+                                <th class="text-center py-4 px-4 text-cyan-400 font-bold">Platinum</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-zinc-300">
+                            <tr class="border-b border-white/5">
+                                <td class="py-4 px-4">Download Quality</td>
+                                <td class="text-center py-4 px-4">1024px</td>
+                                <td class="text-center py-4 px-4">2K</td>
+                                <td class="text-center py-4 px-4">4K</td>
+                                <td class="text-center py-4 px-4">8K</td>
+                            </tr>
+                            <tr class="border-b border-white/5">
+                                <td class="py-4 px-4">Watermark</td>
+                                <td class="text-center py-4 px-4">Yes</td>
+                                <td class="text-center py-4 px-4 text-green-400">No</td>
+                                <td class="text-center py-4 px-4 text-green-400">No</td>
+                                <td class="text-center py-4 px-4 text-green-400">No</td>
+                            </tr>
+                            <tr class="border-b border-white/5">
+                                <td class="py-4 px-4">Prompt Metadata</td>
+                                <td class="text-center py-4 px-4">-</td>
+                                <td class="text-center py-4 px-4">-</td>
+                                <td class="text-center py-4 px-4 text-green-400">✓</td>
+                                <td class="text-center py-4 px-4 text-green-400">✓</td>
+                            </tr>
+                            <tr class="border-b border-white/5">
+                                <td class="py-4 px-4">Commercial License</td>
+                                <td class="text-center py-4 px-4">-</td>
+                                <td class="text-center py-4 px-4">-</td>
+                                <td class="text-center py-4 px-4 text-green-400">✓</td>
+                                <td class="text-center py-4 px-4 text-green-400">✓</td>
+                            </tr>
+                            <tr class="border-b border-white/5">
+                                <td class="py-4 px-4">API Access</td>
+                                <td class="text-center py-4 px-4">-</td>
+                                <td class="text-center py-4 px-4">-</td>
+                                <td class="text-center py-4 px-4">-</td>
+                                <td class="text-center py-4 px-4 text-green-400">✓</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-4">Support</td>
+                                <td class="text-center py-4 px-4">Community</td>
+                                <td class="text-center py-4 px-4">Priority</td>
+                                <td class="text-center py-4 px-4">Priority</td>
+                                <td class="text-center py-4 px-4">1-on-1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- FAQ -->
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-3xl font-black text-white mb-8 text-center">Frequently Asked Questions</h2>
+                
+                <div class="space-y-4">
+                    <details class="bg-zinc-900/50 border border-white/5 rounded-2xl p-6">
+                        <summary class="text-white font-bold cursor-pointer">Can I cancel anytime?</summary>
+                        <p class="text-zinc-400 mt-4">Yes! You can cancel your subscription at any time. You'll continue to have access until the end of your billing period.</p>
+                    </details>
+                    
+                    <details class="bg-zinc-900/50 border border-white/5 rounded-2xl p-6">
+                        <summary class="text-white font-bold cursor-pointer">What payment methods do you accept?</summary>
+                        <p class="text-zinc-400 mt-4">We accept all major credit cards, PayPal, and cryptocurrency payments.</p>
+                    </details>
+                    
+                    <details class="bg-zinc-900/50 border border-white/5 rounded-2xl p-6">
+                        <summary class="text-white font-bold cursor-pointer">Is there a free trial?</summary>
+                        <p class="text-zinc-400 mt-4">Yes! All paid plans come with a 7-day free trial. No credit card required.</p>
+                    </details>
+                    
+                    <details class="bg-zinc-900/50 border border-white/5 rounded-2xl p-6">
+                        <summary class="text-white font-bold cursor-pointer">Can I upgrade or downgrade my plan?</summary>
+                        <p class="text-zinc-400 mt-4">Absolutely! You can change your plan at any time. Upgrades take effect immediately, and downgrades at the end of your billing cycle.</p>
+                    </details>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-20 border-t border-white/5 bg-zinc-950/50 py-12 px-8">
+        <div class="max-w-[1400px] mx-auto text-center">
+            <p class="text-zinc-600 text-sm">
+                &copy; 2026 FreeFineAI. All rights reserved.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
