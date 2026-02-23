@@ -6,7 +6,6 @@
     <title>FreeFineAI | Premium Flux.1 Digital Assets</title>
     <meta name="description" content="Curated, high-fidelity AI assets. Free for the community, designed for the visionaries.">
     
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="premium-features.js" defer></script>
@@ -24,6 +23,28 @@
         nav, header, main, footer { position: relative; z-index: 10; }
         .hero-title { -webkit-text-stroke: 1px rgba(255,255,255,0.1); color: transparent; transition: all 0.5s; }
         .hero-title:hover { color: white; -webkit-text-stroke: 1px transparent; }
+        
+        /* FLUX Title Enhanced Effect */
+        .flux-title {
+            background: linear-gradient(135deg, #06b6d4 0%, #a78bfa 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.4));
+            animation: flux-glow 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
+        }
+        
+        @keyframes flux-glow {
+            0% { filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.3)); }
+            50% { filter: drop-shadow(0 0 35px rgba(6, 182, 212, 0.6)) drop-shadow(0 0 15px rgba(167, 139, 250, 0.3)); }
+            100% { filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.3)); }
+        }
+        
+        .animate-pulse-glow { animation: flux-glow 3s ease-in-out infinite; }
+        
         .notification { position: fixed; top: 100px; right: 20px; z-index: 1000; transform: translateX(400px); transition: transform 0.3s ease; }
         .notification.show { transform: translateX(0); }
         .streak-badge { animation: pulse 2s infinite; }
@@ -53,6 +74,17 @@
     
     <script>
         window.SITE_CONFIG = {"ENABLE_ACHIEVEMENTS": true, "ENABLE_DAILY_CHALLENGE": true, "ENABLE_FAVORITES": true, "ENABLE_USER_STATS": true, "ENABLE_NOTIFICATIONS": true, "ENABLE_SOCIAL_SHARE": true, "ENABLE_EMAIL_POPUP": true, "ENABLE_TRENDING": true, "ENABLE_LIVE_STATS": true, "ENABLE_MEMBERSHIP": true, "PRIMARY_COLOR": "cyan", "ACCENT_COLOR": "purple", "DEBUG_MODE": false};
+        
+        // 访问统计
+        function trackPageView(pageName = 'index') {
+            const visits = JSON.parse(localStorage.getItem('page_visits') || '{}');
+            const today = new Date().toISOString().split('T')[0];
+            const key = `${pageName}_${today}`;
+            visits[key] = (visits[key] || 0) + 1;
+            localStorage.setItem('page_visits', JSON.stringify(visits));
+        }
+        
+        trackPageView();
         
         window.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('particle-canvas');
@@ -200,7 +232,7 @@
             const streakCount = document.getElementById('streakCount');
             
             if (stats) {
-                stats.textContent = `Visits: ${userProgress.data.visits} | Downloads: ${userProgress.data.downloads}`;
+                stats.textContent = userProgress.data.visits;
             }
             
             if (userProgress.data.streak > 0 && streakBadge && streakCount) {
@@ -213,37 +245,49 @@
     
     </script>
     
-    <nav class="fixed top-0 w-full z-50 nav-glass px-8 py-5 flex justify-between items-center">
-        <span class="text-white font-black text-xl tracking-tighter italic">FREEFINE<span class="primary-color">AI</span></span>
-        <div class="flex items-center gap-6">
+    <nav class="fixed top-0 w-full z-50 nav-glass px-6 md:px-8 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <span class="text-white font-black text-lg md:text-xl tracking-tighter italic">FREEFINE<span class="primary-color">AI</span></span>
             
             <div class="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-widest">
-                <a href="index.html" class="text-zinc-400 hover:text-white transition">Home</a>
+                <a href="index.html" class="text-cyan-400 hover:text-white transition">Home</a>
                 <a href="gallery.html" class="text-zinc-400 hover:text-white transition">Gallery</a>
                 <a href="tools.html" class="text-zinc-400 hover:text-white transition">Tools</a>
                 <a href="membership.html" class="text-zinc-400 hover:text-white transition">Membership</a>
                 <a href="about.html" class="text-zinc-400 hover:text-white transition">About</a>
             </div>
+        </div>
         
-            <div class="hidden md:flex items-center gap-4 text-xs">
-                <div class="flex items-center gap-1">
+        <div class="flex items-center gap-3 md:gap-4">
+            <div class="hidden md:flex items-center gap-2 bg-black/40 border border-white/5 rounded-full px-3 py-2 hover:border-white/10 transition">
+                <span class="text-zinc-500 text-sm">🔍</span>
+                <input type="text" id="navSearch" placeholder="Search..." class="bg-transparent text-xs text-zinc-300 placeholder-zinc-600 outline-none w-24" />
+            </div>
+            
+            <div class="hidden md:flex items-center gap-3 text-xs">
+                <div class="flex items-center gap-2 px-3 py-1 bg-cyan-500/10 rounded-lg border border-cyan-500/20">
                     <span class="primary-color">📊</span>
-                    <span class="text-zinc-400" id="userStats">Visits: 0 | Downloads: 0</span>
+                    <span class="text-cyan-400 font-bold" id="userStats">0</span>
+                    <span class="text-zinc-500 text-[9px]">Visits</span>
                 </div>
-                <div class="flex items-center gap-1 streak-badge" id="streakBadge" style="display: none;">
+                <div class="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg border border-white/10 streak-badge" id="streakBadge" style="display: none;">
                     <span class="text-yellow-400">🔥</span>
-                    <span class="text-yellow-400" id="streakCount">0</span>
+                    <span class="text-white font-bold" id="streakCount">0</span>
                 </div>
             </div>
-            <a href="https://www.paypal.com/ncp/payment/ZRQDBKWE7VBSU" target="_blank" class="hidden sm:block text-[10px] font-bold text-zinc-500 hover:text-white uppercase tracking-widest">Support</a>
-            <a href="https://www.paypal.com/ncp/payment/AQSGVVXLW69GJ" target="_blank" class="bg-white text-black text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-tighter hover:bg-primary transition">Get Bundle $9.99</a>
+            
+            <div class="hidden md:flex gap-2">
+                <a href="https://www.paypal.com/ncp/payment/ZRQDBKWE7VBSU" target="_blank" class="text-[10px] font-bold text-zinc-400 hover:text-white px-3 py-2 rounded-lg hover:bg-white/5 transition uppercase tracking-widest">Support</a>
+                <a href="https://www.paypal.com/ncp/payment/AQSGVVXLW69GJ" target="_blank" class="bg-gradient-to-r from-cyan-500 to-purple-500 text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-tighter hover:shadow-lg transition">Bundle $9.99</a>
+            </div>
         </div>
     </nav>
+
 
     <header class="pt-32 pb-16 px-6 text-center">
         <h1 class="text-6xl md:text-8xl font-black mb-6 leading-none hero-title text-white">Gallery</h1>
         <p class="max-w-2xl mx-auto text-zinc-500 text-base font-light leading-relaxed mb-8">
-            Browse our curated collection of Flux.1 AI-generated images
+            Browse our curated collection of 15 Flux.1 AI-generated images
         </p>
     </header>
 
@@ -470,7 +514,7 @@
         }
         
         function generateRandomPrompt() {
-            const prompts = ["Surreal desert with floating clocks, futuristic aesthetic, dramatic storm", "Macro shot of an iridescent leaf with frost wings, hyper-detailed, neon lighting", "Surreal desert with floating spheres, cyberpunk aesthetic, dramatic fog", "A transparent butterfly drifting through a neon-lit Tokyo street, cinematic bokeh, 8k raw photo", "Azure lion in a garden of pure earth, ethereal glow, fantasy art", "Surreal tundra with floating mirrors, art deco aesthetic, dramatic lightning", "Architectural render of a floating bridge made of gold, extreme minimalism, twilight lighting", "Surreal mountain with floating islands, cyberpunk aesthetic, dramatic fog", "Architectural render of a floating bridge made of gold, extreme minimalism, noon lighting", "Macro shot of an iridescent feather with rainbow wings, hyper-detailed, aurora lighting"];
+            const prompts = ["A transparent phoenix drifting through a neon-lit forest path, cinematic bokeh, 8k raw photo", "Silver lion in a laboratory of pure fire, ethereal glow, fantasy art", "Surreal mountain with floating spheres, steampunk aesthetic, dramatic lightning", "An ancient wizard covered in blooming cherry blossoms, weathered fabric texture, masterpiece", "A transparent phoenix drifting through a neon-lit ancient ruins, cinematic bokeh, 8k raw photo", "Surreal ocean with floating spheres, art deco aesthetic, dramatic lightning", "Emerald eagle in a library of pure air, ethereal glow, fantasy art", "Surreal tundra with floating mirrors, minimalist aesthetic, dramatic lightning", "Macro shot of an iridescent shell with fire wings, hyper-detailed, candlelight lighting", "Macro shot of an iridescent flower with electric wings, hyper-detailed, synthwave lighting"];
             const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
             
             document.getElementById('promptInput').value = randomPrompt;
@@ -522,7 +566,7 @@
         }
         
         function getBlindBox() {
-            const prompts = ["A transparent wolf drifting through a neon-lit mountain peak, cinematic bokeh, 8k raw photo", "Macro shot of an iridescent flower with rainbow wings, hyper-detailed, neon lighting", "Surreal city with floating islands, cyberpunk aesthetic, dramatic lightning", "Surreal mountain with floating mirrors, cyberpunk aesthetic, dramatic rain", "A transparent phoenix drifting through a neon-lit ancient ruins, cinematic bokeh, 8k raw photo", "An ancient mecha knight covered in blooming sunflowers, weathered wood texture, masterpiece", "Surreal forest with floating islands, futuristic aesthetic, dramatic fog", "Macro shot of an iridescent flower with rainbow wings, hyper-detailed, golden hour lighting", "Silver deer in a cathedral of pure light, ethereal glow, fantasy art", "Macro shot of an iridescent feather with water wings, hyper-detailed, moonlight lighting", "Architectural render of a floating tower made of gold, extreme minimalism, dawn lighting", "Surreal mountain with floating crystals, baroque aesthetic, dramatic wind", "Macro shot of an iridescent leaf with rainbow wings, hyper-detailed, candlelight lighting", "An ancient samurai covered in blooming orchids, weathered ceramic texture, masterpiece", "Surreal ocean with floating clocks, art deco aesthetic, dramatic snow", "Architectural render of a floating bridge made of crystal, extreme minimalism, dawn lighting", "A transparent jellyfish drifting through a neon-lit Tokyo street, cinematic bokeh, 8k raw photo", "An ancient angel covered in blooming roses, weathered ceramic texture, masterpiece", "Architectural render of a floating monastery made of gold, extreme minimalism, storm lighting", "Surreal desert with floating books, futuristic aesthetic, dramatic snow"];
+            const prompts = ["Surreal city with floating clocks, cyberpunk aesthetic, dramatic snow", "An ancient robot covered in blooming sunflowers, weathered fabric texture, masterpiece", "Emerald whale in a library of pure earth, ethereal glow, fantasy art", "Azure deer in a arena of pure fire, ethereal glow, fantasy art", "Surreal mountain with floating clocks, cyberpunk aesthetic, dramatic fog", "An ancient samurai covered in blooming peonies, weathered metal texture, masterpiece", "Surreal city with floating books, steampunk aesthetic, dramatic wind", "Macro shot of an iridescent feather with rainbow wings, hyper-detailed, aurora lighting", "Azure deer in a laboratory of pure water, ethereal glow, fantasy art", "An ancient robot covered in blooming peonies, weathered leather texture, masterpiece", "Surreal city with floating crystals, art deco aesthetic, dramatic wind", "Macro shot of an iridescent flower with water wings, hyper-detailed, neon lighting", "Azure lion in a arena of pure fire, ethereal glow, fantasy art", "Emerald whale in a arena of pure shadow, ethereal glow, fantasy art", "Silver fox in a maze of pure fire, ethereal glow, fantasy art", "Architectural render of a floating castle made of crystal, extreme minimalism, storm lighting", "Macro shot of an iridescent feather with rainbow wings, hyper-detailed, synthwave lighting", "An ancient angel covered in blooming peonies, weathered metal texture, masterpiece", "A transparent jellyfish drifting through a neon-lit forest path, cinematic bokeh, 8k raw photo", "An ancient samurai covered in blooming peonies, weathered metal texture, masterpiece"];
             const random = prompts[Math.floor(Math.random() * prompts.length)];
             const display = document.getElementById('blindBoxResult');
             
@@ -679,5 +723,117 @@
         });
     </script>
     
+
+
+    <footer class="mt-32 border-t border-white/5 bg-zinc-950/50 py-16 px-8 relative overflow-hidden">
+        <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
+        
+        <!-- Footer Content Grid -->
+        <div class="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-5 gap-8 text-left mb-12">
+            <!-- Brand Column -->
+            <div class="md:col-span-1">
+                <span class="text-white font-black text-2xl tracking-tighter italic uppercase block mb-3">FREEFINE<span class="primary-color">AI</span></span>
+                <p class="text-zinc-500 text-xs leading-relaxed mb-4">Premium Flux.1 AI-generated assets library. Empowering creators worldwide with high-fidelity digital resources.</p>
+                <div class="flex gap-3 mb-4">
+                    <a href="https://twitter.com/freefineai" target="_blank" class="w-8 h-8 bg-white/5 hover:bg-primary/20 border border-white/10 rounded-lg flex items-center justify-center text-zinc-400 hover:text-primary transition text-xs">𝕏</a>
+                    <a href="https://github.com/freefineai" target="_blank" class="w-8 h-8 bg-white/5 hover:bg-primary/20 border border-white/10 rounded-lg flex items-center justify-center text-zinc-400 hover:text-primary transition text-xs">⚙</a>
+                </div>
+            </div>
+            
+            <!-- Navigation Column -->
+            <div>
+                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Navigation</h4>
+                <ul class="space-y-2 text-xs font-bold">
+                    <li><a href="index.html" class="text-zinc-600 hover:text-primary transition">Home</a></li>
+                    <li><a href="gallery.html" class="text-zinc-600 hover:text-primary transition">Gallery</a></li>
+                    <li><a href="tools.html" class="text-zinc-600 hover:text-primary transition">Tools</a></li>
+                    <li><a href="about.html" class="text-zinc-600 hover:text-primary transition">About Us</a></li>
+                    <li><a href="membership.html" class="text-zinc-600 hover:text-primary transition">Membership</a></li>
+                </ul>
+            </div>
+            
+            <!-- Resources Column -->
+            <div>
+                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Resources</h4>
+                <ul class="space-y-2 text-xs font-bold">
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Prompt Library</a></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">API Docs</a></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Community</a></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Blog</a></li>
+                    <li><a href="mailto:hello@freefineai.com" class="text-zinc-600 hover:text-primary transition">Contact</a></li>
+                </ul>
+            </div>
+            
+            <!-- Legal Column -->
+            <div>
+                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Legal</h4>
+                <ul class="space-y-2 text-xs font-bold">
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Privacy Policy</a></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Terms of Service</a></li>
+                    <li><p class="text-zinc-600">CC BY-NC 4.0 License</p></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Cookie Policy</a></li>
+                </ul>
+            </div>
+            
+            <!-- Stats Column -->
+            <div>
+                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Platform Stats</h4>
+                <div id="footerStats" class="space-y-3 text-[10px]">
+                    <div>
+                        <div class="text-zinc-500 mb-1">Total Visits</div>
+                        <div class="text-cyan-400 font-bold text-sm" id="totalVisits">0</div>
+                    </div>
+                    <div>
+                        <div class="text-zinc-500 mb-1">Status</div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                            <span class="text-green-400 font-bold">Operational</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-zinc-500 mb-1">Uptime</div>
+                        <div class="text-white font-bold">99.9%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Bottom -->
+        <div class="max-w-[1400px] mx-auto pt-8 border-t border-white/5">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                <!-- Copyright -->
+                <div class="text-center md:text-left">
+                    <p class="text-[10px] tracking-[0.3em] text-zinc-700 uppercase italic font-black">&copy; 2026 FREEFINEAI. All Rights Reserved.</p>
+                </div>
+                
+                <!-- Support Message -->
+                <div class="text-center">
+                    <p class="text-[9px] text-zinc-600 font-bold uppercase tracking-wider">
+                        Built with <span class="text-pink-500">❤</span> for creators
+                    </p>
+                </div>
+                
+                <!-- Version -->
+                <div class="text-center md:text-right">
+                    <p class="text-[9px] text-zinc-700 font-bold uppercase">v2.1 | Last Updated: Feb 2026</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // 页脚访问统计更新
+        document.addEventListener('DOMContentLoaded', function() {
+            const visits = JSON.parse(localStorage.getItem('page_visits') || '{}');
+            let totalVisits = 0;
+            for (let key in visits) {
+                totalVisits += visits[key];
+            }
+            const totalVisitsEl = document.getElementById('totalVisits');
+            if (totalVisitsEl) {
+                totalVisitsEl.textContent = totalVisits.toLocaleString();
+            }
+        });
+    </script>
 </body>
 </html>

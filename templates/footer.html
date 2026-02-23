@@ -1,0 +1,112 @@
+    <footer class="mt-32 border-t border-white/5 bg-zinc-950/50 py-16 px-8 relative overflow-hidden">
+        <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
+        
+        <!-- Footer Content Grid -->
+        <div class="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-5 gap-8 text-left mb-12">
+            <!-- Brand Column -->
+            <div class="md:col-span-1">
+                <span class="text-white font-black text-2xl tracking-tighter italic uppercase block mb-3">FREEFINE<span class="primary-color">AI</span></span>
+                <p class="text-zinc-500 text-xs leading-relaxed mb-4">Premium Flux.1 AI-generated assets library. Empowering creators worldwide with high-fidelity digital resources.</p>
+                <div class="flex gap-3 mb-4">
+                    <a href="{TWITTER_URL}" target="_blank" class="w-8 h-8 bg-white/5 hover:bg-primary/20 border border-white/10 rounded-lg flex items-center justify-center text-zinc-400 hover:text-primary transition text-xs">𝕏</a>
+                    <a href="{GITHUB_URL}" target="_blank" class="w-8 h-8 bg-white/5 hover:bg-primary/20 border border-white/10 rounded-lg flex items-center justify-center text-zinc-400 hover:text-primary transition text-xs">⚙</a>
+                </div>
+            </div>
+            
+            <!-- Navigation Column -->
+            <div>
+                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Navigation</h4>
+                <ul class="space-y-2 text-xs font-bold">
+                    <li><a href="index.html" class="text-zinc-600 hover:text-primary transition">Home</a></li>
+                    <li><a href="gallery.html" class="text-zinc-600 hover:text-primary transition">Gallery</a></li>
+                    <li><a href="tools.html" class="text-zinc-600 hover:text-primary transition">Tools</a></li>
+                    <li><a href="about.html" class="text-zinc-600 hover:text-primary transition">About Us</a></li>
+                    <li><a href="membership.html" class="text-zinc-600 hover:text-primary transition">Membership</a></li>
+                </ul>
+            </div>
+            
+            <!-- Resources Column -->
+            <div>
+                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Resources</h4>
+                <ul class="space-y-2 text-xs font-bold">
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Prompt Library</a></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">API Docs</a></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Community</a></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Blog</a></li>
+                    <li><a href="mailto:hello@freefineai.com" class="text-zinc-600 hover:text-primary transition">Contact</a></li>
+                </ul>
+            </div>
+            
+            <!-- Legal Column -->
+            <div>
+                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Legal</h4>
+                <ul class="space-y-2 text-xs font-bold">
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Privacy Policy</a></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Terms of Service</a></li>
+                    <li><p class="text-zinc-600">CC BY-NC 4.0 License</p></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Cookie Policy</a></li>
+                </ul>
+            </div>
+            
+            <!-- Stats Column -->
+            <div>
+                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Platform Stats</h4>
+                <div id="footerStats" class="space-y-3 text-[10px]">
+                    <div>
+                        <div class="text-zinc-500 mb-1">Total Visits</div>
+                        <div class="text-cyan-400 font-bold text-sm" id="totalVisits">0</div>
+                    </div>
+                    <div>
+                        <div class="text-zinc-500 mb-1">Status</div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                            <span class="text-green-400 font-bold">Operational</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-zinc-500 mb-1">Uptime</div>
+                        <div class="text-white font-bold">99.9%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Bottom -->
+        <div class="max-w-[1400px] mx-auto pt-8 border-t border-white/5">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                <!-- Copyright -->
+                <div class="text-center md:text-left">
+                    <p class="text-[10px] tracking-[0.3em] text-zinc-700 uppercase italic font-black">&copy; 2026 FREEFINEAI. All Rights Reserved.</p>
+                </div>
+                
+                <!-- Support Message -->
+                <div class="text-center">
+                    <p class="text-[9px] text-zinc-600 font-bold uppercase tracking-wider">
+                        Built with <span class="text-pink-500">❤</span> for creators
+                    </p>
+                </div>
+                
+                <!-- Version -->
+                <div class="text-center md:text-right">
+                    <p class="text-[9px] text-zinc-700 font-bold uppercase">v2.1 | Last Updated: Feb 2026</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // 页脚访问统计更新
+        document.addEventListener('DOMContentLoaded', function() {{
+            const visits = JSON.parse(localStorage.getItem('page_visits') || '{{}}');
+            let totalVisits = 0;
+            for (let key in visits) {{
+                totalVisits += visits[key];
+            }}
+            const totalVisitsEl = document.getElementById('totalVisits');
+            if (totalVisitsEl) {{
+                totalVisitsEl.textContent = totalVisits.toLocaleString();
+            }}
+        }});
+    </script>
+</body>
+</html>

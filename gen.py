@@ -123,11 +123,17 @@ CONFIG = {
     "ENABLE_NOTIFICATIONS": config.getboolean("FEATURES", "ENABLE_NOTIFICATIONS", True),
     "ENABLE_PWA": config.getboolean("FEATURES", "ENABLE_PWA", False),
     "ENABLE_MULTI_PAGE": config.getboolean("FEATURES", "ENABLE_MULTI_PAGE", True),
+    "ENABLE_SOCIAL_SHARE": config.getboolean("FEATURES", "ENABLE_SOCIAL_SHARE", True),
+    "ENABLE_EMAIL_POPUP": config.getboolean("FEATURES", "ENABLE_EMAIL_POPUP", True),
+    "ENABLE_TRENDING": config.getboolean("FEATURES", "ENABLE_TRENDING", True),
+    "ENABLE_LIVE_STATS": config.getboolean("FEATURES", "ENABLE_LIVE_STATS", True),
+    "ENABLE_MEMBERSHIP": config.getboolean("FEATURES", "ENABLE_MEMBERSHIP", True),
     
     # Social links
-    "TWITTER_URL": config.get("SOCIAL", "TWITTER_URL", "#"),
-    "GITHUB_URL": config.get("SOCIAL", "GITHUB_URL", "#"),
-    "DISCORD_URL": config.get("SOCIAL", "DISCORD_URL", "#"),
+    "TWITTER_URL": config.get("SOCIAL", "TWITTER_URL", "https://twitter.com/freefineai"),
+    "GITHUB_URL": config.get("SOCIAL", "GITHUB_URL", "https://github.com/freefineai"),
+    "DISCORD_URL": config.get("SOCIAL", "DISCORD_URL", "https://discord.gg/freefineai"),
+    "TWITTER_HANDLE": config.get("SOCIAL", "TWITTER_HANDLE", "@freefineai"),
     
     # Analytics
     "GOOGLE_ANALYTICS_ID": config.get("ANALYTICS", "GOOGLE_ANALYTICS_ID", ""),
@@ -148,7 +154,11 @@ CONFIG = {
     # Advanced
     "ENABLE_SERVICE_WORKER": config.getboolean("ADVANCED", "ENABLE_SERVICE_WORKER", False),
     "CACHE_DURATION": config.getint("ADVANCED", "CACHE_DURATION", 7),
-    "DEBUG_MODE": config.getboolean("ADVANCED", "DEBUG_MODE", False)
+    "DEBUG_MODE": config.getboolean("ADVANCED", "DEBUG_MODE", False),
+    
+    # Email
+    "ENABLE_EMAIL_COLLECTION": config.getboolean("EMAIL", "ENABLE_EMAIL_COLLECTION", True),
+    "RECIPIENT_EMAIL": config.get("EMAIL", "RECIPIENT_EMAIL", "chinaxware@gmail.com")
 }
 
 # User engagement feature data
@@ -221,7 +231,6 @@ def setup():
             os.makedirs(folder)
     
     init_user_data()
-    generate_head_template()
 
 def init_user_data():
     """Initialize user data file"""
@@ -260,169 +269,6 @@ def generate_random_prompt():
     
     return result
 
-def generate_head_template():
-    """Generate Head template"""
-    primary_color = CONFIG["PRIMARY_COLOR"]
-    accent_color = CONFIG["ACCENT_COLOR"]
-    
-    color_map = {
-        "cyan": "6, 182, 212",
-        "blue": "59, 130, 246", 
-        "purple": "147, 51, 234",
-        "pink": "236, 72, 153",
-        "green": "34, 197, 94",
-        "yellow": "234, 179, 8",
-        "red": "239, 68, 68"
-    }
-    
-    primary_rgb = color_map.get(primary_color, "6, 182, 212")
-    accent_rgb = color_map.get(accent_color, "147, 51, 234")
-    
-    analytics_code = ""
-    if CONFIG["ENABLE_TRACKING"] and CONFIG["GOOGLE_ANALYTICS_ID"]:
-        analytics_code = f'''
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id={CONFIG["GOOGLE_ANALYTICS_ID"]}"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){{dataLayer.push(arguments);}}
-        gtag('js', new Date());
-        gtag('config', '{CONFIG["GOOGLE_ANALYTICS_ID"]}');
-    </script>
-    '''
-    
-    pwa_code = ""
-    if CONFIG["ENABLE_PWA"]:
-        pwa_code = '''
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#050505">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    '''
-    
-    # Navigation menu
-    nav_menu = ""
-    if CONFIG["ENABLE_MULTI_PAGE"]:
-        nav_menu = '''
-            <div class="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-widest">
-                <a href="index.html" class="text-zinc-400 hover:text-white transition">Home</a>
-                <a href="gallery.html" class="text-zinc-400 hover:text-white transition">Gallery</a>
-                <a href="tools.html" class="text-zinc-400 hover:text-white transition">Tools</a>
-                <a href="about.html" class="text-zinc-400 hover:text-white transition">About</a>
-            </div>
-        '''
-    
-    head_content = f'''<!DOCTYPE html>
-<html lang="{CONFIG["LANGUAGE"]}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{CONFIG["SITE_TITLE"]}</title>
-    <meta name="description" content="{CONFIG["SITE_DESCRIPTION"]}">
-    {analytics_code}
-    {pwa_code}
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {{
-            --primary-color: {primary_rgb};
-            --accent-color: {accent_rgb};
-        }}
-        body {{ background-color: #050505; color: #a1a1aa; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }}
-        .masonry {{ column-count: 1; column-gap: 1.5rem; }}
-        @media (min-width: 768px) {{ .masonry {{ column-count: 2; }} }}
-        @media (min-width: 1280px) {{ .masonry {{ column-count: 3; }} }}
-        .nav-glass {{ background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05); }}
-        #particle-canvas {{ position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }}
-        nav, header, main, footer {{ position: relative; z-index: 10; }}
-        .hero-title {{ -webkit-text-stroke: 1px rgba(255,255,255,0.1); color: transparent; transition: all 0.5s; }}
-        .hero-title:hover {{ color: white; -webkit-text-stroke: 1px transparent; }}
-        .notification {{ position: fixed; top: 100px; right: 20px; z-index: 1000; transform: translateX(400px); transition: transform 0.3s ease; }}
-        .notification.show {{ transform: translateX(0); }}
-        .streak-badge {{ animation: pulse 2s infinite; }}
-        @keyframes pulse {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: 0.7; }} }}
-        .primary-color {{ color: rgb(var(--primary-color)); }}
-        .accent-color {{ color: rgb(var(--accent-color)); }}
-        .bg-primary {{ background-color: rgb(var(--primary-color)); }}
-        .bg-accent {{ background-color: rgb(var(--accent-color)); }}
-        .border-primary {{ border-color: rgb(var(--primary-color)); }}
-        .border-accent {{ border-color: rgb(var(--accent-color)); }}
-    </style>
-</head>
-<body>
-    <canvas id="particle-canvas"></canvas>
-    
-    {generate_notification_html() if CONFIG["ENABLE_NOTIFICATIONS"] else ""}
-    
-    <script>
-        window.SITE_CONFIG = {json.dumps({
-            "ENABLE_ACHIEVEMENTS": CONFIG["ENABLE_ACHIEVEMENTS"],
-            "ENABLE_DAILY_CHALLENGE": CONFIG["ENABLE_DAILY_CHALLENGE"], 
-            "ENABLE_FAVORITES": CONFIG["ENABLE_FAVORITES"],
-            "ENABLE_USER_STATS": CONFIG["ENABLE_USER_STATS"],
-            "ENABLE_NOTIFICATIONS": CONFIG["ENABLE_NOTIFICATIONS"],
-            "PRIMARY_COLOR": CONFIG["PRIMARY_COLOR"],
-            "ACCENT_COLOR": CONFIG["ACCENT_COLOR"],
-            "DEBUG_MODE": CONFIG["DEBUG_MODE"]
-        })};
-        
-        window.addEventListener('DOMContentLoaded', () => {{
-            const canvas = document.getElementById('particle-canvas');
-            if (!canvas) return;
-            
-            const ctx = canvas.getContext('2d');
-            let particles = [];
-            const resize = () => {{ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }};
-            
-            class Particle {{
-                constructor() {{ this.init(); }}
-                init() {{
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 1.5 + 0.5;
-                    this.speedX = Math.random() * 0.4 - 0.2;
-                    this.speedY = Math.random() * 0.4 - 0.2;
-                    this.opacity = Math.random() * 0.5 + 0.1;
-                }}
-                update() {{
-                    this.x += this.speedX; this.y += this.speedY;
-                    if(this.x > canvas.width || this.x < 0) this.speedX *= -1;
-                    if(this.y > canvas.height || this.y < 0) this.speedY *= -1;
-                }}
-                draw() {{
-                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
-                    ctx.fillStyle = `rgba({primary_rgb}, ${{this.opacity}})`; ctx.fill();
-                }}
-            }}
-            
-            const animate = () => {{
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(p => {{ p.update(); p.draw(); }});
-                requestAnimationFrame(animate);
-            }};
-            
-            window.addEventListener('resize', resize);
-            resize();
-            for(let i=0; i<100; i++) particles.push(new Particle());
-            animate();
-        }});
-        
-        {generate_user_progress_js() if CONFIG["ENABLE_USER_STATS"] else ""}
-    </script>
-    
-    <nav class="fixed top-0 w-full z-50 nav-glass px-8 py-5 flex justify-between items-center">
-        <span class="text-white font-black text-xl tracking-tighter italic">FREEFINE<span class="primary-color">AI</span></span>
-        <div class="flex items-center gap-6">
-            {nav_menu}
-            {generate_user_stats_html() if CONFIG["ENABLE_USER_STATS"] else ""}
-            <a href="{CONFIG["TIP_JAR_URL"]}" target="_blank" class="hidden sm:block text-[10px] font-bold text-zinc-500 hover:text-white uppercase tracking-widest">Support</a>
-            <a href="{CONFIG["MEGA_BUNDLE_URL"]}" target="_blank" class="bg-white text-black text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-tighter hover:bg-primary transition">Get Bundle {CONFIG["BUNDLE_PRICE"]}</a>
-        </div>
-    </nav>
-'''
-    
-    with open(os.path.join(CONFIG["TEMPLATE_DIR"], "head.html"), "w", encoding="utf-8") as f: 
-        f.write(head_content)
-
 def generate_notification_html():
     """Generate notification HTML"""
     return '''<div id="notification" class="notification bg-gradient-to-r from-primary to-accent text-white p-4 rounded-2xl shadow-2xl max-w-sm">
@@ -439,14 +285,15 @@ def generate_notification_html():
 
 def generate_user_stats_html():
     """Generate user stats HTML"""
-    return '''<div class="hidden md:flex items-center gap-4 text-xs">
-                <div class="flex items-center gap-1">
+    return '''<div class="hidden md:flex items-center gap-3 text-xs">
+                <div class="flex items-center gap-2 px-3 py-1 bg-cyan-500/10 rounded-lg border border-cyan-500/20">
                     <span class="primary-color">📊</span>
-                    <span class="text-zinc-400" id="userStats">Visits: 0 | Downloads: 0</span>
+                    <span class="text-cyan-400 font-bold" id="userStats">0</span>
+                    <span class="text-zinc-500 text-[9px]">Visits</span>
                 </div>
-                <div class="flex items-center gap-1 streak-badge" id="streakBadge" style="display: none;">
+                <div class="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg border border-white/10 streak-badge" id="streakBadge" style="display: none;">
                     <span class="text-yellow-400">🔥</span>
-                    <span class="text-yellow-400" id="streakCount">0</span>
+                    <span class="text-white font-bold" id="streakCount">0</span>
                 </div>
             </div>'''
 
@@ -569,147 +416,322 @@ def generate_user_progress_js():
         document.addEventListener('DOMContentLoaded', updateUserStats);
     '''
 
+# Email subscription form
+def generate_email_subscription():
+    """Generate email subscription section"""
+    recipient_email = CONFIG["RECIPIENT_EMAIL"]
+    return f'''
+    <section class="my-32 px-6">
+        <div class="max-w-2xl mx-auto">
+            <div class="relative">
+                <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-cyan-500/20 blur-3xl rounded-3xl"></div>
+                <div class="relative bg-gradient-to-br from-zinc-900/80 to-zinc-950 border border-cyan-500/30 rounded-3xl p-8 md:p-12">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl md:text-4xl font-black text-white mb-3 tracking-tight">
+                            Get Weekly AI Art Inspiration
+                        </h2>
+                        <p class="text-zinc-400 text-sm md:text-base leading-relaxed">
+                            Join 10,000+ creators receiving exclusive prompts, tips, and early access to new features
+                        </p>
+                    </div>
+                    
+                    <form 
+                        class="space-y-4" 
+                        id="emailForm"
+                    >
+                        <input type="hidden" name="action" value="subscribe">
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <input 
+                                type="email" 
+                                name="email" 
+                                placeholder="Enter your email..." 
+                                required
+                                class="flex-1 bg-black/40 border border-white/10 focus:border-cyan-500/50 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none transition"
+                            />
+                            <button 
+                                type="submit"
+                                class="bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-black px-6 py-3 rounded-xl uppercase tracking-widest text-xs hover:shadow-lg hover:shadow-cyan-500/50 transition transform hover:scale-105 whitespace-nowrap"
+                            >
+                                Subscribe
+                            </button>
+                        </div>
+                        <p class="text-[10px] text-zinc-600 text-center">
+                            ✅ No spam • Unsubscribe anytime • Private data
+                        </p>
+                        <div id="emailStatus" class="text-center text-sm text-green-400 hidden"></div>
+                    </form>
+                    
+                    <script>
+                        // 初始化表单状态
+                        function initEmailForm() {{
+                            const form = document.getElementById('emailForm');
+                            const btn = form.querySelector('button[type="submit"]');
+                            const isSubscribed = localStorage.getItem('user_email_subscribed');
+                            
+                            if (isSubscribed) {{
+                                btn.textContent = '✓ Already Subscribed';
+                                btn.disabled = true;
+                                btn.className = 'bg-green-600 text-white font-black px-6 py-3 rounded-xl uppercase tracking-widest text-xs whitespace-nowrap';
+                            }}
+                        }}
+                        
+                        // 订阅事件处理
+                        document.getElementById('emailForm').addEventListener('submit', async function(e) {{
+                            e.preventDefault();
+                            
+                            const emailInput = this.querySelector('input[name="email"]');
+                            const btn = this.querySelector('button[type="submit"]');
+                            const statusDiv = document.getElementById('emailStatus');
+                            const email = emailInput.value.trim();
+                            
+                            if (!email) return;
+                            
+                            btn.disabled = true;
+                            btn.textContent = 'Subscribing...';
+                            statusDiv.classList.add('hidden');
+                            
+                            try {{
+                                // 保存到 localStorage
+                                let subscribers = JSON.parse(localStorage.getItem('email_subscribers') || '[]');
+                                if (!subscribers.includes(email)) {{
+                                    subscribers.push(email);
+                                    localStorage.setItem('email_subscribers', JSON.stringify(subscribers));
+                                }}
+                                
+                                // 标记该用户已订阅
+                                localStorage.setItem('user_email_subscribed', 'true');
+                                localStorage.setItem('user_email', email);
+                                
+                                // 尝试发送到后端（可选）
+                                try {{
+                                    await fetch('https://api.web3forms.com/submit', {{
+                                        method: 'POST',
+                                        headers: {{'Content-Type': 'application/json'}},
+                                        body: JSON.stringify({{
+                                            access_key: '7d8aff7a-eca1-4256-8b93-8fb091dea9d9',
+                                            email: email,
+                                            subject: 'New Email Subscription - FreeFineAI',
+                                            from_name: 'FreeFineAI Subscriber'
+                                        }})
+                                    }}).catch(() => {{}});
+                                }} catch(e) {{}}
+                                
+                                // 显示成功
+                                btn.textContent = '✓ Subscribed!';
+                                btn.className = 'bg-green-600 text-white font-black px-6 py-3 rounded-xl uppercase tracking-widest text-xs whitespace-nowrap';
+                                btn.disabled = true;
+                                statusDiv.innerHTML = '🎉 Welcome! Check your email for exclusive prompts.';
+                                statusDiv.classList.remove('hidden');
+                                statusDiv.classList.add('text-green-400');
+                                emailInput.value = '';
+                                
+                            }} catch (error) {{
+                                console.error('Error:', error);
+                                btn.textContent = 'Subscribe';
+                                btn.disabled = false;
+                                statusDiv.innerHTML = '❌ Error. Please try again.';
+                                statusDiv.classList.remove('hidden', 'text-green-400');
+                                statusDiv.classList.add('text-red-400');
+                            }}
+                        }});
+                        
+                        // 等待 DOM 加载完成
+                        if (document.readyState === 'loading') {{
+                            document.addEventListener('DOMContentLoaded', initEmailForm);
+                        }} else {{
+                            initEmailForm();
+                        }}
+                    </script>
+                </div>
+            </div>
+        </div>
+    </section>
+    '''
+
 # Generate enhanced feature components
 def generate_enhanced_tools():
     """Generate enhanced toolbox"""
     daily_challenge = get_daily_challenge()
     
     return f'''
-    <!-- Daily Challenge Banner -->
-    <section class="max-w-[1400px] mx-auto px-8 mb-8">
-        <div class="bg-gradient-to-r from-purple-900/40 via-blue-900/40 to-cyan-900/40 border border-purple-500/20 rounded-3xl p-6 relative overflow-hidden">
+    <!-- Daily Challenge Banner - Enhanced -->
+    <section class="max-w-[1400px] mx-auto px-6 mb-12">
+        <div class="bg-gradient-to-r from-red-900/30 via-purple-900/30 to-blue-900/30 border border-red-500/30 rounded-3xl p-6 relative overflow-hidden group">
             <div class="absolute top-0 right-0 p-4">
-                <div class="bg-red-500 w-2 h-2 rounded-full animate-ping"></div>
+                <div class="bg-red-500 w-3 h-3 rounded-full animate-pulse"></div>
             </div>
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="absolute -top-32 -right-32 w-64 h-64 bg-red-500/5 blur-[80px] rounded-full group-hover:bg-red-500/10 transition-all duration-500"></div>
+            
+            <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div>
-                    <h3 class="text-white font-black text-base mb-1">🎯 Daily Challenge #{daily_challenge['seed']}</h3>
-                    <p class="text-zinc-300 text-sm mb-1">"{daily_challenge['prompt']}"</p>
-                    <span class="text-xs text-purple-400 font-bold">Difficulty: {daily_challenge['difficulty']}</span>
+                    <h3 class="text-white font-black text-lg md:text-xl mb-2">🎯 Daily Challenge</h3>
+                    <p id="challengePrompt" class="text-zinc-300 text-sm font-medium mb-2">"{daily_challenge['prompt']}"</p>
+                    <div class="flex items-center gap-2">
+                        <span id="challengeDifficulty" class="text-xs bg-red-500/20 border border-red-500/40 text-red-300 px-3 py-1 rounded-full font-bold">Difficulty: {daily_challenge['difficulty']}</span>
+                        <span class="text-[10px] text-zinc-500">Seed: {daily_challenge['seed']}</span>
+                    </div>
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="copyChallenge('{daily_challenge['seed']}', '{daily_challenge['prompt']}')" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest transition">
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick="acceptChallenge()" class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white text-xs font-black px-6 py-3 rounded-xl uppercase tracking-widest transition transform hover:scale-105 shadow-lg hover:shadow-red-500/50">
                         Accept Challenge
                     </button>
-                    <button onclick="shareChallenge()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-xl transition">
-                        📤
+                    <button onclick="shareChallenge()" class="bg-white/10 border border-white/20 hover:border-white/40 text-white px-4 py-3 rounded-xl transition">
+                        📤 Share
                     </button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Enhanced Toolbox -->
-    <section class="max-w-[1400px] mx-auto px-8 mb-12">
-        <div class="grid md:grid-cols-3 gap-6">
-            <!-- AI Prompt Generator -->
-            <div class="bg-zinc-900/50 border border-white/5 p-6 rounded-3xl backdrop-blur-md relative overflow-hidden group">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="p-2 bg-cyan-500/10 rounded-lg text-cyan-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    </div>
-                    <h3 class="text-white font-black text-xs uppercase tracking-[0.2em]">AI Prompt Generator</h3>
-                </div>
-                <textarea id="promptInput" placeholder="Enter a simple concept (e.g. 'Cyberpunk City')..." class="w-full bg-black/40 border border-white/5 rounded-xl p-3 text-sm text-zinc-300 h-20 mb-3 outline-none focus:border-cyan-500/50 transition resize-none"></textarea>
+    <!-- Creative Toolkit Section -->
+    <section id="toolsSection" class="max-w-[1400px] mx-auto px-6 mb-16 scroll-mt-32">
+        <div class="mb-8">
+            <h2 class="text-3xl font-black text-white mb-2 tracking-tighter">Creative Toolkit</h2>
+            <p class="text-zinc-500 text-sm">Professional tools to supercharge your AI generation workflow</p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- AI Prompt Enhancer -->
+            <div class="bg-gradient-to-br from-cyan-600/10 to-cyan-600/5 border border-cyan-500/30 p-6 rounded-3xl backdrop-blur-sm relative overflow-hidden group hover:border-cyan-500/60 transition">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-cyan-500/10 blur-[60px] opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                 
-                <div class="mb-3">
-                    <select id="styleSelect" class="w-full bg-black/40 border border-white/5 rounded-xl p-2 text-xs text-zinc-300 outline-none focus:border-cyan-500/50">
-                        <option value="">Choose Style</option>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-cyan-500/20 rounded-lg text-cyan-400 group-hover:bg-cyan-500/30 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <h3 class="text-white font-black text-sm uppercase tracking-[0.1em]">Prompt Enhancer</h3>
+                    </div>
+                    
+                    <textarea id="promptInput" placeholder="Your concept here..." class="w-full bg-black/40 border border-cyan-500/20 focus:border-cyan-500/60 rounded-xl p-4 text-sm text-zinc-300 h-24 mb-4 outline-none transition resize-none focus:bg-black/50"></textarea>
+                    
+                    <select id="styleSelect" class="w-full bg-black/40 border border-cyan-500/20 focus:border-cyan-500/60 rounded-xl p-3 text-xs text-zinc-300 outline-none focus:bg-black/50 mb-4 transition">
+                        <option value="">📌 Choose Style</option>
                         {generate_style_options()}
                     </select>
-                </div>
-                
-                <div class="flex gap-2">
-                    <button onclick="expandPrompt()" class="flex-1 bg-zinc-800 hover:bg-white hover:text-black text-white text-[10px] font-black py-3 rounded-xl uppercase tracking-widest transition shadow-lg">
-                        Enhance Prompt
-                    </button>
-                    <button onclick="generateRandomPrompt()" class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-3 rounded-xl transition">
-                        🎲
-                    </button>
-                </div>
-                
-                <div id="copyNotice" class="absolute top-3 right-6 text-[9px] text-cyan-500 font-bold opacity-0 transition-opacity uppercase tracking-widest">Copied!</div>
-            </div>
-
-            <!-- Resolution Presets -->
-            <div class="bg-zinc-900/50 border border-white/5 p-6 rounded-3xl backdrop-blur-md">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="p-2 bg-purple-500/10 rounded-lg text-purple-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                    
+                    <div class="flex gap-2">
+                        <button onclick="expandPrompt()" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black py-3 rounded-xl uppercase tracking-widest transition shadow-lg hover:shadow-cyan-500/50">
+                            Enhance
+                        </button>
+                        <button onclick="generateRandomPrompt()" class="bg-cyan-600/30 hover:bg-cyan-600/50 border border-cyan-500/40 text-cyan-300 px-4 py-3 rounded-xl transition" title="Random prompt">
+                            🎲
+                        </button>
                     </div>
-                    <h3 class="text-white font-black text-xs uppercase tracking-[0.2em]">Resolution Presets</h3>
-                </div>
-                <div class="grid grid-cols-1 gap-2">
-                    <button onclick="copyRes('1344 x 768')" class="bg-black/40 border border-white/5 p-3 rounded-xl hover:border-cyan-500/50 group transition text-left">
-                        <span class="block text-white font-bold text-xs">16:9 Cinematic</span>
-                        <span class="text-[10px] text-zinc-600">1344 x 768 px</span>
-                    </button>
-                    <button onclick="copyRes('768 x 1344')" class="bg-black/40 border border-white/5 p-3 rounded-xl hover:border-cyan-500/50 group transition text-left">
-                        <span class="block text-white font-bold text-xs">9:16 Portrait</span>
-                        <span class="text-[10px] text-zinc-600">768 x 1344 px</span>
-                    </button>
-                    <button onclick="copyRes('1024 x 1024')" class="bg-black/40 border border-white/5 p-3 rounded-xl hover:border-cyan-500/50 group transition text-left">
-                        <span class="block text-white font-bold text-xs">1:1 Square</span>
-                        <span class="text-[10px] text-zinc-600">1024 x 1024 px</span>
-                    </button>
                 </div>
             </div>
 
-            <!-- User Achievement Panel -->
-            <div class="bg-zinc-900/50 border border-white/5 p-6 rounded-3xl backdrop-blur-md">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="p-2 bg-yellow-500/10 rounded-lg text-yellow-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+            <!-- Resolution & Format Presets -->
+            <div class="bg-gradient-to-br from-purple-600/10 to-purple-600/5 border border-purple-500/30 p-6 rounded-3xl backdrop-blur-sm relative overflow-hidden group hover:border-purple-500/60 transition">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-purple-500/10 blur-[60px] opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-purple-500/20 rounded-lg text-purple-400 group-hover:bg-purple-500/30 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                        </div>
+                        <h3 class="text-white font-black text-sm uppercase tracking-[0.1em]">Resolutions</h3>
                     </div>
-                    <h3 class="text-white font-black text-xs uppercase tracking-[0.2em]">My Achievements</h3>
+                    
+                    <div class="space-y-2">
+                        <button onclick="copyRes('1344x768')" class="w-full text-left bg-black/40 border border-purple-500/20 hover:border-purple-500/60 p-3 rounded-xl transition group/btn">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="text-white font-bold text-xs mb-0.5">16:9 Cinematic</div>
+                                    <div class="text-[10px] text-zinc-500">1344 × 768 px</div>
+                                </div>
+                                <span class="text-purple-400 opacity-0 group-hover/btn:opacity-100 transition">📋</span>
+                            </div>
+                        </button>
+                        <button onclick="copyRes('768x1344')" class="w-full text-left bg-black/40 border border-purple-500/20 hover:border-purple-500/60 p-3 rounded-xl transition group/btn">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="text-white font-bold text-xs mb-0.5">9:16 Portrait</div>
+                                    <div class="text-[10px] text-zinc-500">768 × 1344 px</div>
+                                </div>
+                                <span class="text-purple-400 opacity-0 group-hover/btn:opacity-100 transition">📋</span>
+                            </div>
+                        </button>
+                        <button onclick="copyRes('1024x1024')" class="w-full text-left bg-black/40 border border-purple-500/20 hover:border-purple-500/60 p-3 rounded-xl transition group/btn">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="text-white font-bold text-xs mb-0.5">1:1 Square</div>
+                                    <div class="text-[10px] text-zinc-500">1024 × 1024 px</div>
+                                </div>
+                                <span class="text-purple-400 opacity-0 group-hover/btn:opacity-100 transition">📋</span>
+                            </div>
+                        </button>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Quick Tools -->
+            <div class="bg-gradient-to-br from-yellow-600/10 to-yellow-600/5 border border-yellow-500/30 p-6 rounded-3xl backdrop-blur-sm relative overflow-hidden group hover:border-yellow-500/60 transition">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-yellow-500/10 blur-[60px] opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                 
-                <div id="achievementsList" class="space-y-2 mb-3 max-h-32 overflow-y-auto">
-                    <!-- Achievements will be loaded dynamically via JavaScript -->
-                </div>
-                
-                <div class="text-center">
-                    <button onclick="showAllAchievements()" class="text-[10px] text-zinc-500 hover:text-white font-bold uppercase tracking-widest transition">
-                        View All
-                    </button>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-yellow-500/20 rounded-lg text-yellow-400 group-hover:bg-yellow-500/30 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V7a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                        </div>
+                        <h3 class="text-white font-black text-sm uppercase tracking-[0.1em]">Quick Tools</h3>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <button onclick="getBlindBox()" class="w-full bg-black/40 border border-yellow-500/20 hover:border-yellow-500/60 text-white p-3 rounded-xl text-xs font-bold uppercase tracking-widest transition">
+                            🎁 Mystery Prompt
+                        </button>
+                        <button onclick="showPromptLibrary()" class="w-full bg-black/40 border border-yellow-500/20 hover:border-yellow-500/60 text-white p-3 rounded-xl text-xs font-bold uppercase tracking-widest transition">
+                            📚 Prompt Library
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Community Interaction Area -->
-    <section class="max-w-[1400px] mx-auto px-8 mb-16">
+        <!-- Community Interaction Area -->
         <div class="grid md:grid-cols-2 gap-6">
             <!-- Prompt Blind Box -->
-            <div class="relative group cursor-pointer overflow-hidden rounded-3xl bg-gradient-to-br from-purple-900/40 to-black border border-white/5 p-8 flex flex-col items-center justify-center text-center transition-all hover:border-purple-500/40" onclick="getBlindBox()">
-                <div class="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-100 transition-opacity">
-                    <svg class="w-16 h-16 text-purple-500" fill="currentColor" viewBox="0 0 24 24"><path d="M11 15h2v2h-2v-2m0-8h2v6h-2V7m1-5C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+            <div class="relative group cursor-pointer overflow-hidden rounded-3xl bg-gradient-to-br from-purple-900/40 to-black border border-purple-500/20 p-8 flex flex-col items-center justify-center text-center transition-all hover:border-purple-500/60 hover:shadow-lg hover:shadow-purple-500/20">
+                <div class="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-100 transition-opacity">
+                    <svg class="w-20 h-20 text-purple-500" fill="currentColor" viewBox="0 0 24 24"><path d="M11 15h2v2h-2v-2m0-8h2v6h-2V7m1-5C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
                 </div>
-                <h3 class="text-white text-xl font-black italic uppercase tracking-tighter mb-2">Prompt Blind Box</h3>
-                <p class="text-zinc-500 text-xs mb-4 font-bold uppercase tracking-widest">Randomly generate masterpiece seeds</p>
-                <div id="blindBoxResult" class="hidden text-cyan-400 text-[10px] font-mono mb-4 bg-black/60 p-3 rounded-xl border border-cyan-500/20 w-full text-left max-h-24 overflow-y-auto"></div>
-                <span class="bg-purple-600 text-white text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-widest group-hover:bg-purple-400 transition">Roll the Dice</span>
+                <h3 class="text-white text-2xl font-black italic mb-2">Mystery Box</h3>
+                <p class="text-zinc-400 text-xs mb-4 font-bold uppercase tracking-widest">Spin to unlock hidden inspirations</p>
+                <div id="blindBoxResult" class="hidden text-cyan-300 text-[11px] font-mono mb-4 bg-black/80 p-4 rounded-xl border border-cyan-500/30 w-full text-left max-h-28 overflow-y-auto"></div>
+                <span class="bg-purple-600 text-white text-xs font-black px-6 py-2 rounded-full uppercase tracking-widest group-hover:bg-purple-400 transition">🎲 Roll Now</span>
             </div>
 
-            <!-- User Favorites -->
-            <div class="rounded-3xl bg-zinc-900/40 border border-white/5 p-8 flex flex-col justify-center">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="bg-red-500 w-2 h-2 rounded-full animate-ping"></span>
-                    <h3 class="text-white font-black text-xs uppercase tracking-[0.2em]">My Favorites</h3>
+            <!-- Quick Reference -->
+            <div class="rounded-3xl bg-gradient-to-br from-green-900/20 to-black border border-green-500/20 p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-green-500 w-3 h-3 rounded-full animate-pulse"></span>
+                    <h3 class="text-white font-black text-sm uppercase tracking-[0.2em]">Quick Reference</h3>
                 </div>
                 
-                <div id="favoritesList" class="space-y-2 mb-4 max-h-32 overflow-y-auto">
-                    <p class="text-zinc-500 text-sm">No favorite images yet</p>
-                </div>
-                
-                <div class="flex gap-4">
-                    <button onclick="clearFavorites()" class="text-[10px] font-black text-zinc-500 uppercase tracking-widest hover:text-white transition">Clear All</button>
-                    <button onclick="exportFavorites()" class="text-[10px] font-black text-zinc-500 uppercase tracking-widest hover:text-white transition">Export List</button>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-green-500/20">
+                        <span class="text-zinc-400 text-xs font-bold">Recommended Format</span>
+                        <span class="text-green-400 font-mono text-xs">JPEG 4K</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-green-500/20">
+                        <span class="text-zinc-400 text-xs font-bold">Best Aspect Ratio</span>
+                        <span class="text-green-400 font-mono text-xs">16:9</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-green-500/20">
+                        <span class="text-zinc-400 text-xs font-bold">License</span>
+                        <span class="text-green-400 font-mono text-xs">CC BY-NC 4.0</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-green-500/20">
+                        <span class="text-zinc-400 text-xs font-bold">Model</span>
+                        <span class="text-green-400 font-mono text-xs">Flux.1-Dev</span>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
     '''
+
 
 def generate_style_options():
     """Generate style options"""
@@ -964,8 +986,7 @@ def generate_enhanced_scripts():
 # Generate multi-page functionality
 def generate_gallery_page():
     """Generate gallery page"""
-    with open(os.path.join(CONFIG["TEMPLATE_DIR"], "head.html"), "r", encoding="utf-8") as f: 
-        head = f.read()
+    navbar_html, footer_html = get_navbar_footer_html()
     
     images = sorted([f for f in os.listdir(CONFIG["IMG_DIR"]) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))], reverse=True)
     
@@ -990,7 +1011,7 @@ def generate_gallery_page():
     <header class="pt-32 pb-16 px-6 text-center">
         <h1 class="text-6xl md:text-8xl font-black mb-6 leading-none hero-title text-white">Gallery</h1>
         <p class="max-w-2xl mx-auto text-zinc-500 text-base font-light leading-relaxed mb-8">
-            Browse our curated collection of Flux.1 AI-generated images
+            Browse our curated collection of {len(images)} Flux.1 AI-generated images
         </p>
     </header>
 
@@ -1012,12 +1033,12 @@ def generate_gallery_page():
 '''
     
     with open("gallery.html", "w", encoding="utf-8") as f:
-        f.write(head + gallery_content)
+        f.write(navbar_html + "\n" + gallery_content.replace('</body>\n</html>', '') + "\n" + footer_html)
 
 def generate_tools_page():
     """Generate tools page"""
-    with open(os.path.join(CONFIG["TEMPLATE_DIR"], "head.html"), "r", encoding="utf-8") as f: 
-        head = f.read()
+    navbar_html, footer_html = get_navbar_footer_html()
+
     
     tools_content = f'''
     <header class="pt-32 pb-16 px-6 text-center">
@@ -1083,12 +1104,15 @@ def generate_tools_page():
 '''
     
     with open("tools.html", "w", encoding="utf-8") as f:
-        f.write(head + tools_content)
+        # Remove closing tags from tools_content since footer_html will handle them
+        tools_clean = tools_content.replace('</body>\n</html>', '')
+        f.write(navbar_html + "\n" + tools_clean + "\n" + footer_html)
+
 
 def generate_about_page():
     """Generate about page"""
-    with open(os.path.join(CONFIG["TEMPLATE_DIR"], "head.html"), "r", encoding="utf-8") as f: 
-        head = f.read()
+    navbar_html, footer_html = get_navbar_footer_html()
+
     
     about_content = f'''
     <header class="pt-32 pb-16 px-6 text-center">
@@ -1195,18 +1219,83 @@ def generate_about_page():
 '''
     
     with open("about.html", "w", encoding="utf-8") as f:
-        f.write(head + about_content)
+        # Remove closing tags from about_content since footer_html will handle them
+        about_clean = about_content.replace('</body>\n</html>', '')
+        f.write(navbar_html + "\n" + about_clean + "\n" + footer_html)
+
+
+def get_navbar_footer_html():
+    """Get navbar and footer HTML with replaced placeholders"""
+    primary_color = CONFIG["PRIMARY_COLOR"]
+    accent_color = CONFIG["ACCENT_COLOR"]
+    
+    color_map = {
+        "cyan": "6, 182, 212",
+        "blue": "59, 130, 246", 
+        "purple": "147, 51, 234",
+        "pink": "236, 72, 153",
+        "green": "34, 197, 94",
+        "yellow": "234, 179, 8",
+        "red": "239, 68, 68"
+    }
+    
+    primary_rgb = color_map.get(primary_color, "6, 182, 212")
+    accent_rgb = color_map.get(accent_color, "147, 51, 234")
+    
+    site_config = {
+        "ENABLE_ACHIEVEMENTS": CONFIG["ENABLE_ACHIEVEMENTS"],
+        "ENABLE_DAILY_CHALLENGE": CONFIG["ENABLE_DAILY_CHALLENGE"], 
+        "ENABLE_FAVORITES": CONFIG["ENABLE_FAVORITES"],
+        "ENABLE_USER_STATS": CONFIG["ENABLE_USER_STATS"],
+        "ENABLE_NOTIFICATIONS": CONFIG["ENABLE_NOTIFICATIONS"],
+        "ENABLE_SOCIAL_SHARE": CONFIG["ENABLE_SOCIAL_SHARE"],
+        "ENABLE_EMAIL_POPUP": CONFIG["ENABLE_EMAIL_POPUP"],
+        "ENABLE_TRENDING": CONFIG["ENABLE_TRENDING"],
+        "ENABLE_LIVE_STATS": CONFIG["ENABLE_LIVE_STATS"],
+        "ENABLE_MEMBERSHIP": CONFIG["ENABLE_MEMBERSHIP"],
+        "PRIMARY_COLOR": CONFIG["PRIMARY_COLOR"],
+        "ACCENT_COLOR": CONFIG["ACCENT_COLOR"],
+        "DEBUG_MODE": CONFIG["DEBUG_MODE"]
+    }
+    
+    # Read navbar/header template
+    with open(os.path.join(CONFIG["TEMPLATE_DIR"], "navbar.html"), "r", encoding="utf-8") as f: 
+        navbar_template = f.read()
+    
+    # Replace placeholders in navbar
+    navbar_html = navbar_template.format(
+        SITE_TITLE=CONFIG["SITE_TITLE"],
+        SITE_DESCRIPTION=CONFIG["SITE_DESCRIPTION"],
+        PRIMARY_RGB=primary_rgb,
+        ACCENT_RGB=accent_rgb,
+        SITE_CONFIG_JSON=json.dumps(site_config),
+        TIP_JAR_URL=CONFIG["TIP_JAR_URL"],
+        MEGA_BUNDLE_URL=CONFIG["MEGA_BUNDLE_URL"],
+        BUNDLE_PRICE=CONFIG["BUNDLE_PRICE"]
+    )
+    
+    # Read footer template
+    with open(os.path.join(CONFIG["TEMPLATE_DIR"], "footer.html"), "r", encoding="utf-8") as f: 
+        footer_template = f.read()
+    
+    # Replace placeholders in footer
+    footer_html = footer_template.format(
+        TWITTER_URL=CONFIG["TWITTER_URL"],
+        GITHUB_URL=CONFIG["GITHUB_URL"]
+    )
+    
+    return navbar_html, footer_html
 
 # Generate main page
 def generate():
     setup()
     print_config_info()
     
-    with open(os.path.join(CONFIG["TEMPLATE_DIR"], "head.html"), "r", encoding="utf-8") as f: 
-        head = f.read()
+    # Get navbar and footer
+    navbar_html, footer_html = get_navbar_footer_html()
 
     images = sorted([f for f in os.listdir(CONFIG["IMG_DIR"]) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))], reverse=True)
-    
+
     cards_html = ""
     for img in images[:12]:  # Show only first 12 images on homepage
         name = img.split('.')[0].replace('_', ' ').title()
@@ -1225,19 +1314,63 @@ def generate():
         '''
 
     body_content = f'''
-    <header class="pt-32 pb-16 px-6 text-center">
-        <div class="inline-block px-4 py-1 mb-4 border border-cyan-500/20 rounded-full bg-cyan-500/5 text-cyan-400 text-[10px] font-bold uppercase tracking-widest">Flux.1 Master Library</div>
-        <h1 class="text-6xl md:text-8xl font-black mb-6 leading-none hero-title text-white">FLUX RAW.</h1>
-        <p class="max-w-2xl mx-auto text-zinc-500 text-base font-light leading-relaxed mb-8">
-            {CONFIG["SITE_DESCRIPTION"]}
-        </p>
+    <header class="pt-32 pb-8 px-6">
+        <div class="max-w-[1400px] mx-auto">
+            <div class="text-center mb-12">
+                <div class="inline-block px-4 py-2 mb-6 border border-cyan-500/30 rounded-full bg-cyan-500/5 text-cyan-400 text-[10px] font-bold uppercase tracking-widest hover:border-cyan-500/60 transition cursor-pointer">
+                    ✨ Flux.1 Master Library — {len(images)} Curated Assets
+                </div>
+                <h1 class="text-7xl md:text-8xl lg:text-9xl font-black mb-6 leading-none text-white">
+                    <span class="flux-title block animate-pulse-glow mb-2">FLUX</span>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-cyan-400 block tracking-tighter">RAW.</span>
+                </h1>
+                <p class="max-w-3xl mx-auto text-zinc-400 text-base md:text-lg font-light leading-relaxed mb-8">
+                    Premium AI-generated assets for creators. From concept art to production-ready renders. Free for the community, built by visionaries.
+                </p>
+                
+                <div class="flex flex-col md:flex-row gap-4 justify-center mb-8">
+                    <a href="gallery.html" class="inline-block bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-black px-8 py-4 rounded-2xl uppercase tracking-widest text-xs hover:shadow-lg hover:shadow-cyan-500/50 transition transform hover:scale-105">
+                        Browse Gallery
+                    </a>
+                    <a href="tools.html" class="inline-block bg-white/10 border border-white/20 hover:border-white/40 text-white font-bold px-8 py-4 rounded-2xl uppercase tracking-widest text-xs transition">
+                        Use AI Tools
+                    </a>
+                    <a href="{CONFIG['MEGA_BUNDLE_URL']}" target="_blank" class="inline-block bg-purple-600/20 border border-purple-500/40 hover:border-purple-500/60 text-purple-300 font-bold px-8 py-4 rounded-2xl uppercase tracking-widest text-xs transition">
+                        Unlock Pro Vault
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="grid md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-12">
+                <div class="bg-gradient-to-br from-cyan-500/10 to-transparent border border-cyan-500/20 rounded-2xl p-4 text-center hover:border-cyan-500/40 transition">
+                    <div class="text-2xl font-black text-cyan-400 mb-1">{len(images)}+</div>
+                    <div class="text-xs text-zinc-400 uppercase tracking-widest font-bold">Assets</div>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20 rounded-2xl p-4 text-center hover:border-purple-500/40 transition">
+                    <div class="text-2xl font-black text-purple-400 mb-1">10K+</div>
+                    <div class="text-xs text-zinc-400 uppercase tracking-widest font-bold">Community</div>
+                </div>
+                <div class="bg-gradient-to-br from-yellow-500/10 to-transparent border border-yellow-500/20 rounded-2xl p-4 text-center hover:border-yellow-500/40 transition">
+                    <div class="text-2xl font-black text-yellow-400 mb-1">50K+</div>
+                    <div class="text-xs text-zinc-400 uppercase tracking-widest font-bold">Downloads</div>
+                </div>
+                <div class="bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 rounded-2xl p-4 text-center hover:border-green-500/40 transition">
+                    <div class="text-2xl font-black text-green-400 mb-1">24/7</div>
+                    <div class="text-xs text-zinc-400 uppercase tracking-widest font-bold">Free Access</div>
+                </div>
+            </div>
+        </div>
     </header>
 
     {generate_enhanced_tools() if CONFIG["ENABLE_DAILY_CHALLENGE"] else ""}
 
     <main class="max-w-[1400px] mx-auto px-6 pb-32">
         <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
-            <h2 class="text-white text-2xl font-black tracking-tighter uppercase italic">Featured Works</h2>
+            <div>
+                <h2 class="text-white text-3xl font-black tracking-tighter uppercase italic mb-2">Featured Works</h2>
+                <p class="text-zinc-500 text-xs">Handpicked collection from our finest AI-generated assets</p>
+            </div>
             <a href="gallery.html" class="text-[10px] text-zinc-600 font-bold uppercase tracking-[0.3em] hover:text-white transition">View All →</a>
         </div>
         <div class="masonry">{cards_html}</div>
@@ -1276,48 +1409,17 @@ def generate():
             </div>
         </section>
     </main>
-
-    <footer class="mt-32 border-t border-white/5 bg-zinc-950/50 py-16 px-8 relative overflow-hidden">
-        <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
-        <div class="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-left mb-12">
-            <div class="md:col-span-1">
-                <span class="text-white font-black text-2xl tracking-tighter italic uppercase block mb-3">FREEFINE<span class="primary-color">AI</span></span>
-                <p class="text-zinc-500 text-xs leading-relaxed max-w-xs">Independent archive for Flux.1-dev assets. Built for the community.</p>
-            </div>
-            <div>
-                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Navigation</h4>
-                <ul class="space-y-3 text-xs font-bold">
-                    <li><a href="index.html" class="text-zinc-600 hover:text-primary transition uppercase tracking-widest">Home</a></li>
-                    <li><a href="gallery.html" class="text-zinc-600 hover:text-primary transition uppercase tracking-widest">Gallery</a></li>
-                    <li><a href="tools.html" class="text-zinc-600 hover:text-primary transition uppercase tracking-widest">Tools</a></li>
-                    <li><a href="about.html" class="text-zinc-600 hover:text-primary transition uppercase tracking-widest">About</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Legal</h4>
-                <p class="text-[10px] text-zinc-600 font-bold uppercase">CC BY-NC 4.0 License</p>
-            </div>
-            <div>
-                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Status</h4>
-                <div class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div><span class="text-[9px] text-zinc-400 uppercase font-bold">Operational</span></div>
-            </div>
-        </div>
-        <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 gap-4">
-            <p class="text-[10px] tracking-[0.5em] text-zinc-800 uppercase italic font-black">&copy; 2026 FREEFINEAI</p>
-            <div class="flex gap-6">
-                <a href="{CONFIG['TWITTER_URL']}" class="text-zinc-800 hover:text-white text-[9px] font-black uppercase transition">Twitter</a>
-                <a href="{CONFIG['GITHUB_URL']}" class="text-zinc-800 hover:text-white text-[9px] font-black uppercase transition">GitHub</a>
-            </div>
-        </div>
-    </footer>
+    
+    {generate_email_subscription() if CONFIG["ENABLE_EMAIL_COLLECTION"] else ""}
     
     {generate_enhanced_scripts()}
-</body>
-</html>
 '''
 
     with open("index.html", "w", encoding="utf-8") as f:
-        f.write(head + body_content)
+        # Remove closing tags from body_content since footer_html will handle them
+        body_clean = body_content.replace('</body>\n</html>', '')
+        f.write(navbar_html + "\n" + body_clean + "\n" + footer_html)
+
     
     # Generate multi-page
     if CONFIG["ENABLE_MULTI_PAGE"]:
@@ -1328,7 +1430,8 @@ def generate():
     
     print(f"🚀 English website generated successfully!")
     print(f"📊 Contains {len(images)} images")
-    print(f"✨ All text converted to English")
+    print(f"✨ Using modular template structure (navbar.html + content + footer.html)")
+    print(f"📈 Built-in visit tracking with localStorage")
     print(f"🎨 Interface optimized: compact spacing, visual coordination")
     print(f"💰 Monetization features: improved user engagement, optimized donation guidance")
 

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeFineAI Admin Panel</title>
+    <meta name="description" content="Admin panel for managing subscribers and site statistics">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #050505; color: #a1a1aa; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+        .admin-container { min-height: 100vh; padding: 2rem; }
+        .table-container { overflow-x: auto; }
+        .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: bold; }
+        .badge-green { background-color: rgba(34, 197, 94, 0.1); color: rgb(34, 197, 94); }
+        .badge-blue { background-color: rgba(59, 130, 246, 0.1); color: rgb(59, 130, 246); }
+    </style>
+</head>
+<body>
+    <div id="loginContainer" class="admin-container max-w-md mx-auto pt-32">
+        <div class="bg-gradient-to-br from-zinc-900 to-zinc-950 border border-cyan-500/30 rounded-3xl p-8">
+            <h1 class="text-3xl font-black text-white mb-2 text-center">FreeFineAI</h1>
+            <p class="text-zinc-500 text-center text-sm mb-8">Admin Dashboard</p>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-white text-xs font-bold mb-2 uppercase tracking-widest">Password</label>
+                    <input 
+                        type="password" 
+                        id="passwordInput"
+                        placeholder="Enter admin password"
+                        class="w-full bg-black/40 border border-white/10 focus:border-cyan-500/50 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none transition"
+                    />
+                </div>
+                <button 
+                    type="submit"
+                    class="w-full bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-black py-3 rounded-xl uppercase tracking-widest text-xs hover:shadow-lg hover:shadow-cyan-500/50 transition"
+                >
+                    Login
+                </button>
+            </form>
+            <p class="text-[10px] text-zinc-600 text-center mt-4">Default password: <code class="bg-black/40 px-2 py-1 rounded">admin123</code></p>
+        </div>
+    </div>
+
+    <div id="adminContainer" class="admin-container hidden">
+        <!-- Header -->
+        <div class="max-w-7xl mx-auto mb-8">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-4xl font-black text-white mb-2">Admin Dashboard</h1>
+                    <p class="text-zinc-500">Manage subscribers and site statistics</p>
+                </div>
+                <button 
+                    onclick="logout()"
+                    class="bg-red-600/20 border border-red-500/30 text-red-400 px-4 py-2 rounded-lg hover:bg-red-600/40 transition text-sm font-bold"
+                >
+                    Logout
+                </button>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-gradient-to-br from-cyan-500/10 to-transparent border border-cyan-500/20 rounded-xl p-4">
+                    <div class="text-zinc-500 text-xs font-bold uppercase mb-2">Total Subscribers</div>
+                    <div class="text-3xl font-black text-cyan-400" id="totalSubscribers">0</div>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20 rounded-xl p-4">
+                    <div class="text-zinc-500 text-xs font-bold uppercase mb-2">Site Visits</div>
+                    <div class="text-3xl font-black text-purple-400" id="siteVisits">0</div>
+                </div>
+                <div class="bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 rounded-xl p-4">
+                    <div class="text-zinc-500 text-xs font-bold uppercase mb-2">Total Downloads</div>
+                    <div class="text-3xl font-black text-green-400" id="totalDownloads">0</div>
+                </div>
+                <div class="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 rounded-xl p-4">
+                    <div class="text-zinc-500 text-xs font-bold uppercase mb-2">Images</div>
+                    <div class="text-3xl font-black text-blue-400" id="totalImages">0</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-4 mb-8 flex-wrap">
+                <button 
+                    onclick="exportToCSV()"
+                    class="bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-black px-6 py-2 rounded-lg uppercase tracking-widest text-xs hover:shadow-lg transition"
+                >
+                    📥 Export as CSV
+                </button>
+                <button 
+                    onclick="exportToJSON()"
+                    class="bg-gradient-to-r from-purple-500 to-purple-400 text-white font-black px-6 py-2 rounded-lg uppercase tracking-widest text-xs hover:shadow-lg transition"
+                >
+                    📋 Export as JSON
+                </button>
+                <button 
+                    onclick="sendEmail()"
+                    class="bg-gradient-to-r from-green-500 to-green-400 text-white font-black px-6 py-2 rounded-lg uppercase tracking-widest text-xs hover:shadow-lg transition"
+                >
+                    ✉️ Send Newsletter
+                </button>
+                <button 
+                    onclick="clearAllData()"
+                    class="bg-red-600/20 border border-red-500/30 text-red-400 px-6 py-2 rounded-lg hover:bg-red-600/40 transition text-xs font-bold uppercase tracking-widest"
+                >
+                    🗑️ Clear All
+                </button>
+            </div>
+        </div>
+
+        <!-- Subscribers Table -->
+        <div class="max-w-7xl mx-auto">
+            <div class="bg-zinc-900/50 border border-white/5 rounded-2xl overflow-hidden">
+                <div class="px-6 py-4 border-b border-white/5">
+                    <h2 class="text-xl font-black text-white">Email Subscribers</h2>
+                </div>
+                <div class="table-container">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-white/5 bg-black/20">
+                                <th class="px-6 py-3 text-xs font-black text-white uppercase">#</th>
+                                <th class="px-6 py-3 text-xs font-black text-white uppercase">Email</th>
+                                <th class="px-6 py-3 text-xs font-black text-white uppercase">Date</th>
+                                <th class="px-6 py-3 text-xs font-black text-white uppercase">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subscribersTable">
+                            <tr>
+                                <td colspan="4" class="px-6 py-8 text-center text-zinc-500">No subscribers yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = 'admin123';
+        
+        function checkLogin() {
+            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+            const loginContainer = document.getElementById('loginContainer');
+            const adminContainer = document.getElementById('adminContainer');
+            
+            if (isLoggedIn) {
+                loginContainer.classList.add('hidden');
+                adminContainer.classList.remove('hidden');
+                loadDashboard();
+            }
+        }
+        
+        document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('passwordInput').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                checkLogin();
+            } else {
+                alert('❌ Incorrect password');
+                document.getElementById('passwordInput').value = '';
+            }
+        });
+        
+        function logout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            location.reload();
+        }
+        
+        function loadDashboard() {
+            // 加载订阅者
+            const subscribers = JSON.parse(localStorage.getItem('email_subscribers') || '[]');
+            updateSubscribersTable(subscribers);
+            
+            // 更新统计
+            document.getElementById('totalSubscribers').textContent = subscribers.length;
+            
+            // 计算访问数
+            const visits = JSON.parse(localStorage.getItem('page_visits') || '{}');
+            let totalVisits = 0;
+            for (let key in visits) {
+                totalVisits += visits[key];
+            }
+            document.getElementById('siteVisits').textContent = totalVisits.toLocaleString();
+        }
+        
+        function updateSubscribersTable(subscribers) {
+            const table = document.getElementById('subscribersTable');
+            
+            if (subscribers.length === 0) {
+                table.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-zinc-500">No subscribers yet</td></tr>';
+                return;
+            }
+            
+            table.innerHTML = subscribers.map((email, index) => `
+                <tr class="border-b border-white/5 hover:bg-black/20 transition">
+                    <td class="px-6 py-3 text-xs text-zinc-500 font-mono">${index + 1}</td>
+                    <td class="px-6 py-3 text-sm text-white font-bold">${email}</td>
+                    <td class="px-6 py-3 text-xs text-zinc-500">${new Date().toLocaleDateString()}</td>
+                    <td class="px-6 py-3">
+                        <button 
+                            onclick="deleteSubscriber('${email}')"
+                            class="text-red-400 hover:text-red-300 text-xs font-bold transition"
+                        >
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function deleteSubscriber(email) {
+            if (confirm(`Delete ${email}?`)) {
+                let subscribers = JSON.parse(localStorage.getItem('email_subscribers') || '[]');
+                subscribers = subscribers.filter(e => e !== email);
+                localStorage.setItem('email_subscribers', JSON.stringify(subscribers));
+                loadDashboard();
+            }
+        }
+        
+        function exportToCSV() {
+            const subscribers = JSON.parse(localStorage.getItem('email_subscribers') || '[]');
+            
+            if (subscribers.length === 0) {
+                alert('No subscribers to export');
+                return;
+            }
+            
+            let csv = 'Email,Date\n';
+            subscribers.forEach(email => {
+                csv += `"${email}",${new Date().toLocaleDateString()}\n`;
+            });
+            
+            downloadFile(csv, 'subscribers.csv', 'text/csv');
+        }
+        
+        function exportToJSON() {
+            const subscribers = JSON.parse(localStorage.getItem('email_subscribers') || '[]');
+            
+            if (subscribers.length === 0) {
+                alert('No subscribers to export');
+                return;
+            }
+            
+            const data = {
+                exportDate: new Date().toISOString(),
+                totalSubscribers: subscribers.length,
+                subscribers: subscribers
+            };
+            
+            downloadFile(JSON.stringify(data, null, 2), 'subscribers.json', 'application/json');
+        }
+        
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type: type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function sendEmail() {
+            const subscribers = JSON.parse(localStorage.getItem('email_subscribers') || '[]');
+            
+            if (subscribers.length === 0) {
+                alert('No subscribers');
+                return;
+            }
+            
+            const subject = prompt('Newsletter subject:');
+            if (!subject) return;
+            
+            const message = prompt('Newsletter message (or link):');
+            if (!message) return;
+            
+            // 模拟发送（实际需要后端支持）
+            const mailtoLink = `mailto:${subscribers.join(',')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+            alert(`📧 Ready to send to ${subscribers.length} subscribers!\n\nSubject: ${subject}\n\nNote: Your email client will open. Send the emails from there.`);
+            window.open(mailtoLink);
+        }
+        
+        function clearAllData() {
+            if (confirm('⚠️ Delete ALL subscriber data? This cannot be undone!')) {
+                if (confirm('Are you absolutely sure?')) {
+                    localStorage.removeItem('email_subscribers');
+                    loadDashboard();
+                    alert('✓ All data cleared');
+                }
+            }
+        }
+        
+        // Check login on load
+        window.addEventListener('load', checkLogin);
+    </script>
+</body>
+</html>

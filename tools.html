@@ -6,7 +6,6 @@
     <title>FreeFineAI | Premium Flux.1 Digital Assets</title>
     <meta name="description" content="Curated, high-fidelity AI assets. Free for the community, designed for the visionaries.">
     
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="premium-features.js" defer></script>
@@ -24,6 +23,28 @@
         nav, header, main, footer { position: relative; z-index: 10; }
         .hero-title { -webkit-text-stroke: 1px rgba(255,255,255,0.1); color: transparent; transition: all 0.5s; }
         .hero-title:hover { color: white; -webkit-text-stroke: 1px transparent; }
+        
+        /* FLUX Title Enhanced Effect */
+        .flux-title {
+            background: linear-gradient(135deg, #06b6d4 0%, #a78bfa 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.4));
+            animation: flux-glow 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
+        }
+        
+        @keyframes flux-glow {
+            0% { filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.3)); }
+            50% { filter: drop-shadow(0 0 35px rgba(6, 182, 212, 0.6)) drop-shadow(0 0 15px rgba(167, 139, 250, 0.3)); }
+            100% { filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.3)); }
+        }
+        
+        .animate-pulse-glow { animation: flux-glow 3s ease-in-out infinite; }
+        
         .notification { position: fixed; top: 100px; right: 20px; z-index: 1000; transform: translateX(400px); transition: transform 0.3s ease; }
         .notification.show { transform: translateX(0); }
         .streak-badge { animation: pulse 2s infinite; }
@@ -53,6 +74,17 @@
     
     <script>
         window.SITE_CONFIG = {"ENABLE_ACHIEVEMENTS": true, "ENABLE_DAILY_CHALLENGE": true, "ENABLE_FAVORITES": true, "ENABLE_USER_STATS": true, "ENABLE_NOTIFICATIONS": true, "ENABLE_SOCIAL_SHARE": true, "ENABLE_EMAIL_POPUP": true, "ENABLE_TRENDING": true, "ENABLE_LIVE_STATS": true, "ENABLE_MEMBERSHIP": true, "PRIMARY_COLOR": "cyan", "ACCENT_COLOR": "purple", "DEBUG_MODE": false};
+        
+        // 访问统计
+        function trackPageView(pageName = 'index') {
+            const visits = JSON.parse(localStorage.getItem('page_visits') || '{}');
+            const today = new Date().toISOString().split('T')[0];
+            const key = `${pageName}_${today}`;
+            visits[key] = (visits[key] || 0) + 1;
+            localStorage.setItem('page_visits', JSON.stringify(visits));
+        }
+        
+        trackPageView();
         
         window.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('particle-canvas');
@@ -200,7 +232,7 @@
             const streakCount = document.getElementById('streakCount');
             
             if (stats) {
-                stats.textContent = `Visits: ${userProgress.data.visits} | Downloads: ${userProgress.data.downloads}`;
+                stats.textContent = userProgress.data.visits;
             }
             
             if (userProgress.data.streak > 0 && streakBadge && streakCount) {
@@ -213,32 +245,44 @@
     
     </script>
     
-    <nav class="fixed top-0 w-full z-50 nav-glass px-8 py-5 flex justify-between items-center">
-        <span class="text-white font-black text-xl tracking-tighter italic">FREEFINE<span class="primary-color">AI</span></span>
-        <div class="flex items-center gap-6">
+    <nav class="fixed top-0 w-full z-50 nav-glass px-6 md:px-8 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <span class="text-white font-black text-lg md:text-xl tracking-tighter italic">FREEFINE<span class="primary-color">AI</span></span>
             
             <div class="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-widest">
-                <a href="index.html" class="text-zinc-400 hover:text-white transition">Home</a>
+                <a href="index.html" class="text-cyan-400 hover:text-white transition">Home</a>
                 <a href="gallery.html" class="text-zinc-400 hover:text-white transition">Gallery</a>
                 <a href="tools.html" class="text-zinc-400 hover:text-white transition">Tools</a>
                 <a href="membership.html" class="text-zinc-400 hover:text-white transition">Membership</a>
                 <a href="about.html" class="text-zinc-400 hover:text-white transition">About</a>
             </div>
+        </div>
         
-            <div class="hidden md:flex items-center gap-4 text-xs">
-                <div class="flex items-center gap-1">
+        <div class="flex items-center gap-3 md:gap-4">
+            <div class="hidden md:flex items-center gap-2 bg-black/40 border border-white/5 rounded-full px-3 py-2 hover:border-white/10 transition">
+                <span class="text-zinc-500 text-sm">🔍</span>
+                <input type="text" id="navSearch" placeholder="Search..." class="bg-transparent text-xs text-zinc-300 placeholder-zinc-600 outline-none w-24" />
+            </div>
+            
+            <div class="hidden md:flex items-center gap-3 text-xs">
+                <div class="flex items-center gap-2 px-3 py-1 bg-cyan-500/10 rounded-lg border border-cyan-500/20">
                     <span class="primary-color">📊</span>
-                    <span class="text-zinc-400" id="userStats">Visits: 0 | Downloads: 0</span>
+                    <span class="text-cyan-400 font-bold" id="userStats">0</span>
+                    <span class="text-zinc-500 text-[9px]">Visits</span>
                 </div>
-                <div class="flex items-center gap-1 streak-badge" id="streakBadge" style="display: none;">
+                <div class="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg border border-white/10 streak-badge" id="streakBadge" style="display: none;">
                     <span class="text-yellow-400">🔥</span>
-                    <span class="text-yellow-400" id="streakCount">0</span>
+                    <span class="text-white font-bold" id="streakCount">0</span>
                 </div>
             </div>
-            <a href="https://www.paypal.com/ncp/payment/ZRQDBKWE7VBSU" target="_blank" class="hidden sm:block text-[10px] font-bold text-zinc-500 hover:text-white uppercase tracking-widest">Support</a>
-            <a href="https://www.paypal.com/ncp/payment/AQSGVVXLW69GJ" target="_blank" class="bg-white text-black text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-tighter hover:bg-primary transition">Get Bundle $9.99</a>
+            
+            <div class="hidden md:flex gap-2">
+                <a href="https://www.paypal.com/ncp/payment/ZRQDBKWE7VBSU" target="_blank" class="text-[10px] font-bold text-zinc-400 hover:text-white px-3 py-2 rounded-lg hover:bg-white/5 transition uppercase tracking-widest">Support</a>
+                <a href="https://www.paypal.com/ncp/payment/AQSGVVXLW69GJ" target="_blank" class="bg-gradient-to-r from-cyan-500 to-purple-500 text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-tighter hover:shadow-lg transition">Bundle $9.99</a>
+            </div>
         </div>
     </nav>
+
 
     <header class="pt-32 pb-16 px-6 text-center">
         <h1 class="text-6xl md:text-8xl font-black mb-6 leading-none hero-title text-white">Tools</h1>
@@ -248,136 +292,178 @@
     </header>
 
     
-    <!-- Daily Challenge Banner -->
-    <section class="max-w-[1400px] mx-auto px-8 mb-8">
-        <div class="bg-gradient-to-r from-purple-900/40 via-blue-900/40 to-cyan-900/40 border border-purple-500/20 rounded-3xl p-6 relative overflow-hidden">
+    <!-- Daily Challenge Banner - Enhanced -->
+    <section class="max-w-[1400px] mx-auto px-6 mb-12">
+        <div class="bg-gradient-to-r from-red-900/30 via-purple-900/30 to-blue-900/30 border border-red-500/30 rounded-3xl p-6 relative overflow-hidden group">
             <div class="absolute top-0 right-0 p-4">
-                <div class="bg-red-500 w-2 h-2 rounded-full animate-ping"></div>
+                <div class="bg-red-500 w-3 h-3 rounded-full animate-pulse"></div>
             </div>
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="absolute -top-32 -right-32 w-64 h-64 bg-red-500/5 blur-[80px] rounded-full group-hover:bg-red-500/10 transition-all duration-500"></div>
+            
+            <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div>
-                    <h3 class="text-white font-black text-base mb-1">🎯 Daily Challenge #77432</h3>
-                    <p class="text-zinc-300 text-sm mb-1">"Holographic butterfly in a crystal cave"</p>
-                    <span class="text-xs text-purple-400 font-bold">Difficulty: Easy</span>
+                    <h3 class="text-white font-black text-lg md:text-xl mb-2">🎯 Daily Challenge</h3>
+                    <p id="challengePrompt" class="text-zinc-300 text-sm font-medium mb-2">"Neon samurai in a digital bamboo forest"</p>
+                    <div class="flex items-center gap-2">
+                        <span id="challengeDifficulty" class="text-xs bg-red-500/20 border border-red-500/40 text-red-300 px-3 py-1 rounded-full font-bold">Difficulty: Medium</span>
+                        <span class="text-[10px] text-zinc-500">Seed: 55123</span>
+                    </div>
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="copyChallenge('77432', 'Holographic butterfly in a crystal cave')" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest transition">
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick="acceptChallenge()" class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white text-xs font-black px-6 py-3 rounded-xl uppercase tracking-widest transition transform hover:scale-105 shadow-lg hover:shadow-red-500/50">
                         Accept Challenge
                     </button>
-                    <button onclick="shareChallenge()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-xl transition">
-                        📤
+                    <button onclick="shareChallenge()" class="bg-white/10 border border-white/20 hover:border-white/40 text-white px-4 py-3 rounded-xl transition">
+                        📤 Share
                     </button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Enhanced Toolbox -->
-    <section class="max-w-[1400px] mx-auto px-8 mb-12">
-        <div class="grid md:grid-cols-3 gap-6">
-            <!-- AI Prompt Generator -->
-            <div class="bg-zinc-900/50 border border-white/5 p-6 rounded-3xl backdrop-blur-md relative overflow-hidden group">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="p-2 bg-cyan-500/10 rounded-lg text-cyan-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    </div>
-                    <h3 class="text-white font-black text-xs uppercase tracking-[0.2em]">AI Prompt Generator</h3>
-                </div>
-                <textarea id="promptInput" placeholder="Enter a simple concept (e.g. 'Cyberpunk City')..." class="w-full bg-black/40 border border-white/5 rounded-xl p-3 text-sm text-zinc-300 h-20 mb-3 outline-none focus:border-cyan-500/50 transition resize-none"></textarea>
+    <!-- Creative Toolkit Section -->
+    <section id="toolsSection" class="max-w-[1400px] mx-auto px-6 mb-16 scroll-mt-32">
+        <div class="mb-8">
+            <h2 class="text-3xl font-black text-white mb-2 tracking-tighter">Creative Toolkit</h2>
+            <p class="text-zinc-500 text-sm">Professional tools to supercharge your AI generation workflow</p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- AI Prompt Enhancer -->
+            <div class="bg-gradient-to-br from-cyan-600/10 to-cyan-600/5 border border-cyan-500/30 p-6 rounded-3xl backdrop-blur-sm relative overflow-hidden group hover:border-cyan-500/60 transition">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-cyan-500/10 blur-[60px] opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                 
-                <div class="mb-3">
-                    <select id="styleSelect" class="w-full bg-black/40 border border-white/5 rounded-xl p-2 text-xs text-zinc-300 outline-none focus:border-cyan-500/50">
-                        <option value="">Choose Style</option>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-cyan-500/20 rounded-lg text-cyan-400 group-hover:bg-cyan-500/30 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <h3 class="text-white font-black text-sm uppercase tracking-[0.1em]">Prompt Enhancer</h3>
+                    </div>
+                    
+                    <textarea id="promptInput" placeholder="Your concept here..." class="w-full bg-black/40 border border-cyan-500/20 focus:border-cyan-500/60 rounded-xl p-4 text-sm text-zinc-300 h-24 mb-4 outline-none transition resize-none focus:bg-black/50"></textarea>
+                    
+                    <select id="styleSelect" class="w-full bg-black/40 border border-cyan-500/20 focus:border-cyan-500/60 rounded-xl p-3 text-xs text-zinc-300 outline-none focus:bg-black/50 mb-4 transition">
+                        <option value="">📌 Choose Style</option>
                         <option value="Cinematic">Cinematic</option><option value="Hyperrealistic">Hyperrealistic</option><option value="Artistic">Artistic</option><option value="Cyberpunk">Cyberpunk</option><option value="Fantasy">Fantasy</option><option value="Minimalist">Minimalist</option>
                     </select>
-                </div>
-                
-                <div class="flex gap-2">
-                    <button onclick="expandPrompt()" class="flex-1 bg-zinc-800 hover:bg-white hover:text-black text-white text-[10px] font-black py-3 rounded-xl uppercase tracking-widest transition shadow-lg">
-                        Enhance Prompt
-                    </button>
-                    <button onclick="generateRandomPrompt()" class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-3 rounded-xl transition">
-                        🎲
-                    </button>
-                </div>
-                
-                <div id="copyNotice" class="absolute top-3 right-6 text-[9px] text-cyan-500 font-bold opacity-0 transition-opacity uppercase tracking-widest">Copied!</div>
-            </div>
-
-            <!-- Resolution Presets -->
-            <div class="bg-zinc-900/50 border border-white/5 p-6 rounded-3xl backdrop-blur-md">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="p-2 bg-purple-500/10 rounded-lg text-purple-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                    
+                    <div class="flex gap-2">
+                        <button onclick="expandPrompt()" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black py-3 rounded-xl uppercase tracking-widest transition shadow-lg hover:shadow-cyan-500/50">
+                            Enhance
+                        </button>
+                        <button onclick="generateRandomPrompt()" class="bg-cyan-600/30 hover:bg-cyan-600/50 border border-cyan-500/40 text-cyan-300 px-4 py-3 rounded-xl transition" title="Random prompt">
+                            🎲
+                        </button>
                     </div>
-                    <h3 class="text-white font-black text-xs uppercase tracking-[0.2em]">Resolution Presets</h3>
-                </div>
-                <div class="grid grid-cols-1 gap-2">
-                    <button onclick="copyRes('1344 x 768')" class="bg-black/40 border border-white/5 p-3 rounded-xl hover:border-cyan-500/50 group transition text-left">
-                        <span class="block text-white font-bold text-xs">16:9 Cinematic</span>
-                        <span class="text-[10px] text-zinc-600">1344 x 768 px</span>
-                    </button>
-                    <button onclick="copyRes('768 x 1344')" class="bg-black/40 border border-white/5 p-3 rounded-xl hover:border-cyan-500/50 group transition text-left">
-                        <span class="block text-white font-bold text-xs">9:16 Portrait</span>
-                        <span class="text-[10px] text-zinc-600">768 x 1344 px</span>
-                    </button>
-                    <button onclick="copyRes('1024 x 1024')" class="bg-black/40 border border-white/5 p-3 rounded-xl hover:border-cyan-500/50 group transition text-left">
-                        <span class="block text-white font-bold text-xs">1:1 Square</span>
-                        <span class="text-[10px] text-zinc-600">1024 x 1024 px</span>
-                    </button>
                 </div>
             </div>
 
-            <!-- User Achievement Panel -->
-            <div class="bg-zinc-900/50 border border-white/5 p-6 rounded-3xl backdrop-blur-md">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="p-2 bg-yellow-500/10 rounded-lg text-yellow-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+            <!-- Resolution & Format Presets -->
+            <div class="bg-gradient-to-br from-purple-600/10 to-purple-600/5 border border-purple-500/30 p-6 rounded-3xl backdrop-blur-sm relative overflow-hidden group hover:border-purple-500/60 transition">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-purple-500/10 blur-[60px] opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-purple-500/20 rounded-lg text-purple-400 group-hover:bg-purple-500/30 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                        </div>
+                        <h3 class="text-white font-black text-sm uppercase tracking-[0.1em]">Resolutions</h3>
                     </div>
-                    <h3 class="text-white font-black text-xs uppercase tracking-[0.2em]">My Achievements</h3>
+                    
+                    <div class="space-y-2">
+                        <button onclick="copyRes('1344x768')" class="w-full text-left bg-black/40 border border-purple-500/20 hover:border-purple-500/60 p-3 rounded-xl transition group/btn">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="text-white font-bold text-xs mb-0.5">16:9 Cinematic</div>
+                                    <div class="text-[10px] text-zinc-500">1344 × 768 px</div>
+                                </div>
+                                <span class="text-purple-400 opacity-0 group-hover/btn:opacity-100 transition">📋</span>
+                            </div>
+                        </button>
+                        <button onclick="copyRes('768x1344')" class="w-full text-left bg-black/40 border border-purple-500/20 hover:border-purple-500/60 p-3 rounded-xl transition group/btn">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="text-white font-bold text-xs mb-0.5">9:16 Portrait</div>
+                                    <div class="text-[10px] text-zinc-500">768 × 1344 px</div>
+                                </div>
+                                <span class="text-purple-400 opacity-0 group-hover/btn:opacity-100 transition">📋</span>
+                            </div>
+                        </button>
+                        <button onclick="copyRes('1024x1024')" class="w-full text-left bg-black/40 border border-purple-500/20 hover:border-purple-500/60 p-3 rounded-xl transition group/btn">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="text-white font-bold text-xs mb-0.5">1:1 Square</div>
+                                    <div class="text-[10px] text-zinc-500">1024 × 1024 px</div>
+                                </div>
+                                <span class="text-purple-400 opacity-0 group-hover/btn:opacity-100 transition">📋</span>
+                            </div>
+                        </button>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Quick Tools -->
+            <div class="bg-gradient-to-br from-yellow-600/10 to-yellow-600/5 border border-yellow-500/30 p-6 rounded-3xl backdrop-blur-sm relative overflow-hidden group hover:border-yellow-500/60 transition">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-yellow-500/10 blur-[60px] opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                 
-                <div id="achievementsList" class="space-y-2 mb-3 max-h-32 overflow-y-auto">
-                    <!-- Achievements will be loaded dynamically via JavaScript -->
-                </div>
-                
-                <div class="text-center">
-                    <button onclick="showAllAchievements()" class="text-[10px] text-zinc-500 hover:text-white font-bold uppercase tracking-widest transition">
-                        View All
-                    </button>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-yellow-500/20 rounded-lg text-yellow-400 group-hover:bg-yellow-500/30 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V7a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                        </div>
+                        <h3 class="text-white font-black text-sm uppercase tracking-[0.1em]">Quick Tools</h3>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <button onclick="getBlindBox()" class="w-full bg-black/40 border border-yellow-500/20 hover:border-yellow-500/60 text-white p-3 rounded-xl text-xs font-bold uppercase tracking-widest transition">
+                            🎁 Mystery Prompt
+                        </button>
+                        <button onclick="showPromptLibrary()" class="w-full bg-black/40 border border-yellow-500/20 hover:border-yellow-500/60 text-white p-3 rounded-xl text-xs font-bold uppercase tracking-widest transition">
+                            📚 Prompt Library
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Community Interaction Area -->
-    <section class="max-w-[1400px] mx-auto px-8 mb-16">
+        <!-- Community Interaction Area -->
         <div class="grid md:grid-cols-2 gap-6">
             <!-- Prompt Blind Box -->
-            <div class="relative group cursor-pointer overflow-hidden rounded-3xl bg-gradient-to-br from-purple-900/40 to-black border border-white/5 p-8 flex flex-col items-center justify-center text-center transition-all hover:border-purple-500/40" onclick="getBlindBox()">
-                <div class="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-100 transition-opacity">
-                    <svg class="w-16 h-16 text-purple-500" fill="currentColor" viewBox="0 0 24 24"><path d="M11 15h2v2h-2v-2m0-8h2v6h-2V7m1-5C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+            <div class="relative group cursor-pointer overflow-hidden rounded-3xl bg-gradient-to-br from-purple-900/40 to-black border border-purple-500/20 p-8 flex flex-col items-center justify-center text-center transition-all hover:border-purple-500/60 hover:shadow-lg hover:shadow-purple-500/20">
+                <div class="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-100 transition-opacity">
+                    <svg class="w-20 h-20 text-purple-500" fill="currentColor" viewBox="0 0 24 24"><path d="M11 15h2v2h-2v-2m0-8h2v6h-2V7m1-5C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
                 </div>
-                <h3 class="text-white text-xl font-black italic uppercase tracking-tighter mb-2">Prompt Blind Box</h3>
-                <p class="text-zinc-500 text-xs mb-4 font-bold uppercase tracking-widest">Randomly generate masterpiece seeds</p>
-                <div id="blindBoxResult" class="hidden text-cyan-400 text-[10px] font-mono mb-4 bg-black/60 p-3 rounded-xl border border-cyan-500/20 w-full text-left max-h-24 overflow-y-auto"></div>
-                <span class="bg-purple-600 text-white text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-widest group-hover:bg-purple-400 transition">Roll the Dice</span>
+                <h3 class="text-white text-2xl font-black italic mb-2">Mystery Box</h3>
+                <p class="text-zinc-400 text-xs mb-4 font-bold uppercase tracking-widest">Spin to unlock hidden inspirations</p>
+                <div id="blindBoxResult" class="hidden text-cyan-300 text-[11px] font-mono mb-4 bg-black/80 p-4 rounded-xl border border-cyan-500/30 w-full text-left max-h-28 overflow-y-auto"></div>
+                <span class="bg-purple-600 text-white text-xs font-black px-6 py-2 rounded-full uppercase tracking-widest group-hover:bg-purple-400 transition">🎲 Roll Now</span>
             </div>
 
-            <!-- User Favorites -->
-            <div class="rounded-3xl bg-zinc-900/40 border border-white/5 p-8 flex flex-col justify-center">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="bg-red-500 w-2 h-2 rounded-full animate-ping"></span>
-                    <h3 class="text-white font-black text-xs uppercase tracking-[0.2em]">My Favorites</h3>
+            <!-- Quick Reference -->
+            <div class="rounded-3xl bg-gradient-to-br from-green-900/20 to-black border border-green-500/20 p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-green-500 w-3 h-3 rounded-full animate-pulse"></span>
+                    <h3 class="text-white font-black text-sm uppercase tracking-[0.2em]">Quick Reference</h3>
                 </div>
                 
-                <div id="favoritesList" class="space-y-2 mb-4 max-h-32 overflow-y-auto">
-                    <p class="text-zinc-500 text-sm">No favorite images yet</p>
-                </div>
-                
-                <div class="flex gap-4">
-                    <button onclick="clearFavorites()" class="text-[10px] font-black text-zinc-500 uppercase tracking-widest hover:text-white transition">Clear All</button>
-                    <button onclick="exportFavorites()" class="text-[10px] font-black text-zinc-500 uppercase tracking-widest hover:text-white transition">Export List</button>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-green-500/20">
+                        <span class="text-zinc-400 text-xs font-bold">Recommended Format</span>
+                        <span class="text-green-400 font-mono text-xs">JPEG 4K</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-green-500/20">
+                        <span class="text-zinc-400 text-xs font-bold">Best Aspect Ratio</span>
+                        <span class="text-green-400 font-mono text-xs">16:9</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-green-500/20">
+                        <span class="text-zinc-400 text-xs font-bold">License</span>
+                        <span class="text-green-400 font-mono text-xs">CC BY-NC 4.0</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-green-500/20">
+                        <span class="text-zinc-400 text-xs font-bold">Model</span>
+                        <span class="text-green-400 font-mono text-xs">Flux.1-Dev</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -463,7 +549,7 @@
         }
         
         function generateRandomPrompt() {
-            const prompts = ["Silver eagle in a maze of pure air, ethereal glow, fantasy art", "Crimson deer in a maze of pure air, ethereal glow, fantasy art", "Silver lion in a garden of pure fire, ethereal glow, fantasy art", "Architectural render of a floating tower made of ice, extreme minimalism, storm lighting", "A transparent butterfly drifting through a neon-lit forest path, cinematic bokeh, 8k raw photo", "Surreal ocean with floating islands, art deco aesthetic, dramatic storm", "A transparent unicorn drifting through a neon-lit Tokyo street, cinematic bokeh, 8k raw photo", "Macro shot of an iridescent flower with frost wings, hyper-detailed, synthwave lighting", "Macro shot of an iridescent insect with rainbow wings, hyper-detailed, synthwave lighting", "An ancient angel covered in blooming orchids, weathered fabric texture, masterpiece"];
+            const prompts = ["A transparent wolf drifting through a neon-lit ocean depth, cinematic bokeh, 8k raw photo", "An ancient demon covered in blooming lotus flowers, weathered fabric texture, masterpiece", "Macro shot of an iridescent crystal with fire wings, hyper-detailed, moonlight lighting", "Surreal city with floating crystals, cyberpunk aesthetic, dramatic wind", "Surreal mountain with floating islands, futuristic aesthetic, dramatic fog", "Architectural render of a floating castle made of mercury, extreme minimalism, sunset lighting", "An ancient demon covered in blooming orchids, weathered leather texture, masterpiece", "An ancient mecha knight covered in blooming lotus flowers, weathered leather texture, masterpiece", "Surreal tundra with floating spheres, minimalist aesthetic, dramatic wind", "Surreal city with floating islands, cyberpunk aesthetic, dramatic rain"];
             const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
             
             document.getElementById('promptInput').value = randomPrompt;
@@ -515,7 +601,7 @@
         }
         
         function getBlindBox() {
-            const prompts = ["A transparent wolf drifting through a neon-lit ancient ruins, cinematic bokeh, 8k raw photo", "Surreal tundra with floating islands, minimalist aesthetic, dramatic rain", "Surreal city with floating islands, art deco aesthetic, dramatic wind", "Macro shot of an iridescent leaf with electric wings, hyper-detailed, golden hour lighting", "An ancient mecha knight covered in blooming roses, weathered stone texture, masterpiece", "Crimson lion in a laboratory of pure earth, ethereal glow, fantasy art", "A transparent jellyfish drifting through a neon-lit mountain peak, cinematic bokeh, 8k raw photo", "Architectural render of a floating tower made of ice, extreme minimalism, noon lighting", "Architectural render of a floating bridge made of gold, extreme minimalism, twilight lighting", "Surreal desert with floating mirrors, art deco aesthetic, dramatic snow", "A transparent unicorn drifting through a neon-lit ancient ruins, cinematic bokeh, 8k raw photo", "Silver lion in a arena of pure earth, ethereal glow, fantasy art", "A transparent phoenix drifting through a neon-lit Tokyo street, cinematic bokeh, 8k raw photo", "Architectural render of a floating castle made of crystal, extreme minimalism, twilight lighting", "Surreal ocean with floating spheres, futuristic aesthetic, dramatic storm", "Architectural render of a floating monastery made of crystal, extreme minimalism, midnight lighting", "Macro shot of an iridescent crystal with rainbow wings, hyper-detailed, moonlight lighting", "Violet whale in a maze of pure water, ethereal glow, fantasy art", "An ancient angel covered in blooming lotus flowers, weathered stone texture, masterpiece", "An ancient mecha knight covered in blooming sunflowers, weathered fabric texture, masterpiece"];
+            const prompts = ["A transparent jellyfish drifting through a neon-lit Tokyo street, cinematic bokeh, 8k raw photo", "Golden eagle in a garden of pure light, ethereal glow, fantasy art", "Architectural render of a floating bridge made of mercury, extreme minimalism, sunset lighting", "Surreal city with floating mirrors, baroque aesthetic, dramatic fog", "An ancient demon covered in blooming orchids, weathered wood texture, masterpiece", "Emerald lion in a library of pure water, ethereal glow, fantasy art", "Macro shot of an iridescent crystal with fire wings, hyper-detailed, candlelight lighting", "Surreal mountain with floating clocks, minimalist aesthetic, dramatic fog", "Macro shot of an iridescent leaf with galaxy wings, hyper-detailed, synthwave lighting", "Macro shot of an iridescent insect with electric wings, hyper-detailed, golden hour lighting", "A transparent dragon drifting through a neon-lit mountain peak, cinematic bokeh, 8k raw photo", "Macro shot of an iridescent feather with galaxy wings, hyper-detailed, candlelight lighting", "Emerald eagle in a laboratory of pure fire, ethereal glow, fantasy art", "An ancient robot covered in blooming sunflowers, weathered ceramic texture, masterpiece", "A transparent dragon drifting through a neon-lit Tokyo street, cinematic bokeh, 8k raw photo", "Macro shot of an iridescent feather with water wings, hyper-detailed, synthwave lighting", "An ancient mecha knight covered in blooming cherry blossoms, weathered wood texture, masterpiece", "Macro shot of an iridescent leaf with electric wings, hyper-detailed, candlelight lighting", "A transparent phoenix drifting through a neon-lit mountain peak, cinematic bokeh, 8k raw photo", "Architectural render of a floating tower made of glass, extreme minimalism, twilight lighting"];
             const random = prompts[Math.floor(Math.random() * prompts.length)];
             const display = document.getElementById('blindBoxResult');
             
@@ -672,5 +758,117 @@
         });
     </script>
     
+
+
+    <footer class="mt-32 border-t border-white/5 bg-zinc-950/50 py-16 px-8 relative overflow-hidden">
+        <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
+        
+        <!-- Footer Content Grid -->
+        <div class="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-5 gap-8 text-left mb-12">
+            <!-- Brand Column -->
+            <div class="md:col-span-1">
+                <span class="text-white font-black text-2xl tracking-tighter italic uppercase block mb-3">FREEFINE<span class="primary-color">AI</span></span>
+                <p class="text-zinc-500 text-xs leading-relaxed mb-4">Premium Flux.1 AI-generated assets library. Empowering creators worldwide with high-fidelity digital resources.</p>
+                <div class="flex gap-3 mb-4">
+                    <a href="https://twitter.com/freefineai" target="_blank" class="w-8 h-8 bg-white/5 hover:bg-primary/20 border border-white/10 rounded-lg flex items-center justify-center text-zinc-400 hover:text-primary transition text-xs">𝕏</a>
+                    <a href="https://github.com/freefineai" target="_blank" class="w-8 h-8 bg-white/5 hover:bg-primary/20 border border-white/10 rounded-lg flex items-center justify-center text-zinc-400 hover:text-primary transition text-xs">⚙</a>
+                </div>
+            </div>
+            
+            <!-- Navigation Column -->
+            <div>
+                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Navigation</h4>
+                <ul class="space-y-2 text-xs font-bold">
+                    <li><a href="index.html" class="text-zinc-600 hover:text-primary transition">Home</a></li>
+                    <li><a href="gallery.html" class="text-zinc-600 hover:text-primary transition">Gallery</a></li>
+                    <li><a href="tools.html" class="text-zinc-600 hover:text-primary transition">Tools</a></li>
+                    <li><a href="about.html" class="text-zinc-600 hover:text-primary transition">About Us</a></li>
+                    <li><a href="membership.html" class="text-zinc-600 hover:text-primary transition">Membership</a></li>
+                </ul>
+            </div>
+            
+            <!-- Resources Column -->
+            <div>
+                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Resources</h4>
+                <ul class="space-y-2 text-xs font-bold">
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Prompt Library</a></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">API Docs</a></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Community</a></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Blog</a></li>
+                    <li><a href="mailto:hello@freefineai.com" class="text-zinc-600 hover:text-primary transition">Contact</a></li>
+                </ul>
+            </div>
+            
+            <!-- Legal Column -->
+            <div>
+                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Legal</h4>
+                <ul class="space-y-2 text-xs font-bold">
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Privacy Policy</a></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Terms of Service</a></li>
+                    <li><p class="text-zinc-600">CC BY-NC 4.0 License</p></li>
+                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Cookie Policy</a></li>
+                </ul>
+            </div>
+            
+            <!-- Stats Column -->
+            <div>
+                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Platform Stats</h4>
+                <div id="footerStats" class="space-y-3 text-[10px]">
+                    <div>
+                        <div class="text-zinc-500 mb-1">Total Visits</div>
+                        <div class="text-cyan-400 font-bold text-sm" id="totalVisits">0</div>
+                    </div>
+                    <div>
+                        <div class="text-zinc-500 mb-1">Status</div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                            <span class="text-green-400 font-bold">Operational</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-zinc-500 mb-1">Uptime</div>
+                        <div class="text-white font-bold">99.9%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Bottom -->
+        <div class="max-w-[1400px] mx-auto pt-8 border-t border-white/5">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                <!-- Copyright -->
+                <div class="text-center md:text-left">
+                    <p class="text-[10px] tracking-[0.3em] text-zinc-700 uppercase italic font-black">&copy; 2026 FREEFINEAI. All Rights Reserved.</p>
+                </div>
+                
+                <!-- Support Message -->
+                <div class="text-center">
+                    <p class="text-[9px] text-zinc-600 font-bold uppercase tracking-wider">
+                        Built with <span class="text-pink-500">❤</span> for creators
+                    </p>
+                </div>
+                
+                <!-- Version -->
+                <div class="text-center md:text-right">
+                    <p class="text-[9px] text-zinc-700 font-bold uppercase">v2.1 | Last Updated: Feb 2026</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // 页脚访问统计更新
+        document.addEventListener('DOMContentLoaded', function() {
+            const visits = JSON.parse(localStorage.getItem('page_visits') || '{}');
+            let totalVisits = 0;
+            for (let key in visits) {
+                totalVisits += visits[key];
+            }
+            const totalVisitsEl = document.getElementById('totalVisits');
+            if (totalVisitsEl) {
+                totalVisitsEl.textContent = totalVisits.toLocaleString();
+            }
+        });
+    </script>
 </body>
 </html>
