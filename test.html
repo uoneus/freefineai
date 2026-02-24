@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>霓虹躲避球 - Neon Dodge</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #0f0f1a; /* 深空蓝背景 */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            user-select: none; /* 禁止选中文本 */
+        }
+
+        #gameCanvas {
+            display: block;
+            margin: 0 auto;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* 让点击穿透到 Canvas */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .score-board {
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00ffcc;
+        }
+
+        #start-screen, #game-over-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid #00ffcc;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+            pointer-events: auto; /* 允许点击按钮 */
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        h1 { margin: 0; color: #00ffcc; text-transform: uppercase; letter-spacing: 3px; }
+        p { color: #ccc; margin: 5px 0 20px 0; }
+        
+        button {
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #fff;
+            box-shadow: 0 0 15px #00ffcc;
+            transform: scale(1.05);
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- 游戏画布 -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- UI 层 -->
+    <div id="ui-layer">
+        <div class="score-board">分数：<span id="scoreEl">0</span></div>
+    </div>
+
+    <!-- 开始界面 -->
+    <div id="start-screen">
+        <h1>霓虹躲避球</h1>
+        <p>左右移动方块，接住绿色球，<br>躲避红色炸弹！</p>
+        <button onclick="startGame()">开始游戏</button>
+    </div>
+
+    <!-- 结束界面 -->
+    <div id="game-over-screen" class="hidden">
+        <h1 style="color: #ff4444;">游戏结束</h1>
+        <p>最终得分：<span id="finalScoreEl">0</span></p>
+        <button onclick="startGame()">再玩一次</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('scoreEl');
+        const finalScoreEl = document.getElementById('finalScoreEl');
+        const startScreen = document.getElementById('start-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+
+        // 游戏状态
+        let isPlaying = false;
+        let score = 0;
+        let animationId;
+        let frameCount = 0;
+        let difficultyMultiplier = 1;
+
+        // 玩家设置
+        const player = {
+            x: 0,
+            y: 0,
+            width: 60,
+            height: 20,
+            color: '#00ffcc',
+            speed: 10
+        };
+
+        // 实体数组
+        let items = []; // 掉落的球
+        let particles = []; // 爆炸粒子
+
+        // 初始化画布尺寸
+        function resizeCanvas() {
+            canvas.width = window.innerWidth > 600 ? 600 : window.innerWidth;
+            canvas.height = window.innerHeight;
+            player.y = canvas.height - 50;
+            player.x = canvas.width / 2 - player.width / 2;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // 输入控制
+        let keys = {};
+        let mouseX = null;
+
+        window.addEventListener('keydown', e => keys[e.key] = true);
+        window.addEventListener('keyup', e => keys[e.key] = false);
+        
+        // 鼠标/触摸跟随
+        canvas.addEventListener('mousemove', e => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+        });
+        canvas.addEventListener('touchmove', e => {
+            e.preventDefault(); // 防止滚动
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.touches[0].clientX - rect.left;
+        }, { passive: false });
+
+        // 类：掉落物
+        class Item {
+            constructor() {
+                this.radius = 10 + Math.random() * 10;
+                this.x = Math.random() * (canvas.width - this.radius * 2) + this.radius;
+                this.y = -this.radius;
+                // 80% 概率是好的 (绿色)，20% 是坏的 (红色)
+                this.type = Math.random() > 0.2 ? 'good' : 'bad';
+                this.color = this.type === 'good' ? '#00ffcc' : '#ff4444';
+                this.speed = (Math.random() * 2 + 3) * difficultyMultiplier;
+                this.rotation = 0;
+                this.rotSpeed = (Math.random() - 0.5) * 0.2;
+            }
+
+            update() {
+                this.y += this.speed;
+                this.rotation += this.rotSpeed;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = this.color;
+                
+                // 绘制形状 (好的画圆，坏的画方块)
+                if (this.type === 'good') {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(-this.radius, -this.radius, this.radius * 2, this.radius * 2);
+                }
+                ctx.restore();
+            }
+        }
+
+        // 类：粒子特效
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 5 + 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.03 + 0.01;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= this.decay;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function createExplosion(x, y, color) {
+            for (let i = 0; i < 20; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        // 核心游戏循环
+        function animate() {
+            if (!isPlaying) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            frameCount++;
+
+            // 1. 更新玩家位置
+            // 键盘控制
+            if (keys['ArrowLeft'] || keys['a']) player.x -= player.speed;
+            if (keys['ArrowRight'] || keys['d']) player.x += player.speed;
+            
+            // 鼠标控制 (如果有鼠标输入，优先使用鼠标，更平滑)
+            if (mouseX !== null) {
+                // 简单的线性插值让移动更平滑
+                player.x += (mouseX - player.width/2 - player.x) * 0.2;
+            }
+
+            // 边界限制
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+            // 绘制玩家
+            ctx.fillStyle = player.color;
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.shadowBlur = 0; // 重置阴影
+
+            // 2. 生成掉落物 (每 40 帧生成一个，随难度增加生成频率)
+            let spawnRate = Math.max(20, 60 - Math.floor(score / 50));
+            if (frameCount % spawnRate === 0) {
+                items.push(new Item());
+            }
+
+            // 3. 更新和绘制掉落物
+            for (let i = items.length - 1; i >= 0; i--) {
+                const item = items[i];
+                item.update();
+                item.draw();
+
+                // 碰撞检测 (简单的矩形与圆形/矩形碰撞)
+                // 这里简化为：如果物品 Y 坐标接近玩家 Y，且 X 坐标重叠
+                if (
+                    item.y + item.radius >= player.y &&
+                    item.y - item.radius <= player.y + player.height &&
+                    item.x >= player.x &&
+                    item.x <= player.x + player.width
+                ) {
+                    // 发生碰撞
+                    if (item.type === 'good') {
+                        score += 10;
+                        scoreEl.innerText = score;
+                        // 增加难度
+                        if (score % 50 === 0) difficultyMultiplier += 0.1;
+                        items.splice(i, 1); // 移除物品
+                    } else {
+                        gameOver(item.x, item.y);
+                    }
+                } else if (item.y > canvas.height) {
+                    // 超出屏幕移除
+                    items.splice(i, 1);
+                }
+            }
+
+            // 4. 更新和绘制粒子
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.update();
+                p.draw();
+                if (p.alpha <= 0) particles.splice(i, 1);
+            }
+
+            animationId = requestAnimationFrame(animate);
+        }
+
+        function startGame() {
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            
+            // 重置状态
+            score = 0;
+            scoreEl.innerText = '0';
+            items = [];
+            particles = [];
+            difficultyMultiplier = 1;
+            frameCount = 0;
+            mouseX = null; // 重置鼠标位置，防止开局瞬移
+            isPlaying = true;
+            
+            animate();
+        }
+
+        function gameOver(x, y) {
+            isPlaying = false;
+            cancelAnimationFrame(animationId);
+            createExplosion(x, y, '#ff4444'); // 死亡特效
+            
+            // 绘制最后一帧爆炸
+            particles.forEach(p => { p.update(); p.draw(); });
+            
+            finalScoreEl.innerText = score;
+            setTimeout(() => {
+                gameOverScreen.classList.remove('hidden');
+            }, 500); // 稍微延迟显示 UI，让玩家看到爆炸
+        }
+
+    </script>
+</body>
+</html>
