@@ -3,735 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FreeFineAI | Premium Flux.1 Digital Assets</title>
-    <meta name="description" content="Curated, high-fidelity AI assets. Free for the community, designed for the visionaries.">
-    
+    <title>About | FreeFineAI</title>
+    <meta name="description" content="Learn about FreeFineAI - premium Flux.1 digital assets for the creative community.">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="premium-features.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: 6, 182, 212;
-            --accent-color: 147, 51, 234;
-        }
+        * { box-sizing: border-box; }
         body { background-color: #050505; color: #a1a1aa; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
-        .masonry { column-count: 1; column-gap: 1.5rem; }
-        @media (min-width: 768px) { .masonry { column-count: 2; } }
-        @media (min-width: 1280px) { .masonry { column-count: 3; } }
-        .nav-glass { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05); }
-        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        nav, header, main, footer { position: relative; z-index: 10; }
-        .hero-title { -webkit-text-stroke: 1px rgba(255,255,255,0.1); color: transparent; transition: all 0.5s; }
-        .hero-title:hover { color: white; -webkit-text-stroke: 1px transparent; }
-        
-        /* FLUX Title Enhanced Effect */
-        .flux-title {
-            background: linear-gradient(135deg, #06b6d4 0%, #a78bfa 50%, #06b6d4 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 900;
-            letter-spacing: -0.02em;
-            filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.4));
-            animation: flux-glow 3s ease-in-out infinite;
-            text-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
-        }
-        
-        @keyframes flux-glow {
-            0% { filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.3)); }
-            50% { filter: drop-shadow(0 0 35px rgba(6, 182, 212, 0.6)) drop-shadow(0 0 15px rgba(167, 139, 250, 0.3)); }
-            100% { filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.3)); }
-        }
-        
-        .animate-pulse-glow { animation: flux-glow 3s ease-in-out infinite; }
-        
-        .notification { position: fixed; top: 100px; right: 20px; z-index: 1000; transform: translateX(400px); transition: transform 0.3s ease; }
-        .notification.show { transform: translateX(0); }
-        .streak-badge { animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-        .primary-color { color: rgb(var(--primary-color)); }
-        .accent-color { color: rgb(var(--accent-color)); }
-        .bg-primary { background-color: rgb(var(--primary-color)); }
-        .bg-accent { background-color: rgb(var(--accent-color)); }
-        .border-primary { border-color: rgb(var(--primary-color)); }
-        .border-accent { border-color: rgb(var(--accent-color)); }
+        .nav-glass { background: rgba(5,5,5,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .gradient-text { background: linear-gradient(135deg, #06b6d4 0%, #a78bfa 50%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .btn-primary { background: linear-gradient(135deg, #06b6d4, #e0f2f7); transition: all 0.3s ease; }
+        .btn-primary:hover { box-shadow: 0 8px 30px rgba(6,182,212,0.4); transform: translateY(-2px); }
+        /* Particle Canvas */
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        body { position: relative; }
+        nav, header, section, footer { position: relative; z-index: 2; }
     </style>
 </head>
+
 <body>
+    <!-- Particle Background -->
     <canvas id="particle-canvas"></canvas>
     
-    <div id="notification" class="notification bg-gradient-to-r from-primary to-accent text-white p-4 rounded-2xl shadow-2xl max-w-sm">
-        <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                <span class="text-sm">🎉</span>
-            </div>
-            <div>
-                <div class="font-bold text-sm" id="notificationTitle">Congratulations!</div>
-                <div class="text-xs opacity-90" id="notificationText">You earned a new achievement</div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        window.SITE_CONFIG = {"ENABLE_ACHIEVEMENTS": true, "ENABLE_DAILY_CHALLENGE": true, "ENABLE_FAVORITES": true, "ENABLE_USER_STATS": true, "ENABLE_NOTIFICATIONS": true, "ENABLE_SOCIAL_SHARE": true, "ENABLE_EMAIL_POPUP": true, "ENABLE_TRENDING": true, "ENABLE_LIVE_STATS": true, "ENABLE_MEMBERSHIP": true, "PRIMARY_COLOR": "cyan", "ACCENT_COLOR": "purple", "DEBUG_MODE": false};
-        
-        // 访问统计
-        function trackPageView(pageName = 'index') {
-            const visits = JSON.parse(localStorage.getItem('page_visits') || '{}');
-            const today = new Date().toISOString().split('T')[0];
-            const key = `${pageName}_${today}`;
-            visits[key] = (visits[key] || 0) + 1;
-            localStorage.setItem('page_visits', JSON.stringify(visits));
-        }
-        
-        trackPageView();
-        
-        window.addEventListener('DOMContentLoaded', () => {
-            const canvas = document.getElementById('particle-canvas');
-            if (!canvas) return;
-            
-            const ctx = canvas.getContext('2d');
-            let particles = [];
-            const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
-            
-            class Particle {
-                constructor() { this.init(); }
-                init() {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 1.5 + 0.5;
-                    this.speedX = Math.random() * 0.4 - 0.2;
-                    this.speedY = Math.random() * 0.4 - 0.2;
-                    this.opacity = Math.random() * 0.5 + 0.1;
-                }
-                update() {
-                    this.x += this.speedX; this.y += this.speedY;
-                    if(this.x > canvas.width || this.x < 0) this.speedX *= -1;
-                    if(this.y > canvas.height || this.y < 0) this.speedY *= -1;
-                }
-                draw() {
-                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
-                    ctx.fillStyle = `rgba(6, 182, 212, ${this.opacity})`; ctx.fill();
-                }
-            }
-            
-            const animate = () => {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(p => { p.update(); p.draw(); });
-                requestAnimationFrame(animate);
-            };
-            
-            window.addEventListener('resize', resize);
-            resize();
-            for(let i=0; i<100; i++) particles.push(new Particle());
-            animate();
-        });
-        
-        
-        class UserProgress {
-            constructor() {
-                this.data = JSON.parse(localStorage.getItem('freefineai_progress') || '{}');
-                this.initDefaults();
-            }
-            
-            initDefaults() {
-                if (!this.data.visits) this.data.visits = 0;
-                if (!this.data.downloads) this.data.downloads = 0;
-                if (!this.data.promptsGenerated) this.data.promptsGenerated = 0;
-                if (!this.data.lastVisit) this.data.lastVisit = null;
-                if (!this.data.streak) this.data.streak = 0;
-                if (!this.data.achievements) this.data.achievements = [];
-                if (!this.data.favoriteImages) this.data.favoriteImages = [];
-                this.save();
-            }
-            
-            save() {
-                localStorage.setItem('freefineai_progress', JSON.stringify(this.data));
-                if (window.SITE_CONFIG.DEBUG_MODE) {
-                    console.log('User data saved:', this.data);
-                }
-            }
-            
-            addVisit() {
-                const today = new Date().toDateString();
-                if (this.data.lastVisit !== today) {
-                    this.data.visits++;
-                    if (this.data.lastVisit === new Date(Date.now() - 86400000).toDateString()) {
-                        this.data.streak++;
-                    } else {
-                        this.data.streak = 1;
-                    }
-                    this.data.lastVisit = today;
-                    if (window.SITE_CONFIG.ENABLE_ACHIEVEMENTS) this.checkAchievements();
-                    this.save();
-                }
-            }
-            
-            addDownload() {
-                this.data.downloads++;
-                if (window.SITE_CONFIG.ENABLE_ACHIEVEMENTS) this.checkAchievements();
-                this.save();
-            }
-            
-            addPromptGeneration() {
-                this.data.promptsGenerated++;
-                if (window.SITE_CONFIG.ENABLE_ACHIEVEMENTS) this.checkAchievements();
-                this.save();
-            }
-            
-            checkAchievements() {
-                const achievements = [
-                    { id: 'first_visit', name: 'First Visit', desc: 'Welcome to FreeFineAI!', condition: () => this.data.visits >= 1 },
-                    { id: 'regular_visitor', name: 'Regular Visitor', desc: 'Visit the site 5 times', condition: () => this.data.visits >= 5 },
-                    { id: 'download_master', name: 'Download Master', desc: 'Download 10 images', condition: () => this.data.downloads >= 10 },
-                    { id: 'prompt_creator', name: 'Prompt Creator', desc: 'Generate 20 prompts', condition: () => this.data.promptsGenerated >= 20 },
-                    { id: 'streak_week', name: 'Week Streak', desc: 'Visit for 7 consecutive days', condition: () => this.data.streak >= 7 }
-                ];
-                
-                achievements.forEach(achievement => {
-                    if (achievement.condition() && !this.data.achievements.includes(achievement.id)) {
-                        this.data.achievements.push(achievement.id);
-                        if (window.SITE_CONFIG.ENABLE_NOTIFICATIONS) {
-                            this.showNotification(achievement.name, achievement.desc);
-                        }
-                    }
-                });
-            }
-            
-            showNotification(title, text) {
-                if (!window.SITE_CONFIG.ENABLE_NOTIFICATIONS) return;
-                
-                const notification = document.getElementById('notification');
-                const titleEl = document.getElementById('notificationTitle');
-                const textEl = document.getElementById('notificationText');
-                
-                if (notification && titleEl && textEl) {
-                    titleEl.textContent = title;
-                    textEl.textContent = text;
-                    notification.classList.add('show');
-                    
-                    setTimeout(() => {
-                        notification.classList.remove('show');
-                    }, 4000);
-                }
-            }
-        }
-        
-        const userProgress = new UserProgress();
-        userProgress.addVisit();
-        
-        function showNotification(title, text) {
-            if (window.userProgress) {
-                userProgress.showNotification(title, text);
-            }
-        }
-        
-        function updateUserStats() {
-            const stats = document.getElementById('userStats');
-            const streakBadge = document.getElementById('streakBadge');
-            const streakCount = document.getElementById('streakCount');
-            
-            if (stats) {
-                stats.textContent = userProgress.data.visits;
-            }
-            
-            if (userProgress.data.streak > 0 && streakBadge && streakCount) {
-                streakBadge.style.display = 'flex';
-                streakCount.textContent = userProgress.data.streak;
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', updateUserStats);
-    
-    </script>
-    
-    <nav class="fixed top-0 w-full z-50 nav-glass px-6 md:px-8 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-4">
-            <span class="text-white font-black text-lg md:text-xl tracking-tighter italic">FREEFINE<span class="primary-color">AI</span></span>
-            
-            <div class="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-widest">
-                <a href="index.html" class="text-cyan-400 hover:text-white transition">Home</a>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 nav-glass">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-white font-black text-xl tracking-tight">
+                FREEFINE<span class="text-cyan-400">AI</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+                <a href="index.html" class="text-zinc-400 hover:text-white transition">Home</a>
                 <a href="gallery.html" class="text-zinc-400 hover:text-white transition">Gallery</a>
-                <a href="tools.html" class="text-zinc-400 hover:text-white transition">Tools</a>
-                <a href="membership.html" class="text-zinc-400 hover:text-white transition">Membership</a>
-                <a href="about.html" class="text-zinc-400 hover:text-white transition">About</a>
+                <a href="about.html" class="text-white hover:text-cyan-400 transition">About US</a>
             </div>
-        </div>
-        
-        <div class="flex items-center gap-3 md:gap-4">
-            <div class="hidden md:flex items-center gap-2 bg-black/40 border border-white/5 rounded-full px-3 py-2 hover:border-white/10 transition">
-                <span class="text-zinc-500 text-sm">🔍</span>
-                <input type="text" id="navSearch" placeholder="Search..." class="bg-transparent text-xs text-zinc-300 placeholder-zinc-600 outline-none w-24" />
-            </div>
-            
-            <div class="hidden md:flex items-center gap-3 text-xs">
-                <div class="flex items-center gap-2 px-3 py-1 bg-cyan-500/10 rounded-lg border border-cyan-500/20">
-                    <span class="primary-color">📊</span>
-                    <span class="text-cyan-400 font-bold" id="userStats">0</span>
-                    <span class="text-zinc-500 text-[9px]">Visits</span>
-                </div>
-                <div class="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg border border-white/10 streak-badge" id="streakBadge" style="display: none;">
-                    <span class="text-yellow-400">🔥</span>
-                    <span class="text-white font-bold" id="streakCount">0</span>
-                </div>
-            </div>
-            
-            <div class="hidden md:flex gap-2">
-                <a href="https://www.paypal.com/ncp/payment/ZRQDBKWE7VBSU" target="_blank" class="text-[10px] font-bold text-zinc-400 hover:text-white px-3 py-2 rounded-lg hover:bg-white/5 transition uppercase tracking-widest">Support</a>
-                <a href="https://www.paypal.com/ncp/payment/AQSGVVXLW69GJ" target="_blank" class="bg-gradient-to-r from-cyan-500 to-purple-500 text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-tighter hover:shadow-lg transition">Bundle $9.99</a>
-            </div>
+            <a href="https://draw.freefineai.com" class="btn-primary text-black font-bold text-sm px-5 py-2 rounded-lg">
+                Start Free
+            </a>
         </div>
     </nav>
 
-
-    <header class="pt-32 pb-16 px-6 text-center">
-        <h1 class="text-6xl md:text-8xl font-black mb-6 leading-none hero-title text-white">About Us</h1>
-        <p class="max-w-2xl mx-auto text-zinc-500 text-base font-light leading-relaxed mb-8">
-            Learn about FreeFineAI's story and mission
-        </p>
+    <!-- Header -->
+    <header class="pt-32 pb-12 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">
+                About <span class="gradient-text">FreeFineAI</span>
+            </h1>
+            <p class="text-zinc-400 text-lg">Empowering creators with premium AI-generated assets</p>
+        </div>
     </header>
 
-    <main class="max-w-[1400px] mx-auto px-6 pb-32">
-        <div class="grid md:grid-cols-2 gap-12 mb-16">
-            <div>
-                <h2 class="text-3xl font-black text-white mb-6">Our Mission</h2>
+    <!-- Mission Section -->
+    <section class="py-16 px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8 md:p-12">
+                <h2 class="text-2xl font-bold text-white mb-6">Our Mission</h2>
                 <p class="text-zinc-400 leading-relaxed mb-6">
-                    FreeFineAI is dedicated to providing creators worldwide with the highest quality AI-generated image resources. We believe artificial intelligence should empower every creative person, not become a barrier to creation.
+                    FreeFineAI was created to democratize access to high-quality AI-generated assets. We believe that powerful creative tools should be available to everyone, not just those with large budgets.
                 </p>
                 <p class="text-zinc-400 leading-relaxed">
-                    Through our carefully curated Flux.1 image collection and powerful creative tools, we help designers, artists, and creative professionals turn imagination into reality.
+                    Our curated library of Flux.1 assets provides creators, designers, and developers with professional-grade resources to bring their visions to life—all completely free.
                 </p>
             </div>
-            
-            <div>
-                <h2 class="text-3xl font-black text-white mb-6">Why Choose Us</h2>
-                <div class="space-y-4">
-                    <div class="flex items-start gap-3">
-                        <div class="w-6 h-6 bg-cyan-500/20 rounded-full flex items-center justify-center mt-1">
-                            <span class="text-cyan-400 text-xs">✓</span>
-                        </div>
-                        <div>
-                            <h3 class="text-white font-bold mb-1">Curated Quality</h3>
-                            <p class="text-zinc-400 text-sm">Every image is manually selected to ensure the highest visual quality</p>
-                        </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="py-16 px-6 bg-gradient-to-b from-transparent via-zinc-900/20 to-transparent">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-12 text-center">What We Offer</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="card-hover bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8 text-center">
+                    <div class="w-14 h-14 bg-cyan-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     </div>
-                    
-                    <div class="flex items-start gap-3">
-                        <div class="w-6 h-6 bg-cyan-500/20 rounded-full flex items-center justify-center mt-1">
-                            <span class="text-cyan-400 text-xs">✓</span>
-                        </div>
-                        <div>
-                            <h3 class="text-white font-bold mb-1">Completely Free</h3>
-                            <p class="text-zinc-400 text-sm">Core features are permanently free, supporting creative democratization</p>
-                        </div>
+                    <h3 class="text-white font-bold text-lg mb-3">Curated Assets</h3>
+                    <p class="text-zinc-500 text-sm leading-relaxed">Hand-picked, high-quality images generated with Flux.1 models.</p>
+                </div>
+                <div class="card-hover bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8 text-center">
+                    <div class="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-7 h-7 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </div>
-                    
-                    <div class="flex items-start gap-3">
-                        <div class="w-6 h-6 bg-cyan-500/20 rounded-full flex items-center justify-center mt-1">
-                            <span class="text-cyan-400 text-xs">✓</span>
-                        </div>
-                        <div>
-                            <h3 class="text-white font-bold mb-1">Continuous Updates</h3>
-                            <p class="text-zinc-400 text-sm">Daily new content, keeping pace with AI technology development</p>
-                        </div>
+                    <h3 class="text-white font-bold text-lg mb-3">Always Free</h3>
+                    <p class="text-zinc-500 text-sm leading-relaxed">No subscriptions, no paywalls. Premium quality at zero cost.</p>
+                </div>
+                <div class="card-hover bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8 text-center">
+                    <div class="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                     </div>
+                    <h3 class="text-white font-bold text-lg mb-3">Regular Updates</h3>
+                    <p class="text-zinc-500 text-sm leading-relaxed">New assets added frequently to keep your portfolio fresh.</p>
                 </div>
             </div>
         </div>
-        
-        <!-- Platform Statistics -->
-        <section class="bg-zinc-900/50 border border-white/5 rounded-3xl p-8 mb-16">
-            <h2 class="text-2xl font-black text-white mb-8 text-center">Platform Statistics</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div class="text-center">
-                    <div class="text-3xl font-black text-cyan-400 mb-2">1000+</div>
-                    <div class="text-zinc-400 text-sm uppercase tracking-widest">Curated Images</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl font-black text-purple-400 mb-2">50K+</div>
-                    <div class="text-zinc-400 text-sm uppercase tracking-widest">Total Downloads</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl font-black text-green-400 mb-2">10K+</div>
-                    <div class="text-zinc-400 text-sm uppercase tracking-widest">Active Users</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl font-black text-yellow-400 mb-2">24/7</div>
-                    <div class="text-zinc-400 text-sm uppercase tracking-widest">Online Service</div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Contact Information -->
-        <section class="text-center">
-            <h2 class="text-3xl font-black text-white mb-6">Contact Us</h2>
-            <p class="text-zinc-400 mb-8 max-w-2xl mx-auto">
-                Have questions, suggestions, or collaboration ideas? We'd love to hear from you.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="mailto:hello@freefineai.com" class="bg-zinc-800 hover:bg-cyan-600 text-white px-8 py-3 rounded-xl transition font-bold">
-                    📧 Send Email
-                </a>
-                <a href="https://twitter.com/freefineai" class="bg-zinc-800 hover:bg-blue-600 text-white px-8 py-3 rounded-xl transition font-bold">
-                    🐦 Twitter
-                </a>
-                <a href="https://github.com/freefineai" class="bg-zinc-800 hover:bg-gray-600 text-white px-8 py-3 rounded-xl transition font-bold">
-                    💻 GitHub
-                </a>
-            </div>
-        </section>
-    </main>
-    
-    
-    <script>
-        function expandPrompt() {
-            const input = document.getElementById('promptInput');
-            const styleSelect = document.getElementById('styleSelect');
-            const notice = document.getElementById('copyNotice');
-            
-            if(!input.value) return;
-            
-            let enhancements = ", hyper-realistic, highly detailed textures, cinematic lighting, shot on 35mm lens, f/1.8, 8k resolution, masterwork, intricate details, flux style";
-            
-            const selectedStyle = styleSelect.value;
-            if (selectedStyle) {
-                const styleEnhancements = {"Cinematic": ", cinematic composition, dramatic lighting, film grain, 35mm lens, depth of field", "Hyperrealistic": ", photorealistic, ultra-detailed, 8K resolution, professional photography", "Artistic": ", oil painting style, brush strokes, artistic interpretation, masterpiece", "Cyberpunk": ", neon lights, dark atmosphere, futuristic, cyberpunk aesthetic, synthwave", "Fantasy": ", magical atmosphere, ethereal lighting, fantasy art, enchanted, mystical", "Minimalist": ", clean composition, negative space, simple forms, minimal color palette"};
-                enhancements += styleEnhancements[selectedStyle] || "";
-            }
-            
-            input.value = input.value + enhancements;
-            input.select();
-            document.execCommand('copy');
-            
-            if (window.userProgress) {
-                userProgress.addPromptGeneration();
-                updateUserStats();
-            }
-            
-            notice.style.opacity = '1';
-            setTimeout(() => notice.style.opacity = '0', 2000);
-        }
-        
-        function generateRandomPrompt() {
-            const prompts = ["Silver fox in a maze of pure water, ethereal glow, fantasy art", "Golden lion in a garden of pure shadow, ethereal glow, fantasy art", "Macro shot of an iridescent flower with galaxy wings, hyper-detailed, neon lighting", "Architectural render of a floating tower made of marble, extreme minimalism, noon lighting", "Silver whale in a maze of pure shadow, ethereal glow, fantasy art", "A transparent dragon drifting through a neon-lit ocean depth, cinematic bokeh, 8k raw photo", "Architectural render of a floating castle made of marble, extreme minimalism, sunset lighting", "Architectural render of a floating tower made of ice, extreme minimalism, storm lighting", "Surreal forest with floating books, baroque aesthetic, dramatic lightning", "Silver tiger in a library of pure earth, ethereal glow, fantasy art"];
-            const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-            
-            document.getElementById('promptInput').value = randomPrompt;
-            if (window.userProgress) {
-                userProgress.addPromptGeneration();
-                updateUserStats();
-            }
-            showNotification('🎲 Random Prompt', 'New creative prompt generated!');
-        }
-        
-        function copyRes(val) {
-            const el = document.createElement('textarea');
-            el.value = val;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            showNotification('📋 Copied', `Resolution ${val} copied to clipboard`);
-        }
-        
-        function copyChallenge(seed, prompt) {
-            const challengeText = `Seed: ${seed}\nPrompt: ${prompt}`;
-            const el = document.createElement('textarea');
-            el.value = challengeText;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            showNotification('🎯 Challenge Accepted', 'Seed and prompt copied!');
-        }
-        
-        function shareChallenge() {
-            const challengeUrl = window.location.href + '#challenge';
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Daily Flux Challenge',
-                    text: 'Join today\'s AI image generation challenge!',
-                    url: challengeUrl
-                });
-            } else {
-                const el = document.createElement('textarea');
-                el.value = challengeUrl;
-                document.body.appendChild(el);
-                el.select();
-                document.execCommand('copy');
-                document.body.removeChild(el);
-                showNotification('🔗 Link Copied', 'Share link copied to clipboard');
-            }
-        }
-        
-        function getBlindBox() {
-            const prompts = ["Surreal city with floating mirrors, cyberpunk aesthetic, dramatic wind", "Macro shot of an iridescent shell with water wings, hyper-detailed, candlelight lighting", "An ancient demon covered in blooming orchids, weathered stone texture, masterpiece", "Silver lion in a maze of pure fire, ethereal glow, fantasy art", "Macro shot of an iridescent insect with galaxy wings, hyper-detailed, moonlight lighting", "Surreal ocean with floating islands, baroque aesthetic, dramatic storm", "Architectural render of a floating castle made of marble, extreme minimalism, midnight lighting", "Surreal tundra with floating mirrors, steampunk aesthetic, dramatic storm", "Surreal desert with floating islands, baroque aesthetic, dramatic lightning", "Silver fox in a library of pure air, ethereal glow, fantasy art", "An ancient wizard covered in blooming cherry blossoms, weathered wood texture, masterpiece", "A transparent jellyfish drifting through a neon-lit Tokyo street, cinematic bokeh, 8k raw photo", "Surreal mountain with floating books, baroque aesthetic, dramatic lightning", "Macro shot of an iridescent insect with galaxy wings, hyper-detailed, moonlight lighting", "An ancient robot covered in blooming cherry blossoms, weathered leather texture, masterpiece", "A transparent butterfly drifting through a neon-lit ancient ruins, cinematic bokeh, 8k raw photo", "An ancient mecha knight covered in blooming sunflowers, weathered stone texture, masterpiece", "Architectural render of a floating monastery made of ice, extreme minimalism, noon lighting", "An ancient mecha knight covered in blooming orchids, weathered fabric texture, masterpiece", "Surreal forest with floating crystals, futuristic aesthetic, dramatic rain"];
-            const random = prompts[Math.floor(Math.random() * prompts.length)];
-            const display = document.getElementById('blindBoxResult');
-            
-            display.innerText = random;
-            display.classList.remove('hidden');
-            
-            const el = document.createElement('textarea');
-            el.value = random;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            
-            if (window.userProgress) {
-                userProgress.addPromptGeneration();
-                updateUserStats();
-            }
-            showNotification('🎁 Blind Box Opened', 'Mystery prompt copied!');
-        }
-        
-        function toggleFavorite(imageName) {
-            if (!window.userProgress) return;
-            
-            const favorites = userProgress.data.favoriteImages || [];
-            const index = favorites.indexOf(imageName);
-            
-            if (index > -1) {
-                favorites.splice(index, 1);
-                showNotification('💔 Unfavorited', 'Removed from favorites');
-            } else {
-                favorites.push(imageName);
-                showNotification('❤️ Favorited', 'Added to favorites');
-            }
-            
-            userProgress.data.favoriteImages = favorites;
-            userProgress.save();
-            updateFavoritesList();
-            updateFavoriteButtons();
-        }
-        
-        function updateFavoritesList() {
-            const favoritesList = document.getElementById('favoritesList');
-            if (!favoritesList || !window.userProgress) return;
-            
-            const favorites = userProgress.data.favoriteImages || [];
-            
-            if (favorites.length === 0) {
-                favoritesList.innerHTML = '<p class="text-zinc-500 text-sm">No favorite images yet</p>';
-            } else {
-                favoritesList.innerHTML = favorites.map(img => 
-                    `<div class="flex items-center justify-between bg-black/20 p-2 rounded-lg">
-                        <span class="text-xs text-zinc-300 truncate">${img}</span>
-                        <button onclick="toggleFavorite('${img}')" class="text-red-400 hover:text-red-300 text-xs">×</button>
-                    </div>`
-                ).join('');
-            }
-        }
-        
-        function updateFavoriteButtons() {
-            if (!window.userProgress) return;
-            
-            const favorites = userProgress.data.favoriteImages || [];
-            document.querySelectorAll('[data-favorite-btn]').forEach(btn => {
-                const imageName = btn.getAttribute('data-image');
-                const isFavorited = favorites.includes(imageName);
-                btn.innerHTML = isFavorited ? '💖' : '🤍';
-                btn.title = isFavorited ? 'Remove from favorites' : 'Add to favorites';
-            });
-        }
-        
-        function clearFavorites() {
-            if (!window.userProgress) return;
-            
-            if (confirm('Are you sure you want to clear all favorites?')) {
-                userProgress.data.favoriteImages = [];
-                userProgress.save();
-                updateFavoritesList();
-                updateFavoriteButtons();
-                showNotification('🗑️ Cleared', 'Favorites cleared');
-            }
-        }
-        
-        function exportFavorites() {
-            if (!window.userProgress) return;
-            
-            const favorites = userProgress.data.favoriteImages || [];
-            if (favorites.length === 0) {
-                showNotification('📝 Export Failed', 'No favorites to export');
-                return;
-            }
-            
-            const exportData = favorites.join('\n');
-            const el = document.createElement('textarea');
-            el.value = exportData;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            showNotification('📋 Export Success', 'Favorites list copied to clipboard');
-        }
-        
-        function updateAchievementsList() {
-            const achievementsList = document.getElementById('achievementsList');
-            if (!achievementsList || !window.userProgress) return;
-            
-            const achievements = userProgress.data.achievements || [];
-            
-            const allAchievements = [
-                { id: 'first_visit', name: 'First Visit', desc: 'Welcome to FreeFineAI!', icon: '👋' },
-                { id: 'regular_visitor', name: 'Regular Visitor', desc: 'Visit the site 5 times', icon: '🏠' },
-                { id: 'download_master', name: 'Download Master', desc: 'Download 10 images', icon: '📥' },
-                { id: 'prompt_creator', name: 'Prompt Creator', desc: 'Generate 20 prompts', icon: '✨' },
-                { id: 'streak_week', name: 'Week Streak', desc: 'Visit for 7 consecutive days', icon: '🔥' }
-            ];
-            
-            const recentAchievements = allAchievements
-                .filter(a => achievements.includes(a.id))
-                .slice(-3);
-            
-            if (recentAchievements.length === 0) {
-                achievementsList.innerHTML = '<p class="text-zinc-500 text-xs">Complete tasks to unlock achievements</p>';
-            } else {
-                achievementsList.innerHTML = recentAchievements.map(achievement => 
-                    `<div class="flex items-center gap-2 bg-black/20 p-2 rounded-lg">
-                        <span class="text-sm">${achievement.icon}</span>
-                        <div>
-                            <div class="text-white text-xs font-bold">${achievement.name}</div>
-                            <div class="text-zinc-400 text-[10px]">${achievement.desc}</div>
-                        </div>
-                    </div>`
-                ).join('');
-            }
-        }
-        
-        function showAllAchievements() {
-            showNotification('🏆 Achievement System', 'More achievement features coming soon!');
-        }
-        
-        function trackDownload(imageName) {
-            if (window.userProgress) {
-                userProgress.addDownload();
-                updateUserStats();
-            }
-            showNotification('📥 Download Success', 'Thanks for supporting FreeFineAI!');
-        }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.userProgress) {
-                updateUserStats();
-                updateFavoritesList();
-                updateFavoriteButtons();
-                updateAchievementsList();
-            }
-        });
-    </script>
-    
+    </section>
 
-
-    <footer class="mt-32 border-t border-white/5 bg-zinc-950/50 py-16 px-8 relative overflow-hidden">
-        <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
-        
-        <!-- Footer Content Grid -->
-        <div class="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-5 gap-8 text-left mb-12">
-            <!-- Brand Column -->
-            <div class="md:col-span-1">
-                <span class="text-white font-black text-2xl tracking-tighter italic uppercase block mb-3">FREEFINE<span class="primary-color">AI</span></span>
-                <p class="text-zinc-500 text-xs leading-relaxed mb-4">Premium Flux.1 AI-generated assets library. Empowering creators worldwide with high-fidelity digital resources.</p>
-                <div class="flex gap-3 mb-4">
-                    <a href="https://twitter.com/freefineai" target="_blank" class="w-8 h-8 bg-white/5 hover:bg-primary/20 border border-white/10 rounded-lg flex items-center justify-center text-zinc-400 hover:text-primary transition text-xs">𝕏</a>
-                    <a href="https://github.com/freefineai" target="_blank" class="w-8 h-8 bg-white/5 hover:bg-primary/20 border border-white/10 rounded-lg flex items-center justify-center text-zinc-400 hover:text-primary transition text-xs">⚙</a>
+    <!-- Stats Section -->
+    <section class="py-16 px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div>
+                    <div class="text-3xl md:text-4xl font-black text-white mb-2">15+</div>
+                    <div class="text-zinc-500 text-sm uppercase tracking-wider">Assets</div>
                 </div>
-            </div>
-            
-            <!-- Navigation Column -->
-            <div>
-                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Navigation</h4>
-                <ul class="space-y-2 text-xs font-bold">
-                    <li><a href="index.html" class="text-zinc-600 hover:text-primary transition">Home</a></li>
-                    <li><a href="gallery.html" class="text-zinc-600 hover:text-primary transition">Gallery</a></li>
-                    <li><a href="tools.html" class="text-zinc-600 hover:text-primary transition">Tools</a></li>
-                    <li><a href="about.html" class="text-zinc-600 hover:text-primary transition">About Us</a></li>
-                    <li><a href="membership.html" class="text-zinc-600 hover:text-primary transition">Membership</a></li>
-                </ul>
-            </div>
-            
-            <!-- Resources Column -->
-            <div>
-                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Resources</h4>
-                <ul class="space-y-2 text-xs font-bold">
-                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Prompt Library</a></li>
-                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">API Docs</a></li>
-                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Community</a></li>
-                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Blog</a></li>
-                    <li><a href="mailto:hello@freefineai.com" class="text-zinc-600 hover:text-primary transition">Contact</a></li>
-                </ul>
-            </div>
-            
-            <!-- Legal Column -->
-            <div>
-                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Legal</h4>
-                <ul class="space-y-2 text-xs font-bold">
-                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Privacy Policy</a></li>
-                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Terms of Service</a></li>
-                    <li><p class="text-zinc-600">CC BY-NC 4.0 License</p></li>
-                    <li><a href="#" class="text-zinc-600 hover:text-primary transition">Cookie Policy</a></li>
-                </ul>
-            </div>
-            
-            <!-- Stats Column -->
-            <div>
-                <h4 class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Platform Stats</h4>
-                <div id="footerStats" class="space-y-3 text-[10px]">
-                    <div>
-                        <div class="text-zinc-500 mb-1">Total Visits</div>
-                        <div class="text-cyan-400 font-bold text-sm" id="totalVisits">0</div>
-                    </div>
-                    <div>
-                        <div class="text-zinc-500 mb-1">Status</div>
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                            <span class="text-green-400 font-bold">Operational</span>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="text-zinc-500 mb-1">Uptime</div>
-                        <div class="text-white font-bold">99.9%</div>
-                    </div>
+                <div>
+                    <div class="text-3xl md:text-4xl font-black text-white mb-2">10K+</div>
+                    <div class="text-zinc-500 text-sm uppercase tracking-wider">Community</div>
+                </div>
+                <div>
+                    <div class="text-3xl md:text-4xl font-black text-white mb-2">50K+</div>
+                    <div class="text-zinc-500 text-sm uppercase tracking-wider">Downloads</div>
+                </div>
+                <div>
+                    <div class="text-3xl md:text-4xl font-black text-white mb-2">24/7</div>
+                    <div class="text-zinc-500 text-sm uppercase tracking-wider">Access</div>
                 </div>
             </div>
         </div>
-        
-        <!-- Footer Bottom -->
-        <div class="max-w-[1400px] mx-auto pt-8 border-t border-white/5">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                <!-- Copyright -->
-                <div class="text-center md:text-left">
-                    <p class="text-[10px] tracking-[0.3em] text-zinc-700 uppercase italic font-black">&copy; 2026 FREEFINEAI. All Rights Reserved.</p>
-                </div>
-                
-                <!-- Support Message -->
-                <div class="text-center">
-                    <p class="text-[9px] text-zinc-600 font-bold uppercase tracking-wider">
-                        Built with <span class="text-pink-500">❤</span> for creators
-                    </p>
-                </div>
-                
-                <!-- Version -->
-                <div class="text-center md:text-right">
-                    <p class="text-[9px] text-zinc-700 font-bold uppercase">v2.1 | Last Updated: Feb 2026</p>
-                </div>
-            </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-6">Ready to Get Started?</h2>
+            <p class="text-zinc-400 mb-8 max-w-2xl mx-auto">Join thousands of creators using FreeFineAI assets for their projects.</p>
+            <a href="https://draw.freefineai.com" class="btn-primary text-black font-bold px-8 py-4 rounded-lg text-sm uppercase tracking-wider inline-block">
+                Start Creating
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-zinc-800/50">
+        <div class="max-w-6xl mx-auto text-center">
+            <a href="index.html" class="inline-block text-white font-black text-lg tracking-tight mb-4">
+                FREEFINE<span class="text-cyan-400">AI</span>
+            </a>
+            <p class="text-zinc-500 text-sm">© 2025 FreeFineAI. Premium Flux.1 assets for the creative community.</p>
         </div>
     </footer>
-    
+
+    <!-- Particle Animation Script -->
     <script>
-        // 页脚访问统计更新
-        document.addEventListener('DOMContentLoaded', function() {
-            const visits = JSON.parse(localStorage.getItem('page_visits') || '{}');
-            let totalVisits = 0;
-            for (let key in visits) {
-                totalVisits += visits[key];
+        window.addEventListener('DOMContentLoaded', function() {
+            var canvas = document.getElementById('particle-canvas');
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var particles = [];
+            var stars = [];
+            var mouseX = 0, mouseY = 0;
+            
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
             }
-            const totalVisitsEl = document.getElementById('totalVisits');
-            if (totalVisitsEl) {
-                totalVisitsEl.textContent = totalVisits.toLocaleString();
+            
+            function Particle() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedX = Math.random() * 0.3 - 0.15;
+                this.speedY = Math.random() * 0.3 - 0.15;
+                this.opacity = Math.random() * 0.4 + 0.2;
             }
+            
+            Particle.prototype.update = function() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+            };
+            
+            Particle.prototype.draw = function() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(6, 182, 212, ' + this.opacity + ')';
+                ctx.fill();
+            };
+            
+            function Star(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 3 + 2;
+                this.opacity = 1;
+                this.decay = Math.random() * 0.02 + 0.015;
+            }
+            
+            Star.prototype.update = function() {
+                this.opacity -= this.decay;
+            };
+            
+            Star.prototype.draw = function() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(Date.now() * 0.005);
+                ctx.beginPath();
+                for (var i = 0; i < 5; i++) {
+                    ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * this.size, -Math.sin((18 + i * 72) * Math.PI / 180) * this.size);
+                    ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * this.size * 0.4, -Math.sin((54 + i * 72) * Math.PI / 180) * this.size * 0.4);
+                }
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(250, 204, 21, ' + this.opacity + ')';
+                ctx.shadowColor = 'rgba(250, 204, 21, ' + this.opacity + ')';
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.restore();
+            };
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (var i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                }
+                for (var i = stars.length - 1; i >= 0; i--) {
+                    stars[i].update();
+                    stars[i].draw();
+                    if (stars[i].opacity <= 0) {
+                        stars.splice(i, 1);
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            
+            document.addEventListener('mousemove', function(e) {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                if (Math.random() > 0.5) {
+                    stars.push(new Star(mouseX, mouseY));
+                }
+            });
+            
+            resize();
+            window.addEventListener('resize', resize);
+            for (var i = 0; i < 80; i++) {
+                particles.push(new Particle());
+            }
+            animate();
         });
     </script>
 </body>
