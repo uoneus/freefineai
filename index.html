@@ -53,6 +53,7 @@
         .image-card:hover img { transform: scale(1.05); }
         .btn-primary { background: linear-gradient(135deg, #06b6d4, #dceaed); transition: all 0.3s ease; }
         .btn-primary:hover { box-shadow: 0 8px 30px rgba(6,182,212,0.4); transform: translateY(-2px); }
+        .size-preset-btn.active { background: rgba(6,182,212,0.2); border-color: #06b6d4; color: #22d3ee; }
         .section-fade { animation: fadeInUp 0.6s ease forwards; opacity: 0; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .testimonial-card { background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.08); }
@@ -97,7 +98,7 @@
         // Show ad popup after 1 minute (60000ms)
         setTimeout(function() {
             document.getElementById('adPopup').classList.add('show');
-        }, 60000);
+        }, 300000);
 
         function closeAdPopup() {
             document.getElementById('adPopup').classList.remove('show');
@@ -257,6 +258,199 @@
             </div>
         </div>
     </header>
+
+    <!-- Text-to-Image Generation Section -->
+    <section class="py-10 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-6 text-center">Create Your Image</h2>
+            <div class="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 md:p-8">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Left Column: Prompt & Controls -->
+                    <div class="space-y-4">
+                        <div>
+                            <label for="prompt" class="block text-white font-medium text-sm mb-2">Prompt</label>
+                            <textarea
+                                id="prompt"
+                                name="prompt"
+                                rows="4"
+                                class="w-full bg-zinc-800/50 border border-zinc-700 rounded-xl px-4 py-3 text-white text-sm placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition resize-none"
+                                placeholder="A beautiful sunset over the ocean with vibrant orange and pink colors..."
+                                required
+                            ></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-white font-medium text-xs mb-2">Size Presets</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button" onclick="setSize(768, 1344)" class="size-preset-btn bg-zinc-800/50 border border-zinc-700 hover:border-cyan-500 rounded-lg px-3 py-2 text-xs text-zinc-300 transition">
+                                    📱 Phone Vertical<br><span class="text-zinc-500">768×1344</span>
+                                </button>
+                                <button type="button" onclick="setSize(1024, 1024)" class="size-preset-btn active size-preset-btn bg-cyan-500/20 border border-cyan-500 rounded-lg px-3 py-2 text-xs text-cyan-400 transition">
+                                    ⬜ Standard<br><span class="text-cyan-300">1024×1024</span>
+                                </button>
+                                <button type="button" onclick="setSize(1920, 1080)" class="size-preset-btn bg-zinc-800/50 border border-zinc-700 hover:border-cyan-500 rounded-lg px-3 py-2 text-xs text-zinc-300 transition">
+                                    🖥️ HD 1080p<br><span class="text-zinc-500">1920×1080</span>
+                                </button>
+                                <button type="button" onclick="setSize(1536, 1536)" class="size-preset-btn bg-zinc-800/50 border border-zinc-700 hover:border-cyan-500 rounded-lg px-3 py-2 text-xs text-zinc-300 transition">
+                                    🖼️ Default<br><span class="text-zinc-500">1536×1536</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="model" class="block text-white font-medium text-xs mb-1">Model</label>
+                                <select
+                                    id="model"
+                                    name="model"
+                                    class="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition appearance-none cursor-pointer"
+                                >
+                                    <option value="flux-schnell">FLUX.1-schnell</option>
+                                    <option value="flux-kontext">FLUX.1-Kontext</option>
+                                    <option value="flux-krea">FLUX.1-Krea</option>
+                                    <option value="flux-dev">FLUX.2-dev</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="width" class="block text-white font-medium text-xs mb-1">Width</label>
+                                <select
+                                    id="width"
+                                    name="width"
+                                    class="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition appearance-none cursor-pointer"
+                                >
+                                    <option value="768">768px</option>
+                                    <option value="1024" selected>1024px</option>
+                                    <option value="1344">1344px</option>
+                                    <option value="1536">1536px</option>
+                                    <option value="1920">1920px</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-span-2">
+                                <label for="height" class="block text-white font-medium text-xs mb-1">Height</label>
+                                <select
+                                    id="height"
+                                    name="height"
+                                    class="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition appearance-none cursor-pointer"
+                                >
+                                    <option value="768">768px</option>
+                                    <option value="1024" selected>1024px</option>
+                                    <option value="1344">1344px</option>
+                                    <option value="1536">1536px</option>
+                                    <option value="1080">1080px</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Verification Code -->
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1">
+                                <label for="captcha" class="block text-white font-medium text-xs mb-1">Verification Code</label>
+                                <input
+                                    type="text"
+                                    id="captcha"
+                                    name="captcha"
+                                    placeholder="Enter code"
+                                    class="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition uppercase"
+                                    maxlength="4"
+                                />
+                            </div>
+                            <div id="captchaDisplay" class="bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2.5 cursor-pointer select-none" onclick="refreshCaptcha()">
+                                <span class="text-cyan-400 font-bold text-lg tracking-wider" style="font-family: monospace;">ABCD</span>
+                            </div>
+                            <button type="button" onclick="refreshCaptcha()" class="text-zinc-500 hover:text-white transition p-2" title="Refresh">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <!-- Buttons Row -->
+                        <div class="flex items-center gap-3 pt-2">
+                            <button
+                                type="submit"
+                                form="imageGeneratorForm"
+                                id="generateBtn"
+                                class="btn-primary text-black font-bold px-6 py-3 rounded-xl text-sm uppercase tracking-wider flex items-center gap-2 flex-1 justify-center"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                Generate
+                            </button>
+                            <button type="button" onclick="resetGenerator()" class="bg-zinc-700 hover:bg-zinc-600 text-white font-medium px-4 py-3 rounded-xl text-xs transition">
+                                Reset
+                            </button>
+                        </div>
+
+                        <div id="statusText" class="text-zinc-500 text-xs hidden"></div>
+
+                        <!-- Daily usage indicator -->
+                        <div id="dailyLimitBar" class="hidden">
+                            <div class="flex justify-between text-xs text-zinc-500 mb-1">
+                                <span>Today's usage</span>
+                                <span id="usageText">0 / 10</span>
+                            </div>
+                            <div class="bg-zinc-700 rounded-full h-1.5">
+                                <div id="usageBar" class="h-1.5 rounded-full bg-cyan-500 transition-all duration-500" style="width:0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Preview -->
+                    <div>
+                        <!-- Preview Area -->
+                        <div id="previewArea" class="bg-zinc-800/30 rounded-2xl border border-zinc-700/50 aspect-square flex flex-col items-center justify-center p-6">
+                            <!-- Default State -->
+                            <div id="defaultPreview" class="text-center">
+                                <svg class="w-16 h-16 mx-auto text-zinc-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="text-zinc-500 text-sm">Your generated image will appear here</p>
+                            </div>
+                            
+                            <!-- Loading State -->
+                            <div id="loadingState" class="hidden text-center w-full">
+                                <div class="w-12 h-12 mx-auto border-2 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                                <span class="text-zinc-400 text-sm">Generating your image...</span>
+                                <div class="mt-4 bg-zinc-700/30 rounded-xl h-2 overflow-hidden">
+                                    <div id="progressBar" class="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Result Display -->
+                            <div id="resultState" class="hidden w-full h-full flex flex-col">
+                                <div class="flex-1 rounded-xl overflow-hidden border border-zinc-700">
+                                    <img id="resultImage" src="" alt="Generated image" class="w-full h-full object-contain bg-zinc-900">
+                                </div>
+                                <div class="flex gap-2 mt-3">
+                                    <a id="downloadBtn" href="" download class="bg-cyan-500 hover:bg-cyan-400 text-black font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-2 transition flex-1 justify-center">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                        </svg>
+                                        Download
+                                    </a>
+                                    <button onclick="resetGenerator()" class="bg-zinc-700 hover:bg-zinc-600 text-white font-medium px-4 py-2 rounded-lg text-xs transition">
+                                        New
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Error State -->
+                            <div id="errorState" class="hidden text-center w-full">
+                                <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-400 text-sm">
+                                    <span id="errorMessage">An error occurred. Please try again.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="imageGeneratorForm" class="hidden"></form>
+            </div>
+        </div>
+    </section>
 
     <!-- Featured Assets Section -->
     <section class="py-10 px-6">
@@ -467,6 +661,322 @@
             <p class="text-zinc-500 text-sm">© 2025 FreeFineAI. Premium Flux.1 assets for the creative community.</p>
         </div>
     </footer>
+
+    <!-- Text-to-Image Generation Script -->
+    <script>
+        const API_BASE_URL = 'https://api.freefineai.com/api';
+        const IMAGE_BASE_URL = 'https://api.freefineai.com';
+
+        // Load and display daily usage limit
+        async function loadUserLimit() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/v1/limit`);
+                if (!res.ok) return;
+                const data = await res.json();
+                updateUsageBar(data.today_usage, data.daily_limit);
+            } catch (e) {
+                console.log('Failed to load limit:', e);
+            }
+        }
+
+        function updateUsageBar(used, limit) {
+            const bar = document.getElementById('dailyLimitBar');
+            const text = document.getElementById('usageText');
+            const fill = document.getElementById('usageBar');
+            const btn = document.getElementById('generateBtn');
+            if (!bar) return;
+            bar.classList.remove('hidden');
+            text.textContent = `${used} / ${limit}`;
+            const pct = limit > 0 ? Math.min(100, (used / limit) * 100) : 0;
+            fill.style.width = pct + '%';
+            // Color feedback
+            if (pct >= 100) {
+                fill.className = 'h-1.5 rounded-full bg-red-500 transition-all duration-500';
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else if (pct >= 70) {
+                fill.className = 'h-1.5 rounded-full bg-yellow-500 transition-all duration-500';
+            } else {
+                fill.className = 'h-1.5 rounded-full bg-cyan-500 transition-all duration-500';
+            }
+        }
+
+        loadUserLimit();
+
+        // User tracking info
+        function getUserAgent() {
+            const ua = navigator.userAgent;
+            let os = 'Unknown';
+            let browser = 'Unknown';
+            let deviceType = 'Desktop';
+
+            // Detect OS
+            if (ua.indexOf('Win') > -1) os = 'Windows';
+            else if (ua.indexOf('Mac') > -1) os = 'macOS';
+            else if (ua.indexOf('Linux') > -1) os = 'Linux';
+            else if (ua.indexOf('Android') > -1) os = 'Android';
+            else if (ua.indexOf('iOS') > -1 || ua.indexOf('iPhone') > -1 || ua.indexOf('iPad') > -1) os = 'iOS';
+
+            // Detect Browser
+            if (ua.indexOf('Chrome') > -1) browser = 'Chrome';
+            else if (ua.indexOf('Firefox') > -1) browser = 'Firefox';
+            else if (ua.indexOf('Safari') > -1) browser = 'Safari';
+            else if (ua.indexOf('Edge') > -1) browser = 'Edge';
+
+            // Detect Device Type
+            if (ua.indexOf('Mobile') > -1 || ua.indexOf('Android') > -1 || ua.indexOf('iPhone') > -1) {
+                deviceType = 'Mobile';
+            } else if (ua.indexOf('Tablet') > -1 || ua.indexOf('iPad') > -1) {
+                deviceType = 'Tablet';
+            }
+
+            return { os, browser, deviceType };
+        }
+
+        // Track user on page load
+        async function trackUser() {
+            const userInfo = getUserAgent();
+            try {
+                await fetch(`${API_BASE_URL}/v1/track`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userInfo)
+                });
+            } catch (err) {
+                console.log('User tracking failed:', err);
+            }
+        }
+
+        // Run tracking on load
+        trackUser();
+
+        const form = document.getElementById('imageGeneratorForm');
+        const generateBtn = document.getElementById('generateBtn');
+        const statusText = document.getElementById('statusText');
+        const loadingState = document.getElementById('loadingState');
+        const resultState = document.getElementById('resultState');
+        const errorState = document.getElementById('errorState');
+        const resultImage = document.getElementById('resultImage');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const progressBar = document.getElementById('progressBar');
+        const errorMessage = document.getElementById('errorMessage');
+        const defaultPreview = document.getElementById('defaultPreview');
+
+        let progressInterval;
+        let currentCaptchaToken = '';
+        let currentCaptchaCode = '';
+
+        // Fetch captcha from server
+        async function refreshCaptcha() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/v1/captcha`);
+                const data = await res.json();
+                currentCaptchaToken = data.token;
+                currentCaptchaCode = data.code;
+                document.getElementById('captchaDisplay').innerHTML =
+                    '<span class="text-cyan-400 font-bold text-lg tracking-wider" style="font-family: monospace; letter-spacing: 4px;">' +
+                    data.code.split('').join(' ') + '</span>';
+                document.getElementById('captcha').value = '';
+            } catch (e) {
+                console.log('Captcha load failed:', e);
+            }
+        }
+
+        // Initialize captcha on page load
+        refreshCaptcha();
+
+        // Load available models from backend
+        async function loadModels() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/v1/models`);
+                const data = await response.json();
+                if (data.success && data.models && data.models.length > 0) {
+                    const modelSelect = document.getElementById('model');
+                    modelSelect.innerHTML = '';
+                    data.models.forEach(m => {
+                        const option = document.createElement('option');
+                        option.value = m;
+                        option.textContent = m.toUpperCase();
+                        modelSelect.appendChild(option);
+                    });
+                }
+            } catch (err) {
+                console.log('Failed to load models:', err);
+            }
+        }
+
+        // Load models on page load
+        loadModels();
+
+        function setSize(width, height) {
+            document.getElementById('width').value = width;
+            document.getElementById('height').value = height;
+            
+            // Update active state on preset buttons
+            document.querySelectorAll('.size-preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.size-preset-btn').classList.add('active');
+        }
+
+        function validateCaptcha() {
+            const userInput = document.getElementById('captcha').value.trim().toUpperCase();
+            if (userInput !== currentCaptchaCode) {
+                showError('Invalid verification code. Please try again.');
+                refreshCaptcha();
+                return false;
+            }
+            return true;
+        }
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                prompt: document.getElementById('prompt').value,
+                model: document.getElementById('model').value,
+                width: parseInt(document.getElementById('width').value),
+                height: parseInt(document.getElementById('height').value),
+                captcha_token: currentCaptchaToken,
+                captcha_code: document.getElementById('captcha').value.trim().toUpperCase()
+            };
+
+            if (!formData.prompt.trim()) {
+                showError('Please enter a prompt');
+                return;
+            }
+
+            startGeneration();
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.status === 429) {
+                    const errData = await response.json();
+                    updateUsageBar(errData.today_usage, errData.daily_limit);
+                    showError(errData.message || 'Daily limit reached. Please try again tomorrow.');
+                    return;
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || errorData.message || 'Generation failed');
+                }
+
+                const data = await response.json();
+
+                // Update usage bar after successful submission
+                if (data.today_usage !== undefined) {
+                    updateUsageBar(data.today_usage, data.daily_limit);
+                }
+
+                // Poll for image completion since generation is async
+                if (data.image_id) {
+                    await pollForImage(data.image_id);
+                } else {
+                    showResult(`${IMAGE_BASE_URL}${data.image_url}`);
+                }
+                refreshCaptcha(); // Refresh captcha after successful generation
+            } catch (err) {
+                showError(err.message || 'Failed to generate image. Please try again.');
+            }
+        });
+
+        function startGeneration() {
+            defaultPreview.classList.add('hidden');
+            loadingState.classList.remove('hidden');
+            resultState.classList.add('hidden');
+            errorState.classList.add('hidden');
+            generateBtn.disabled = true;
+            statusText.classList.remove('hidden');
+            statusText.textContent = 'Starting...';
+
+            let progress = 0;
+            progressBar.style.width = '0%';
+            progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 90) progress = 90;
+                progressBar.style.width = progress + '%';
+                statusText.textContent = `Processing... ${Math.round(progress)}%`;
+            }, 500);
+        }
+
+        async function pollForImage(imageId) {
+            const maxAttempts = 60; // 60 attempts * 2 seconds = 2 minutes max
+            let attempts = 0;
+            
+            while (attempts < maxAttempts) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/images/${imageId}`);
+                    if (response.ok) {
+                        const img = await response.json();
+                        if (img.status === 'completed' && img.image_url) {
+                            showResult(`${IMAGE_BASE_URL}${img.image_url}`);
+                            return;
+                        } else if (img.status === 'failed') {
+                            showError('Image generation failed. Please try again.');
+                            return;
+                        }
+                    }
+                } catch (err) {
+                    console.error('Poll error:', err);
+                }
+                
+                attempts++;
+                statusText.textContent = `Processing... ${Math.round(attempts * 100 / maxAttempts)}%`;
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+            
+            showError('Image generation is taking too long. Please check back later.');
+        }
+
+        function showResult(imageUrl) {
+            clearInterval(progressInterval);
+            progressBar.style.width = '100%';
+            statusText.textContent = 'Complete!';
+            
+            setTimeout(() => {
+                loadingState.classList.add('hidden');
+                resultState.classList.remove('hidden');
+                resultImage.src = imageUrl;
+                downloadBtn.href = imageUrl;
+                resetFormState();
+                loadUserLimit(); // refresh usage bar
+            }, 500);
+        }
+
+        function showError(message) {
+            clearInterval(progressInterval);
+            loadingState.classList.add('hidden');
+            errorState.classList.remove('hidden');
+            errorMessage.textContent = message;
+            resetFormState();
+        }
+
+        function resetFormState() {
+            form.classList.remove('opacity-50', 'pointer-events-none');
+            generateBtn.disabled = false;
+        }
+
+        function resetGenerator() {
+            form.reset();
+            refreshCaptcha();
+            generateBtn.disabled = false;
+            statusText.classList.add('hidden');
+            loadingState.classList.add('hidden');
+            resultState.classList.add('hidden');
+            errorState.classList.add('hidden');
+            defaultPreview.classList.remove('hidden');
+            resultImage.src = '';
+            progressBar.style.width = '0%';
+        }
+    </script>
 
 </body>
 </html>
