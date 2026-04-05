@@ -186,8 +186,17 @@
                 </div>
                 <div style="margin-bottom:12px;">
                     <label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Email</label>
-                    <input type="email" id="regEmail" placeholder="your@email.com"
-                        style="width:100%;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;">
+                    <div style="display:flex;gap:8px;">
+                        <input type="email" id="regEmail" placeholder="your@email.com"
+                            style="flex:1;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;">
+                        <button onclick="sendEmailCode()" id="sendCodeBtn"
+                            style="background:#18181b;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#06b6d4;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;">Send Code</button>
+                    </div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Verification Code</label>
+                    <input type="text" id="regCode" placeholder="6-digit code from email" maxlength="6"
+                        style="width:100%;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;letter-spacing:4px;">
                 </div>
                 <div style="margin-bottom:16px;">
                     <label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Password</label>
@@ -918,18 +927,53 @@
             } catch(e) { errEl.textContent = 'Connection error'; errEl.style.display = 'block'; }
         }
 
+        async function sendEmailCode() {
+            const email = document.getElementById('regEmail').value.trim();
+            const errEl = document.getElementById('regError');
+            const btn = document.getElementById('sendCodeBtn');
+            if (!email) { errEl.textContent = 'Please enter email first'; errEl.style.display = 'block'; return; }
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+            try {
+                const r = await fetch(`${API_BASE_URL}/v1/user/send-code`, {
+                    method: 'POST', headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({email})
+                });
+                const d = await r.json();
+                if (d.success) {
+                    btn.textContent = '60s';
+                    let t = 60;
+                    const timer = setInterval(() => {
+                        t--;
+                        btn.textContent = t + 's';
+                        if (t <= 0) { clearInterval(timer); btn.disabled = false; btn.textContent = 'Resend'; }
+                    }, 1000);
+                    errEl.style.display = 'none';
+                } else {
+                    errEl.textContent = d.message || 'Failed to send code';
+                    errEl.style.display = 'block';
+                    btn.disabled = false; btn.textContent = 'Send Code';
+                }
+            } catch(e) {
+                errEl.textContent = 'Connection error';
+                errEl.style.display = 'block';
+                btn.disabled = false; btn.textContent = 'Send Code';
+            }
+        }
+
         async function doRegister() {
             const username = document.getElementById('regUsername').value.trim();
             const email = document.getElementById('regEmail').value.trim();
             const password = document.getElementById('regPassword').value;
+            const code = document.getElementById('regCode').value.trim();
             const errEl = document.getElementById('regError');
             const okEl = document.getElementById('regSuccess');
             errEl.style.display = 'none'; okEl.style.display = 'none';
-            if (!username || !email || !password) { errEl.textContent = 'Please fill all fields'; errEl.style.display = 'block'; return; }
+            if (!username || !email || !password || !code) { errEl.textContent = 'Please fill all fields'; errEl.style.display = 'block'; return; }
             try {
                 const r = await fetch(`${API_BASE_URL}/v1/user/register`, {
                     method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({username, email, password})
+                    body: JSON.stringify({username, email, password, code})
                 });
                 const d = await r.json();
                 if (d.success) {
