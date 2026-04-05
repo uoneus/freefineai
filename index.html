@@ -1091,6 +1091,74 @@
         // Run tracking on load
         trackUser();
 
+        // Load and inject ads
+        async function loadAndInjectAds() {
+            try {
+                const r = await fetch(`${API_BASE_URL}/v1/ads`);
+                const d = await r.json();
+                if (!d.success || !d.ads) return;
+
+                const now = new Date();
+                const currentDay = now.getDay().toString();
+                const currentTime = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+
+                d.ads.forEach(ad => {
+                    // Check day
+                    if (!ad.allowed_days.includes(currentDay)) return;
+                    // Check time window
+                    if (currentTime < ad.time_start || currentTime > ad.time_end) return;
+
+                    const delayMs = (ad.delay_minutes || 0) * 60 * 1000;
+
+                    if (ad.ad_category === 'script' && ad.script_code) {
+                        // Inject script into head after delay
+                        setTimeout(() => {
+                            const tmp = document.createElement('div');
+                            tmp.innerHTML = ad.script_code;
+                            Array.from(tmp.childNodes).forEach(node => {
+                                if (node.tagName === 'SCRIPT') {
+                                    const s = document.createElement('script');
+                                    if (node.src) s.src = node.src;
+                                    if (node.async) s.async = true;
+                                    if (node.crossOrigin) s.crossOrigin = node.crossOrigin;
+                                    s.textContent = node.textContent;
+                                    document.head.appendChild(s);
+                                } else {
+                                    document.head.appendChild(node.cloneNode(true));
+                                }
+                            });
+                        }, delayMs);
+                    } else if (ad.ad_category === 'affiliate' && ad.image_url) {
+                        // Show affiliate popup after delay
+                        setTimeout(() => {
+                            showAffiliateAd(ad);
+                        }, delayMs);
+                    }
+                });
+            } catch(e) { console.log('Ad load failed:', e); }
+        }
+
+        function showAffiliateAd(ad) {
+            const existing = document.getElementById('affiliateAdPopup');
+            if (existing) existing.remove();
+
+            const div = document.createElement('div');
+            div.id = 'affiliateAdPopup';
+            div.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9990;display:flex;align-items:center;justify-content:center;';
+            div.innerHTML = `
+                <div style="position:relative;max-width:560px;width:90%;border-radius:16px;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,0.5);">
+                    <a href="${ad.target_url}" target="_blank" rel="noopener sponsored">
+                        <img src="${ad.image_url}" alt="${ad.title}" style="width:100%;display:block;">
+                    </a>
+                    <button onclick="document.getElementById('affiliateAdPopup').remove()" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.6);border:none;border-radius:50%;width:30px;height:30px;color:#fff;font-size:16px;cursor:pointer;line-height:1;">×</button>
+                </div>
+            `;
+            div.addEventListener('click', function(e) { if (e.target === this) this.remove(); });
+            document.body.appendChild(div);
+        }
+
+        loadAndInjectAds();
+
         const form = document.getElementById('imageGeneratorForm');
         const generateBtn = document.getElementById('generateBtn');
         const statusText = document.getElementById('statusText');
@@ -1129,7 +1197,9 @@
         // Load available models from backend
         async function loadModels() {
             try {
-                const response = await fetch(`${API_BASE_URL}/v1/models`);
+                const headers = {};
+                if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+                const response = await fetch(`${API_BASE_URL}/v1/models`, { headers });
                 const data = await response.json();
                 if (data.success && data.models && data.models.length > 0) {
                     const modelSelect = document.getElementById('model');
