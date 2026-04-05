@@ -1008,23 +1008,26 @@
         // Load and display daily usage limit
         async function loadUserLimit() {
             try {
-                const res = await fetch(`${API_BASE_URL}/v1/limit`);
+                const headers = {};
+                if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+                const res = await fetch(`${API_BASE_URL}/v1/limit`, { headers });
                 if (!res.ok) return;
                 const data = await res.json();
-                updateUsageBar(data.today_usage, data.daily_limit);
+                updateUsageBar(data.today_usage, data.daily_limit, data.role);
             } catch (e) {
                 console.log('Failed to load limit:', e);
             }
         }
 
-        function updateUsageBar(used, limit) {
+        function updateUsageBar(used, limit, role) {
             const bar = document.getElementById('dailyLimitBar');
             const text = document.getElementById('usageText');
             const fill = document.getElementById('usageBar');
             const btn = document.getElementById('generateBtn');
             if (!bar) return;
             bar.classList.remove('hidden');
-            text.textContent = `${used} / ${limit}`;
+            const roleLabel = role === 'vip' ? ' · VIP' : role === 'member' ? ' · Member' : ' · Guest';
+            text.textContent = `${used} / ${limit}${roleLabel}`;
             const pct = limit > 0 ? Math.min(100, (used / limit) * 100) : 0;
             fill.style.width = pct + '%';
             // Color feedback

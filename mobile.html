@@ -302,19 +302,23 @@
 
         async function loadUserLimit() {
             try {
-                const r = await fetch(`${API_BASE}/v1/limit`);
+                const headers = {};
+                const token = localStorage.getItem('userToken');
+                if (token) headers['Authorization'] = `Bearer ${token}`;
+                const r = await fetch(`${API_BASE}/v1/limit`, { headers });
                 const d = await r.json();
-                updateUsage(d.today_usage, d.daily_limit);
+                updateUsage(d.today_usage, d.daily_limit, d.role);
             } catch(e) {}
         }
 
-        function updateUsage(used, limit) {
+        function updateUsage(used, limit, role) {
             const wrap = document.getElementById('usageWrap');
             const text = document.getElementById('usageText');
             const fill = document.getElementById('usageFill');
             const btn = document.getElementById('generateBtn');
             wrap.classList.remove('hidden');
-            text.textContent = `${used} / ${limit}`;
+            const roleLabel = role === 'vip' ? ' · VIP' : role === 'member' ? ' · Member' : ' · Guest';
+            text.textContent = `${used} / ${limit}${roleLabel}`;
             const pct = limit > 0 ? Math.min(100, used / limit * 100) : 0;
             fill.style.width = pct + '%';
             fill.className = 'usage-fill ' + (pct >= 100 ? 'bg-red-500' : pct >= 70 ? 'bg-yellow-500' : 'bg-cyan-500');
