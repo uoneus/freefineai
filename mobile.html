@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FreeFineAI - AI Image Generator</title>
+    <meta name="description" content="Free AI image generator. Create stunning images with Flux, Gemini, Cloudflare AI models. No login required.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: #050505; color: #a1a1aa; font-family: 'Inter', sans-serif; margin: 0; min-height: 100vh; }
+        .gradient-text { background: linear-gradient(135deg, #06b6d4, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .btn-primary { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
+        .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; }
+        .model-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; transition: border-color .2s; }
+        .model-card:active { border-color: #06b6d4; }
+        textarea { -webkit-appearance: none; }
+        select { -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+        .usage-bar { height: 3px; border-radius: 2px; background: #27272a; overflow: hidden; }
+        .usage-fill { height: 100%; border-radius: 2px; transition: width .5s; }
+        /* Bottom nav */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,5,5,0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.06); z-index: 50; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0 8px; color: #52525b; font-size: 10px; font-weight: 600; text-decoration: none; transition: color .2s; }
+        .nav-item.active, .nav-item:active { color: #06b6d4; }
+        /* Sections */
+        .section { display: none; }
+        .section.active { display: block; }
+        /* Loading spinner */
+        .spinner { width: 36px; height: 36px; border: 3px solid rgba(6,182,212,0.2); border-top-color: #06b6d4; border-radius: 50%; animation: spin .8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        /* Toast */
+        #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: #18181b; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 20px; font-size: 13px; color: #e4e4e7; opacity: 0; transition: all .3s; z-index: 100; white-space: nowrap; pointer-events: none; }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body class="pb-20">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 px-4 py-3 flex items-center justify-between" style="background:rgba(5,5,5,0.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);">
+        <span class="text-white font-black text-lg tracking-tight">FREEFINE<span class="text-cyan-400">AI</span></span>
+        <button onclick="showTermsModal()" class="text-zinc-500 text-xs border border-zinc-700 rounded-lg px-3 py-1.5">Terms</button>
+    </header>
+
+    <!-- Toast -->
+    <div id="toast"></div>
+
+    <!-- Section: Generate -->
+    <section id="sec-generate" class="section active px-4 pt-5 pb-4">
+
+        <!-- Daily usage bar -->
+        <div id="usageWrap" class="hidden mb-4">
+            <div class="flex justify-between text-xs text-zinc-500 mb-1.5">
+                <span>Today's usage</span>
+                <span id="usageText">0 / 10</span>
+            </div>
+            <div class="usage-bar">
+                <div id="usageFill" class="usage-fill bg-cyan-500" style="width:0%"></div>
+            </div>
+        </div>
+
+        <!-- Prompt -->
+        <div class="mb-3">
+            <label class="block text-white text-xs font-semibold mb-1.5">Prompt</label>
+            <textarea id="prompt" rows="4" placeholder="Describe the image you want to create..."
+                class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3.5 py-3 text-white text-sm placeholder-zinc-600 focus:outline-none focus:border-cyan-500 resize-none"></textarea>
+        </div>
+
+        <!-- Model + Size row -->
+        <div class="grid grid-cols-2 gap-2 mb-3">
+            <div>
+                <label class="block text-zinc-400 text-xs mb-1">Model</label>
+                <select id="model" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500">
+                    <option value="CogView4_6B">CogView4</option>
+                    <option value="flux-1-schnell">FLUX.1-schnell</option>
+                    <option value="FLUX.2-dev">FLUX.2-dev</option>
+                    <option value="gemini-3.1-flash-image-preview">Gemini Flash</option>
+                    <option value="flux-2-dev">CF Flux-2</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-zinc-400 text-xs mb-1">Size</label>
+                <select id="size" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500">
+                    <option value="1024x1024">1024×1024</option>
+                    <option value="768x1344">768×1344 (Portrait)</option>
+                    <option value="1344x768">1344×768 (Landscape)</option>
+                    <option value="1536x1536">1536×1536</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Captcha -->
+        <div class="flex items-center gap-2 mb-4">
+            <div class="flex-1">
+                <label class="block text-zinc-400 text-xs mb-1">Verification Code</label>
+                <input type="text" id="captcha" maxlength="4" placeholder="Enter code"
+                    class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder-zinc-600 focus:outline-none focus:border-cyan-500 uppercase tracking-widest">
+            </div>
+            <div>
+                <label class="block text-zinc-400 text-xs mb-1 opacity-0">.</label>
+                <div id="captchaDisplay" onclick="loadCaptcha()"
+                    class="bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 cursor-pointer select-none min-w-[80px] text-center">
+                    <span class="text-cyan-400 font-bold text-base tracking-widest font-mono">----</span>
+                </div>
+            </div>
+            <div>
+                <label class="block text-zinc-400 text-xs mb-1 opacity-0">.</label>
+                <button onclick="loadCaptcha()" class="bg-zinc-800 border border-zinc-700 rounded-lg p-2.5">
+                    <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Generate button -->
+        <button id="generateBtn" onclick="generate()"
+            class="btn-primary w-full text-black font-bold py-3.5 rounded-xl text-sm uppercase tracking-wider flex items-center justify-center gap-2 mb-4">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Generate
+        </button>
+
+        <!-- Result area -->
+        <div id="resultArea" class="hidden">
+            <!-- Loading -->
+            <div id="loadingState" class="hidden card p-8 flex flex-col items-center gap-4">
+                <div class="spinner"></div>
+                <p class="text-zinc-400 text-sm">Generating your image...</p>
+                <div class="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                    <div id="progressBar" class="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full transition-all duration-500" style="width:0%"></div>
+                </div>
+            </div>
+            <!-- Image result -->
+            <div id="imageResult" class="hidden">
+                <img id="resultImg" src="" alt="Generated" class="w-full rounded-2xl border border-zinc-800 mb-3">
+                <div class="flex gap-2">
+                    <a id="downloadBtn" href="" download class="flex-1 bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3 rounded-xl text-sm text-center flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Download
+                    </a>
+                    <button onclick="resetResult()" class="bg-zinc-800 text-white font-medium py-3 px-5 rounded-xl text-sm">New</button>
+                </div>
+            </div>
+            <!-- Error -->
+            <div id="errorState" class="hidden card p-4 border-red-500/30 bg-red-500/5">
+                <p id="errorMsg" class="text-red-400 text-sm text-center"></p>
+                <button onclick="resetResult()" class="mt-3 w-full text-zinc-400 text-xs">Try again</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Models -->
+    <section id="sec-models" class="section px-4 pt-5 pb-4">
+        <h2 class="text-white font-bold text-lg mb-4">Available Models</h2>
+        <div class="space-y-3">
+            <div class="model-card p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white font-semibold text-sm">CogView4</span>
+                    <span class="bg-green-500/20 text-green-400 text-xs px-2 py-0.5 rounded-full">Free</span>
+                </div>
+                <p class="text-zinc-500 text-xs leading-relaxed">High-quality image generation by Zhipu AI. Supports Chinese and English prompts.</p>
+                <div class="flex gap-1.5 mt-2 flex-wrap">
+                    <span class="bg-zinc-800 text-zinc-400 text-xs px-2 py-0.5 rounded">1024×1024</span>
+                    <span class="bg-zinc-800 text-zinc-400 text-xs px-2 py-0.5 rounded">Gitee</span>
+                </div>
+            </div>
+            <div class="model-card p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white font-semibold text-sm">FLUX.1-schnell</span>
+                    <span class="bg-green-500/20 text-green-400 text-xs px-2 py-0.5 rounded-full">Free</span>
+                </div>
+                <p class="text-zinc-500 text-xs leading-relaxed">Black Forest Labs' fast model. Generates top-quality images in 1–4 steps.</p>
+                <div class="flex gap-1.5 mt-2 flex-wrap">
+                    <span class="bg-zinc-800 text-zinc-400 text-xs px-2 py-0.5 rounded">1024×1024</span>
+                    <span class="bg-zinc-800 text-zinc-400 text-xs px-2 py-0.5 rounded">Gitee</span>
+                </div>
+            </div>
+            <div class="model-card p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white font-semibold text-sm">FLUX.2-dev</span>
+                    <span class="bg-cyan-500/20 text-cyan-400 text-xs px-2 py-0.5 rounded-full">Premium</span>
+                </div>
+                <p class="text-zinc-500 text-xs leading-relaxed">Next-generation high-quality text-to-image model by Black Forest Labs.</p>
+                <div class="flex gap-1.5 mt-2 flex-wrap">
+                    <span class="bg-zinc-800 text-zinc-400 text-xs px-2 py-0.5 rounded">1024×1024</span>
+                    <span class="bg-zinc-800 text-zinc-400 text-xs px-2 py-0.5 rounded">Moark</span>
+                </div>
+            </div>
+            <div class="model-card p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white font-semibold text-sm">Gemini Flash Image</span>
+                    <span class="bg-purple-500/20 text-purple-400 text-xs px-2 py-0.5 rounded-full">Google</span>
+                </div>
+                <p class="text-zinc-500 text-xs leading-relaxed">Google's Gemini multimodal model with image generation capability.</p>
+                <div class="flex gap-1.5 mt-2 flex-wrap">
+                    <span class="bg-zinc-800 text-zinc-400 text-xs px-2 py-0.5 rounded">Auto size</span>
+                    <span class="bg-zinc-800 text-zinc-400 text-xs px-2 py-0.5 rounded">Gemini API</span>
+                </div>
+            </div>
+            <div class="model-card p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white font-semibold text-sm">CF Flux-2-dev</span>
+                    <span class="bg-orange-500/20 text-orange-400 text-xs px-2 py-0.5 rounded-full">Cloudflare</span>
+                </div>
+                <p class="text-zinc-500 text-xs leading-relaxed">FLUX.2-dev running on Cloudflare Workers AI infrastructure.</p>
+                <div class="flex gap-1.5 mt-2 flex-wrap">
+                    <span class="bg-zinc-800 text-zinc-400 text-xs px-2 py-0.5 rounded">1024×1024</span>
+                    <span class="bg-zinc-800 text-zinc-400 text-xs px-2 py-0.5 rounded">Cloudflare</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav flex">
+        <a href="#" onclick="showSection('generate')" id="nav-generate" class="nav-item active">
+            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Generate
+        </a>
+        <a href="#" onclick="showSection('models')" id="nav-models" class="nav-item">
+            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+            Models
+        </a>
+        <a href="gallery.html" class="nav-item">
+            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Gallery
+        </a>
+        <a href="index.html" class="nav-item">
+            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2"/></svg>
+            Desktop
+        </a>
+    </nav>
+
+    <!-- Terms Modal -->
+    <div id="termsModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:200;overflow-y:auto;padding:20px;">
+        <div style="background:#111;border-radius:16px;max-width:500px;margin:0 auto;overflow:hidden;">
+            <div style="padding:20px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;">
+                <h2 style="color:#fff;font-size:1rem;font-weight:700;margin:0;">Terms of Service</h2>
+                <button onclick="document.getElementById('termsModal').style.display='none'" style="background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:30px;height:30px;color:#fff;font-size:16px;cursor:pointer;">×</button>
+            </div>
+            <div style="padding:20px;color:#a1a1aa;font-size:0.8rem;line-height:1.7;">
+                <p style="color:#71717a;font-size:0.72rem;margin-bottom:12px;">Last Updated: April 5, 2026</p>
+                <p style="margin-bottom:12px;">By using FreeFineAI, you agree to use the service only for lawful purposes. You are prohibited from generating harmful, illegal, or rights-infringing content.</p>
+                <p style="margin-bottom:12px;">FreeFineAI provides services on an "AS IS" basis. Any legal consequences from your use of the service are your sole responsibility.</p>
+                <p>We reserve the right to suspend access for violations of these terms.</p>
+                <div style="margin-top:16px;padding:12px;background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.2);border-radius:8px;color:#22d3ee;font-size:0.75rem;">
+                    Using FreeFineAI means you agree to these terms.
+                </div>
+            </div>
+            <div style="padding:16px;border-top:1px solid rgba(255,255,255,0.08);">
+                <button onclick="document.getElementById('termsModal').style.display='none'" style="width:100%;background:linear-gradient(135deg,#06b6d4,#22d3ee);color:#000;font-weight:700;padding:12px;border:none;border-radius:10px;cursor:pointer;font-size:0.875rem;">I Understand</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://api.freefineai.com/api';
+        const IMG_BASE = 'https://api.freefineai.com';
+
+        let captchaToken = '';
+        let captchaCode = '';
+        let pollInterval = null;
+        let progressVal = 0;
+
+        // Init
+        loadCaptcha();
+        loadUserLimit();
+        loadModels();
+
+        function showSection(name) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('sec-' + name).classList.add('active');
+            document.getElementById('nav-' + name).classList.add('active');
+            return false;
+        }
+
+        function showTermsModal() {
+            document.getElementById('termsModal').style.display = 'block';
+        }
+
+        async function loadCaptcha() {
+            try {
+                const r = await fetch(`${API_BASE}/v1/captcha`);
+                const d = await r.json();
+                captchaToken = d.token;
+                captchaCode = d.code;
+                document.getElementById('captchaDisplay').innerHTML =
+                    `<span class="text-cyan-400 font-bold text-base tracking-widest font-mono">${d.code.split('').join(' ')}</span>`;
+                document.getElementById('captcha').value = '';
+            } catch(e) { console.log('captcha error', e); }
+        }
+
+        async function loadModels() {
+            try {
+                const r = await fetch(`${API_BASE}/v1/models`);
+                const d = await r.json();
+                if (d.success && d.models?.length) {
+                    const sel = document.getElementById('model');
+                    sel.innerHTML = d.models.map(m => `<option value="${m}">${m}</option>`).join('');
+                }
+            } catch(e) {}
+        }
+
+        async function loadUserLimit() {
+            try {
+                const r = await fetch(`${API_BASE}/v1/limit`);
+                const d = await r.json();
+                updateUsage(d.today_usage, d.daily_limit);
+            } catch(e) {}
+        }
+
+        function updateUsage(used, limit) {
+            const wrap = document.getElementById('usageWrap');
+            const text = document.getElementById('usageText');
+            const fill = document.getElementById('usageFill');
+            const btn = document.getElementById('generateBtn');
+            wrap.classList.remove('hidden');
+            text.textContent = `${used} / ${limit}`;
+            const pct = limit > 0 ? Math.min(100, used / limit * 100) : 0;
+            fill.style.width = pct + '%';
+            fill.className = 'usage-fill ' + (pct >= 100 ? 'bg-red-500' : pct >= 70 ? 'bg-yellow-500' : 'bg-cyan-500');
+            if (pct >= 100) {
+                btn.disabled = true;
+                btn.classList.add('opacity-50');
+            }
+        }
+
+        async function generate() {
+            const prompt = document.getElementById('prompt').value.trim();
+            if (!prompt) { showToast('Please enter a prompt'); return; }
+
+            const userCode = document.getElementById('captcha').value.trim().toUpperCase();
+            const [w, h] = document.getElementById('size').value.split('x').map(Number);
+
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+
+            document.getElementById('resultArea').classList.remove('hidden');
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('imageResult').classList.add('hidden');
+            document.getElementById('errorState').classList.add('hidden');
+
+            progressVal = 0;
+            const prog = document.getElementById('progressBar');
+            prog.style.width = '0%';
+            const progTimer = setInterval(() => {
+                progressVal = Math.min(progressVal + Math.random() * 8, 88);
+                prog.style.width = progressVal + '%';
+            }, 600);
+
+            try {
+                const resp = await fetch(`${API_BASE}/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt,
+                        model: document.getElementById('model').value,
+                        width: w, height: h,
+                        captcha_token: captchaToken,
+                        captcha_code: userCode
+                    })
+                });
+
+                if (resp.status === 429) {
+                    const d = await resp.json();
+                    updateUsage(d.today_usage, d.daily_limit);
+                    throw new Error(d.message || 'Daily limit reached');
+                }
+                if (!resp.ok) {
+                    const d = await resp.json();
+                    throw new Error(d.message || 'Generation failed');
+                }
+
+                const data = await resp.json();
+                if (data.today_usage !== undefined) updateUsage(data.today_usage, data.daily_limit);
+
+                clearInterval(progTimer);
+                await pollImage(data.image_id);
+                loadCaptcha();
+            } catch(e) {
+                clearInterval(progTimer);
+                showError(e.message);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function pollImage(id) {
+            const max = 60;
+            for (let i = 0; i < max; i++) {
+                await new Promise(r => setTimeout(r, 2000));
+                try {
+                    const r = await fetch(`${API_BASE}/images/${id}`);
+                    if (r.ok) {
+                        const img = await r.json();
+                        if (img.status === 'completed' && img.image_url) {
+                            showImage(`${IMG_BASE}${img.image_url}`);
+                            return;
+                        }
+                        if (img.status === 'failed') throw new Error('Generation failed. Please try again.');
+                    }
+                } catch(e) {
+                    if (e.message.includes('failed')) throw e;
+                }
+            }
+            throw new Error('Timed out. Please try again.');
+        }
+
+        function showImage(url) {
+            document.getElementById('progressBar').style.width = '100%';
+            setTimeout(() => {
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('imageResult').classList.remove('hidden');
+                document.getElementById('resultImg').src = url;
+                document.getElementById('downloadBtn').href = url;
+                loadUserLimit();
+            }, 300);
+        }
+
+        function showError(msg) {
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+            document.getElementById('errorMsg').textContent = msg;
+        }
+
+        function resetResult() {
+            document.getElementById('resultArea').classList.add('hidden');
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('imageResult').classList.add('hidden');
+            document.getElementById('errorState').classList.add('hidden');
+            loadCaptcha();
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        }
+    </script>
+</body>
+</html>

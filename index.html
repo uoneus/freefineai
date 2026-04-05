@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Auto-redirect mobile devices to mobile.html
+        if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            window.location.replace('mobile.html');
+        }
+    </script>
     <title>FreeFineAI | Free Flux.1 AI Image Generator - No Login Required</title>
     <meta name="description" content="FreeFineAI - Free Flux.1 AI image generator. Create stunning AI art, Flux.1 schnll, Kontext, Krea models. No login, no payment. High-quality text-to-image AI for everyone.">
     <meta name="keywords" content="free AI image generator, Flux.1, free Flux.2, AI art generator, text to image, no login AI, free AI art, Flux schnll, Flux Kontext, Flux Krea, AI image creation, free AI tools, image generator AI">
