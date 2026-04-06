@@ -234,6 +234,17 @@
             </div>
         </div>
 
+        <!-- Daily usage -->
+        <div id="editUsageWrap" class="hidden mb-3">
+            <div class="flex justify-between text-xs text-zinc-500 mb-1.5">
+                <span>Today's usage</span>
+                <span id="editUsageText">0 / 10</span>
+            </div>
+            <div class="usage-bar">
+                <div id="editUsageFill" class="usage-fill bg-cyan-500" style="width:0%"></div>
+            </div>
+        </div>
+
         <!-- Edit button -->
         <button id="editBtn" onclick="startMobileEdit()"
             class="btn-primary w-full text-black font-bold py-3.5 rounded-xl text-sm uppercase tracking-wider flex items-center justify-center gap-2 mb-4">
@@ -779,6 +790,22 @@
                     `<span class="text-cyan-400 font-bold text-base tracking-widest font-mono">${d.code.split('').join(' ')}</span>`;
                 document.getElementById('editCaptcha').value = '';
             } catch(e) {}
+            // Also refresh usage
+            loadEditUsage();
+        }
+
+        async function loadEditUsage() {
+            try {
+                const headers = mAuthToken ? { 'Authorization': 'Bearer ' + mAuthToken } : {};
+                const r = await fetch(`${API_BASE}/v1/limit`, { headers });
+                const d = await r.json();
+                if (d.today_usage !== undefined) {
+                    document.getElementById('editUsageWrap').classList.remove('hidden');
+                    document.getElementById('editUsageText').textContent = `${d.today_usage} / ${d.daily_limit}`;
+                    document.getElementById('editUsageFill').style.width =
+                        Math.min(100, (d.today_usage / d.daily_limit) * 100) + '%';
+                }
+            } catch(e) {}
         }
 
         async function loadEditModels() {
@@ -877,6 +904,12 @@
                 const d = await r.json();
                 if (d.image_id) {
                     editPollResult(d.image_id);
+                    if (d.today_usage !== undefined) {
+                        document.getElementById('editUsageWrap').classList.remove('hidden');
+                        document.getElementById('editUsageText').textContent = `${d.today_usage} / ${d.daily_limit}`;
+                        document.getElementById('editUsageFill').style.width =
+                            Math.min(100, (d.today_usage / d.daily_limit) * 100) + '%';
+                    }
                 } else {
                     clearInterval(editProgressInterval);
                     document.getElementById('editLoadingState').classList.add('hidden');
