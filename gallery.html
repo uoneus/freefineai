@@ -28,6 +28,14 @@
         body { position: relative; }
         nav, header, section, footer { position: relative; z-index: 2; }
     </style>
+    <script>
+    fetch('https://api.robotai.my/api/v1/public/config').then(r=>r.json()).then(d=>{
+        if(d.config&&d.config.seo_json_ld){
+            var s=document.createElement('script');s.type='application/ld+json';
+            s.textContent=d.config.seo_json_ld;document.head.appendChild(s);
+        }
+    }).catch(()=>{});
+    </script>
 </head>
 
 <body>

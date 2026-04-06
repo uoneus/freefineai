@@ -20,22 +20,6 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://freefineai.com/">
     <meta name="twitter:card" content="summary_large_image">
-    <!-- Structured Data for SEO -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "FreeFineAI",
-        "url": "https://freefineai.com/",
-        "description": "Free Flux.1 AI image generator. Create stunning AI art without login.",
-        "keywords": "free AI image generator, Flux.1, AI art, text to image, free Flux.2",
-        "potentialAction": {
-            "@type": "SearchAction",
-            "target": "https://freefineai.com/?q={search_term_string}",
-            "query-input": "required name=search_term_string"
-        }
-    }
-    </script>
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -75,6 +59,14 @@
         .ad-popup-close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 50%; color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
         .ad-popup-close:hover { background: rgba(255,255,255,0.2); }
     </style>
+    <script>
+    fetch('https://api.robotai.my/api/v1/public/config').then(r=>r.json()).then(d=>{
+        if(d.config&&d.config.seo_json_ld){
+            var s=document.createElement('script');s.type='application/ld+json';
+            s.textContent=d.config.seo_json_ld;document.head.appendChild(s);
+        }
+    }).catch(()=>{});
+    </script>
 </head>
 
 <!-- Google tag (gtag.js) -->
