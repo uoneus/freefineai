@@ -394,11 +394,11 @@ async function refreshCaptcha() {
     } catch(e) { console.log('Captcha load failed:', e); }
 }
 
-// Models
+// Models — only img2img endpoints
 async function loadModels() {
     try {
         const headers = authToken ? { 'Authorization': 'Bearer ' + authToken } : {};
-        const r = await fetch(`${API_BASE_URL}/v1/models`, { headers });
+        const r = await fetch(`${API_BASE_URL}/v1/img2img/models`, { headers });
         const d = await r.json();
         if (d.success && d.models && d.models.length > 0) {
             const sel = document.getElementById('model');
