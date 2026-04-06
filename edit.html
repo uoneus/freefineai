@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeFineAI | AI Image Editor - Edit Images with AI</title>
+    <meta name="description" content="FreeFineAI Image Editor - Upload an image and use AI to modify, restyle, or transform it. Powered by Flux.1 Kontext.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { background-color: #050505; color: #a1a1aa; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+        .nav-glass { background: rgba(5,5,5,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .gradient-text { background: linear-gradient(135deg, #06b6d4 0%, #a78bfa 50%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .btn-primary { background: linear-gradient(135deg, #06b6d4, #dceaed); transition: all 0.3s ease; }
+        .btn-primary:hover { box-shadow: 0 8px 30px rgba(6,182,212,0.4); transform: translateY(-2px); }
+        .size-preset-btn.active { background: rgba(6,182,212,0.2); border-color: #06b6d4; color: #22d3ee; }
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        nav, header, section, footer { position: relative; z-index: 2; }
+        /* Upload drop zone */
+        .drop-zone { border: 2px dashed rgba(6,182,212,0.4); transition: all 0.3s; }
+        .drop-zone:hover, .drop-zone.drag-over { border-color: #06b6d4; background: rgba(6,182,212,0.05); }
+        .drop-zone.has-image { border-style: solid; border-color: rgba(6,182,212,0.6); }
+    </style>
+</head>
+<body class="min-h-screen">
+<canvas id="particle-canvas"></canvas>
+
+<!-- Navigation -->
+<nav class="fixed top-0 w-full z-50 nav-glass">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="index.html" class="text-white font-black text-xl tracking-tight">FREEFINE<span class="text-cyan-400">AI</span></a>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+            <a href="index.html" class="text-zinc-400 hover:text-white transition">Home</a>
+            <a href="edit.html" class="text-white hover:text-cyan-400 transition">Image Editor</a>
+            <a href="gallery.html" class="text-zinc-400 hover:text-white transition">Gallery</a>
+            <a href="about.html" class="text-zinc-400 hover:text-white transition">About</a>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="loginNavBtn" onclick="showAuthModal('login')" class="btn-primary text-black font-bold text-sm px-5 py-2 rounded-lg">Sign In</button>
+            <div id="userNavInfo" class="hidden items-center gap-2">
+                <span id="navUsername" class="text-white text-sm font-medium"></span>
+                <span id="navRole" class="text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400"></span>
+                <button onclick="logout()" class="text-zinc-400 hover:text-white text-xs ml-1">Sign Out</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Auth Modal -->
+<div id="authModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9997;align-items:center;justify-content:center;">
+    <div style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:20px;width:90%;max-width:420px;overflow:hidden;">
+        <div style="display:flex;border-bottom:1px solid rgba(255,255,255,0.08);">
+            <button id="tabLogin" onclick="switchTab('login')" style="flex:1;padding:16px;background:rgba(6,182,212,0.1);color:#22d3ee;font-weight:700;font-size:0.875rem;border:none;cursor:pointer;border-bottom:2px solid #06b6d4;">Sign In</button>
+            <button id="tabRegister" onclick="switchTab('register')" style="flex:1;padding:16px;background:transparent;color:#71717a;font-weight:600;font-size:0.875rem;border:none;cursor:pointer;border-bottom:2px solid transparent;">Register</button>
+        </div>
+        <div id="loginForm" style="padding:24px;">
+            <div style="margin-bottom:12px;"><label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Username or Email</label>
+                <input type="text" id="loginUsername" placeholder="Enter username or email" style="width:100%;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;"></div>
+            <div style="margin-bottom:16px;"><label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter password" style="width:100%;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;"></div>
+            <div id="loginError" style="display:none;color:#f87171;font-size:0.8rem;margin-bottom:12px;padding:10px;background:rgba(239,68,68,0.1);border-radius:8px;"></div>
+            <button onclick="doLogin()" style="width:100%;background:linear-gradient(135deg,#06b6d4,#22d3ee);color:#000;font-weight:700;padding:12px;border:none;border-radius:10px;cursor:pointer;font-size:0.875rem;">Sign In</button>
+        </div>
+        <div id="registerForm" style="padding:24px;display:none;">
+            <div style="margin-bottom:12px;"><label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Username</label>
+                <input type="text" id="regUsername" placeholder="3-20 characters" style="width:100%;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;"></div>
+            <div style="margin-bottom:12px;"><label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Email</label>
+                <div style="display:flex;gap:8px;">
+                    <input type="email" id="regEmail" placeholder="your@email.com" style="flex:1;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;">
+                    <button onclick="sendEmailCode()" id="sendCodeBtn" style="background:#18181b;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#06b6d4;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;">Send Code</button>
+                </div></div>
+            <div style="margin-bottom:12px;"><label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Verification Code</label>
+                <input type="text" id="regCode" placeholder="6-digit code" maxlength="6" style="width:100%;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;letter-spacing:4px;"></div>
+            <div style="margin-bottom:16px;"><label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Password</label>
+                <input type="password" id="regPassword" placeholder="At least 6 characters" style="width:100%;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;"></div>
+            <div id="regError" style="display:none;color:#f87171;font-size:0.8rem;margin-bottom:12px;padding:10px;background:rgba(239,68,68,0.1);border-radius:8px;"></div>
+            <div id="regSuccess" style="display:none;color:#4ade80;font-size:0.8rem;margin-bottom:12px;padding:10px;background:rgba(74,222,128,0.1);border-radius:8px;"></div>
+            <button onclick="doRegister()" style="width:100%;background:linear-gradient(135deg,#06b6d4,#22d3ee);color:#000;font-weight:700;padding:12px;border:none;border-radius:10px;cursor:pointer;font-size:0.875rem;">Create Account</button>
+        </div>
+        <button onclick="closeAuthModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#71717a;font-size:20px;cursor:pointer;">×</button>
+    </div>
+</div>
+
+<!-- Hero -->
+<header class="pt-40 pb-10 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+        <h1 class="text-5xl md:text-6xl font-black text-white mb-6 tracking-tight leading-tight">
+            AI Image <span class="gradient-text">Editor</span>
+        </h1>
+        <p class="text-zinc-400 text-lg max-w-2xl mx-auto mb-6 leading-relaxed">
+            Upload any image, describe what you want to change, and let AI transform it.
+        </p>
+    </div>
+</header>
+
+<!-- Image Editor Section -->
+<section class="py-10 px-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 md:p-8">
+            <div class="grid md:grid-cols-2 gap-8">
+
+                <!-- Left: Controls -->
+                <div class="space-y-4">
+
+                    <!-- Upload Area -->
+                    <div>
+                        <label class="block text-white font-medium text-sm mb-2">Reference Image</label>
+                        <div id="dropZone" class="drop-zone rounded-xl p-6 text-center cursor-pointer relative" onclick="document.getElementById('fileInput').click()">
+                            <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+                            <div id="uploadPlaceholder">
+                                <svg class="w-10 h-10 mx-auto text-zinc-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="text-zinc-400 text-sm font-medium">Click or drag & drop an image</p>
+                                <p class="text-zinc-600 text-xs mt-1">PNG, JPG, WEBP — max 10MB</p>
+                            </div>
+                            <div id="uploadPreview" class="hidden">
+                                <img id="uploadedThumb" src="" alt="Preview" class="max-h-40 mx-auto rounded-lg object-contain">
+                                <p id="uploadedName" class="text-zinc-400 text-xs mt-2 truncate"></p>
+                                <button onclick="clearUpload(event)" class="mt-2 text-red-400 hover:text-red-300 text-xs">✕ Remove</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prompt -->
+                    <div>
+                        <label class="block text-white font-medium text-sm mb-2">Edit Instruction</label>
+                        <textarea id="prompt" rows="4"
+                            class="w-full bg-zinc-800/50 border border-zinc-700 rounded-xl px-4 py-3 text-white text-sm placeholder-zinc-500 focus:outline-none focus:border-cyan-500 transition resize-none"
+                            placeholder="Describe what you want to change, e.g. 'Change the background to a snowy mountain'..."></textarea>
+                    </div>
+
+                    <!-- Size Presets -->
+                    <div>
+                        <label class="block text-white font-medium text-xs mb-2">Output Size</label>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="setSize(768,1344)" class="size-preset-btn bg-zinc-800/50 border border-zinc-700 hover:border-cyan-500 rounded-lg px-3 py-2 text-xs text-zinc-300 transition">📱 Vertical<br><span class="text-zinc-500">768×1344</span></button>
+                            <button type="button" onclick="setSize(1024,1024)" class="size-preset-btn active bg-cyan-500/20 border border-cyan-500 rounded-lg px-3 py-2 text-xs text-cyan-400 transition">⬜ Square<br><span class="text-cyan-300">1024×1024</span></button>
+                            <button type="button" onclick="setSize(1920,1080)" class="size-preset-btn bg-zinc-800/50 border border-zinc-700 hover:border-cyan-500 rounded-lg px-3 py-2 text-xs text-zinc-300 transition">🖥️ HD<br><span class="text-zinc-500">1920×1080</span></button>
+                            <button type="button" onclick="setSize(1536,1536)" class="size-preset-btn bg-zinc-800/50 border border-zinc-700 hover:border-cyan-500 rounded-lg px-3 py-2 text-xs text-zinc-300 transition">🖼️ Large<br><span class="text-zinc-500">1536×1536</span></button>
+                        </div>
+                    </div>
+
+                    <!-- Model + Size selects -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-white font-medium text-xs mb-1">Model</label>
+                            <select id="model" class="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500 transition appearance-none cursor-pointer">
+                                <option value="FLUX.1-Kontext-dev">FLUX.1-Kontext-dev</option>
+                                <option value="FLUX.1-Dev">FLUX.1-Dev</option>
+                                <option value="Kolors">Kolors</option>
+                                <option value="HiDream-E1-Full">HiDream-E1-Full</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-white font-medium text-xs mb-1">Width</label>
+                            <select id="width" class="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500 transition appearance-none cursor-pointer">
+                                <option value="768">768px</option>
+                                <option value="1024" selected>1024px</option>
+                                <option value="1344">1344px</option>
+                                <option value="1536">1536px</option>
+                                <option value="1920">1920px</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-white font-medium text-xs mb-1">Height</label>
+                            <select id="height" class="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500 transition appearance-none cursor-pointer">
+                                <option value="768">768px</option>
+                                <option value="1024" selected>1024px</option>
+                                <option value="1344">1344px</option>
+                                <option value="1536">1536px</option>
+                                <option value="1080">1080px</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Captcha -->
+                    <div class="flex items-center gap-3">
+                        <div class="flex-1">
+                            <label class="block text-white font-medium text-xs mb-1">Verification Code</label>
+                            <input type="text" id="captcha" placeholder="Enter code"
+                                class="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-cyan-500 transition uppercase" maxlength="4">
+                        </div>
+                        <div id="captchaDisplay" class="bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2.5 cursor-pointer select-none" onclick="refreshCaptcha()">
+                            <span class="text-cyan-400 font-bold text-lg tracking-wider" style="font-family:monospace;">ABCD</span>
+                        </div>
+                        <button type="button" onclick="refreshCaptcha()" class="text-zinc-500 hover:text-white transition p-2" title="Refresh">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- Generate Button -->
+                    <div class="flex items-center gap-3 pt-2">
+                        <button id="editBtn" onclick="startEdit()"
+                            class="btn-primary text-black font-bold px-6 py-3 rounded-xl text-sm uppercase tracking-wider flex items-center gap-2 flex-1 justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            Edit Image
+                        </button>
+                        <button type="button" onclick="resetEditor()" class="bg-zinc-700 hover:bg-zinc-600 text-white font-medium px-4 py-3 rounded-xl text-xs transition">Reset</button>
+                    </div>
+
+                    <div id="statusText" class="text-zinc-500 text-xs hidden"></div>
+
+                    <!-- Daily usage -->
+                    <div id="dailyLimitBar" class="hidden">
+                        <div class="flex justify-between text-xs text-zinc-500 mb-1">
+                            <span>Today's usage</span>
+                            <span id="usageText">0 / 10</span>
+                        </div>
+                        <div class="bg-zinc-700 rounded-full h-1.5">
+                            <div id="usageBar" class="h-1.5 rounded-full bg-cyan-500 transition-all duration-500" style="width:0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Result Preview -->
+                <div>
+                    <div id="previewArea" class="bg-zinc-800/30 rounded-2xl border border-zinc-700/50 aspect-square flex flex-col items-center justify-center p-6">
+                        <div id="defaultPreview" class="text-center">
+                            <svg class="w-16 h-16 mx-auto text-zinc-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            <p class="text-zinc-500 text-sm">Your edited image will appear here</p>
+                        </div>
+                        <div id="loadingState" class="hidden text-center w-full">
+                            <div class="w-12 h-12 mx-auto border-2 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                            <span class="text-zinc-400 text-sm">Editing your image...</span>
+                            <div class="mt-4 bg-zinc-700/30 rounded-xl h-2 overflow-hidden">
+                                <div id="progressBar" class="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl transition-all duration-500" style="width:0%"></div>
+                            </div>
+                        </div>
+                        <div id="resultState" class="hidden w-full h-full flex flex-col">
+                            <div class="flex-1 rounded-xl overflow-hidden border border-zinc-700">
+                                <img id="resultImage" src="" alt="Edited image" class="w-full h-full object-contain bg-zinc-900">
+                            </div>
+                            <div class="flex gap-2 mt-3">
+                                <a id="downloadBtn" href="" download="edited.png" class="bg-cyan-500 hover:bg-cyan-400 text-black font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-2 transition flex-1 justify-center">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                    Download
+                                </a>
+                                <button onclick="resetEditor()" class="bg-zinc-700 hover:bg-zinc-600 text-white font-medium px-4 py-2 rounded-lg text-xs transition">New</button>
+                            </div>
+                        </div>
+                        <div id="errorState" class="hidden text-center w-full">
+                            <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-400 text-sm">
+                                <span id="errorMessage">An error occurred. Please try again.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-12 px-6 border-t border-zinc-800/50 mt-10">
+    <div class="max-w-6xl mx-auto text-center">
+        <a href="index.html" class="inline-block text-white font-black text-lg tracking-tight mb-4">FREEFINE<span class="text-cyan-400">AI</span></a>
+        <p class="text-zinc-500 text-sm">© 2024-2026 FreeFineAI. Premium Flux.1 assets for the creative community.</p>
+    </div>
+</footer>
+
+<!-- Particle Script -->
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+    var canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var particles = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    function Particle() {
+        this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 1.5 + 0.5; this.speedX = Math.random() * 0.3 - 0.15;
+        this.speedY = Math.random() * 0.3 - 0.15; this.opacity = Math.random() * 0.4 + 0.2;
+    }
+    Particle.prototype.update = function() {
+        this.x += this.speedX; this.y += this.speedY;
+        if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+        if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+    };
+    Particle.prototype.draw = function() {
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(6,182,212,' + this.opacity + ')'; ctx.fill();
+    };
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(function(p) { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+    }
+    resize(); window.addEventListener('resize', resize);
+    for (var i = 0; i < 120; i++) particles.push(new Particle());
+    animate();
+});
+</script>
+
+<script>
+const API_BASE_URL = 'https://api.robotai.my/api';
+const IMAGE_BASE_URL = 'https://api.robotai.my';
+
+let authToken = localStorage.getItem('userToken') || '';
+let authUser = JSON.parse(localStorage.getItem('userInfo') || 'null');
+let captchaToken = '';
+let uploadedImageBase64 = '';
+let currentWidth = 1024, currentHeight = 1024;
+let pollingTimer = null;
+
+// Auth UI
+function updateAuthUI() {
+    if (authUser) {
+        document.getElementById('loginNavBtn').classList.add('hidden');
+        const info = document.getElementById('userNavInfo');
+        info.classList.remove('hidden'); info.classList.add('flex');
+        document.getElementById('navUsername').textContent = authUser.username || '';
+        document.getElementById('navRole').textContent = authUser.role || 'member';
+    } else {
+        document.getElementById('loginNavBtn').classList.remove('hidden');
+        document.getElementById('userNavInfo').classList.add('hidden');
+    }
+}
+updateAuthUI();
+
+function showAuthModal(tab) {
+    document.getElementById('authModal').style.display = 'flex';
+    switchTab(tab || 'login');
+}
+function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
+function switchTab(tab) {
+    document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+    document.getElementById('tabLogin').style.borderBottomColor = tab === 'login' ? '#06b6d4' : 'transparent';
+    document.getElementById('tabRegister').style.borderBottomColor = tab === 'register' ? '#06b6d4' : 'transparent';
+}
+async function doLogin() {
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+    const errEl = document.getElementById('loginError');
+    try {
+        const r = await fetch(`${API_BASE_URL}/v1/user/login`, {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({username, password})
+        });
+        const d = await r.json();
+        if (d.success) {
+            authToken = d.token; authUser = d.user;
+            localStorage.setItem('userToken', authToken);
+            localStorage.setItem('userInfo', JSON.stringify(authUser));
+            closeAuthModal(); updateAuthUI(); loadUserLimit();
+        } else { errEl.textContent = d.message || 'Login failed'; errEl.style.display = 'block'; }
+    } catch(e) { errEl.textContent = 'Connection error'; errEl.style.display = 'block'; }
+}
+async function sendEmailCode() {
+    const email = document.getElementById('regEmail').value;
+    if (!email) return;
+    const btn = document.getElementById('sendCodeBtn');
+    btn.disabled = true; btn.textContent = '60s';
+    let t = 60;
+    const iv = setInterval(() => { t--; btn.textContent = t + 's'; if (t <= 0) { clearInterval(iv); btn.disabled = false; btn.textContent = 'Send Code'; } }, 1000);
+    await fetch(`${API_BASE_URL}/v1/user/send-code`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email}) });
+}
+async function doRegister() {
+    const username = document.getElementById('regUsername').value;
+    const email = document.getElementById('regEmail').value;
+    const code = document.getElementById('regCode').value;
+    const password = document.getElementById('regPassword').value;
+    const errEl = document.getElementById('regError');
+    const okEl = document.getElementById('regSuccess');
+    try {
+        const r = await fetch(`${API_BASE_URL}/v1/user/register`, {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({username, email, code, password})
+        });
+        const d = await r.json();
+        if (d.success) { okEl.textContent = 'Registered! Please sign in.'; okEl.style.display = 'block'; errEl.style.display = 'none'; setTimeout(() => switchTab('login'), 1500); }
+        else { errEl.textContent = d.message || 'Registration failed'; errEl.style.display = 'block'; }
+    } catch(e) { errEl.textContent = 'Connection error'; errEl.style.display = 'block'; }
+}
+function logout() {
+    authToken = ''; authUser = null;
+    localStorage.removeItem('userToken'); localStorage.removeItem('userInfo');
+    updateAuthUI();
+}
+
+// Captcha
+async function refreshCaptcha() {
+    try {
+        const r = await fetch(`${API_BASE_URL}/v1/captcha`);
+        const d = await r.json();
+        if (d.token) {
+            captchaToken = d.token;
+            document.getElementById('captchaDisplay').innerHTML =
+                `<span class="text-cyan-400 font-bold text-lg tracking-wider" style="font-family:monospace;">${d.code}</span>`;
+        }
+    } catch(e) {}
+}
+refreshCaptcha();
+
+// Size presets
+function setSize(w, h) {
+    currentWidth = w; currentHeight = h;
+    document.getElementById('width').value = w;
+    document.getElementById('height').value = h;
+    document.querySelectorAll('.size-preset-btn').forEach(btn => {
+        btn.className = btn.className.replace('active bg-cyan-500/20 border-cyan-500 text-cyan-400', '');
+        btn.classList.add('bg-zinc-800/50', 'border-zinc-700', 'text-zinc-300');
+    });
+    event.currentTarget.classList.remove('bg-zinc-800/50', 'border-zinc-700', 'text-zinc-300');
+    event.currentTarget.classList.add('active', 'bg-cyan-500/20', 'border-cyan-500', 'text-cyan-400');
+}
+
+// File upload
+function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) { alert('Image too large. Max 10MB.'); return; }
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        uploadedImageBase64 = ev.target.result; // full data URL
+        document.getElementById('uploadedThumb').src = uploadedImageBase64;
+        document.getElementById('uploadedName').textContent = file.name;
+        document.getElementById('uploadPlaceholder').classList.add('hidden');
+        document.getElementById('uploadPreview').classList.remove('hidden');
+        document.getElementById('dropZone').classList.add('has-image');
+    };
+    reader.readAsDataURL(file);
+}
+function clearUpload(e) {
+    e.stopPropagation();
+    uploadedImageBase64 = '';
+    document.getElementById('fileInput').value = '';
+    document.getElementById('uploadPlaceholder').classList.remove('hidden');
+    document.getElementById('uploadPreview').classList.add('hidden');
+    document.getElementById('dropZone').classList.remove('has-image');
+}
+
+// Drag & drop
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const dt = new DataTransfer(); dt.items.add(file);
+        document.getElementById('fileInput').files = dt.files;
+        handleFileSelect({ target: { files: dt.files } });
+    }
+});
+
+// Daily limit
+async function loadUserLimit() {
+    try {
+        const headers = authToken ? { 'Authorization': 'Bearer ' + authToken } : {};
+        const r = await fetch(`${API_BASE_URL}/v1/limit`, { headers });
+        const d = await r.json();
+        if (d.today_usage !== undefined) {
+            const bar = document.getElementById('dailyLimitBar');
+            bar.classList.remove('hidden');
+            document.getElementById('usageText').textContent = `${d.today_usage} / ${d.daily_limit}`;
+            document.getElementById('usageBar').style.width = Math.min(100, (d.today_usage / d.daily_limit) * 100) + '%';
+        }
+    } catch(e) {}
+}
+loadUserLimit();
+
+// Main edit function
+async function startEdit() {
+    if (!uploadedImageBase64) { alert('Please upload an image first.'); return; }
+    const prompt = document.getElementById('prompt').value.trim();
+    if (!prompt) { alert('Please enter an edit instruction.'); return; }
+    const captchaCode = document.getElementById('captcha').value.trim();
+    if (!captchaCode) { alert('Please enter the verification code.'); return; }
+
+    const model = document.getElementById('model').value;
+    const width = parseInt(document.getElementById('width').value);
+    const height = parseInt(document.getElementById('height').value);
+
+    showState('loading');
+    document.getElementById('editBtn').disabled = true;
+    animateProgress();
+
+    try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
+
+        const r = await fetch(`${API_BASE_URL}/v1/img2img`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+                prompt,
+                image_url: uploadedImageBase64,
+                model,
+                width,
+                height,
+                captcha_token: captchaToken,
+                captcha_code: captchaCode.toUpperCase()
+            })
+        });
+        const d = await r.json();
+
+        if (d.image_id) {
+            pollResult(d.image_id);
+            if (d.today_usage !== undefined) {
+                document.getElementById('usageText').textContent = `${d.today_usage} / ${d.daily_limit}`;
+                document.getElementById('usageBar').style.width = Math.min(100, (d.today_usage / d.daily_limit) * 100) + '%';
+                document.getElementById('dailyLimitBar').classList.remove('hidden');
+            }
+        } else {
+            showError(d.message || 'Failed to start editing.');
+            document.getElementById('editBtn').disabled = false;
+            refreshCaptcha();
+        }
+    } catch(e) {
+        showError('Connection error. Please try again.');
+        document.getElementById('editBtn').disabled = false;
+        refreshCaptcha();
+    }
+}
+
+function pollResult(imageId) {
+    let attempts = 0;
+    pollingTimer = setInterval(async () => {
+        attempts++;
+        if (attempts > 120) { clearInterval(pollingTimer); showError('Timeout. Please try again.'); document.getElementById('editBtn').disabled = false; return; }
+        try {
+            const r = await fetch(`${IMAGE_BASE_URL}/api/v1/images/${imageId}`);
+            const d = await r.json();
+            if (d.status === 'completed' && d.image_url) {
+                clearInterval(pollingTimer);
+                const fullURL = IMAGE_BASE_URL + d.image_url;
+                document.getElementById('resultImage').src = fullURL;
+                document.getElementById('downloadBtn').href = fullURL;
+                showState('result');
+                document.getElementById('editBtn').disabled = false;
+            } else if (d.status === 'failed') {
+                clearInterval(pollingTimer);
+                showError('Editing failed. Please try again.');
+                document.getElementById('editBtn').disabled = false;
+                refreshCaptcha();
+            }
+        } catch(e) {}
+    }, 2000);
+}
+
+let progressInterval = null;
+function animateProgress() {
+    let p = 0;
+    const bar = document.getElementById('progressBar');
+    if (progressInterval) clearInterval(progressInterval);
+    progressInterval = setInterval(() => {
+        p = p < 85 ? p + (Math.random() * 3) : p + 0.1;
+        if (p > 95) p = 95;
+        bar.style.width = p + '%';
+    }, 800);
+}
+
+function showState(state) {
+    ['defaultPreview','loadingState','resultState','errorState'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+    });
+    if (state === 'loading') document.getElementById('loadingState').classList.remove('hidden');
+    else if (state === 'result') { document.getElementById('resultState').classList.remove('hidden'); if (progressInterval) clearInterval(progressInterval); document.getElementById('progressBar').style.width = '100%'; }
+    else if (state === 'error') document.getElementById('errorState').classList.remove('hidden');
+    else document.getElementById('defaultPreview').classList.remove('hidden');
+}
+function showError(msg) {
+    document.getElementById('errorMessage').textContent = msg;
+    showState('error');
+}
+function resetEditor() {
+    if (pollingTimer) clearInterval(pollingTimer);
+    if (progressInterval) clearInterval(progressInterval);
+    document.getElementById('editBtn').disabled = false;
+    document.getElementById('prompt').value = '';
+    document.getElementById('captcha').value = '';
+    clearUpload({ stopPropagation: () => {} });
+    showState('default');
+    refreshCaptcha();
+}
+
+// Visitor tracking
+(function() {
+    const ua = navigator.userAgent;
+    let dt = 'Desktop', os = 'Unknown', br = 'Unknown';
+    if (/Mobile|Android|iPhone/i.test(ua)) dt = 'Mobile';
+    else if (/Tablet|iPad/i.test(ua)) dt = 'Tablet';
+    if (/Windows/i.test(ua)) os = 'Windows';
+    else if (/Android/i.test(ua)) os = 'Android';
+    else if (/iPhone|iPad|iPod/i.test(ua)) os = 'iOS';
+    else if (/Mac OS X/i.test(ua)) os = 'macOS';
+    else if (/Linux/i.test(ua)) os = 'Linux';
+    if (/Edg\//i.test(ua)) br = 'Edge';
+    else if (/Chrome\//i.test(ua)) br = 'Chrome';
+    else if (/Firefox\//i.test(ua)) br = 'Firefox';
+    else if (/Safari\//i.test(ua)) br = 'Safari';
+    fetch(`${API_BASE_URL}/v1/track`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({device_type: dt, os, browser: br})
+    }).catch(()=>{});
+})();
+</script>
+</body>
+</html>
