@@ -673,9 +673,11 @@
             }, 600);
 
             try {
+                const reqHeaders = { 'Content-Type': 'application/json' };
+                if (mAuthToken) reqHeaders['Authorization'] = `Bearer ${mAuthToken}`;
                 const resp = await fetch(`${API_BASE}/generate`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: reqHeaders,
                     body: JSON.stringify({
                         prompt,
                         model: document.getElementById('model').value,
