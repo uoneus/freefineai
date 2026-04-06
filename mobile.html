@@ -800,10 +800,23 @@
                 const r = await fetch(`${API_BASE}/v1/limit`, { headers });
                 const d = await r.json();
                 if (d.today_usage !== undefined) {
-                    document.getElementById('editUsageWrap').classList.remove('hidden');
-                    document.getElementById('editUsageText').textContent = `${d.today_usage} / ${d.daily_limit}`;
-                    document.getElementById('editUsageFill').style.width =
-                        Math.min(100, (d.today_usage / d.daily_limit) * 100) + '%';
+                    const wrap = document.getElementById('editUsageWrap');
+                    const text = document.getElementById('editUsageText');
+                    const fill = document.getElementById('editUsageFill');
+                    const btn  = document.getElementById('editBtn');
+                    wrap.classList.remove('hidden');
+                    const roleLabel = d.role === 'vip' ? ' · VIP' : d.role === 'member' ? ' · Member' : ' · Guest';
+                    text.textContent = `${d.today_usage} / ${d.daily_limit}${roleLabel}`;
+                    const pct = d.daily_limit > 0 ? Math.min(100, d.today_usage / d.daily_limit * 100) : 0;
+                    fill.style.width = pct + '%';
+                    fill.className = 'usage-fill ' + (pct >= 100 ? 'bg-red-500' : pct >= 70 ? 'bg-yellow-500' : 'bg-cyan-500');
+                    if (pct >= 100) {
+                        btn.disabled = true;
+                        btn.classList.add('opacity-50');
+                    } else {
+                        btn.disabled = false;
+                        btn.classList.remove('opacity-50');
+                    }
                 }
             } catch(e) {}
         }
@@ -905,10 +918,15 @@
                 if (d.image_id) {
                     editPollResult(d.image_id);
                     if (d.today_usage !== undefined) {
-                        document.getElementById('editUsageWrap').classList.remove('hidden');
-                        document.getElementById('editUsageText').textContent = `${d.today_usage} / ${d.daily_limit}`;
-                        document.getElementById('editUsageFill').style.width =
-                            Math.min(100, (d.today_usage / d.daily_limit) * 100) + '%';
+                        const wrap = document.getElementById('editUsageWrap');
+                        const text = document.getElementById('editUsageText');
+                        const fill = document.getElementById('editUsageFill');
+                        wrap.classList.remove('hidden');
+                        const roleLabel = d.role === 'vip' ? ' · VIP' : d.role === 'member' ? ' · Member' : ' · Guest';
+                        text.textContent = `${d.today_usage} / ${d.daily_limit}${roleLabel}`;
+                        const pct = d.daily_limit > 0 ? Math.min(100, d.today_usage / d.daily_limit * 100) : 0;
+                        fill.style.width = pct + '%';
+                        fill.className = 'usage-fill ' + (pct >= 100 ? 'bg-red-500' : pct >= 70 ? 'bg-yellow-500' : 'bg-cyan-500');
                     }
                 } else {
                     clearInterval(editProgressInterval);
