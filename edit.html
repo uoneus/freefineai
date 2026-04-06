@@ -120,6 +120,16 @@
                                 <p id="uploadedName" class="text-zinc-400 text-xs mt-2 truncate"></p>
                                 <button onclick="clearUpload(event)" class="mt-2 text-red-400 hover:text-red-300 text-xs">✕ Remove</button>
                             </div>
+                            <!-- Upload progress -->
+                            <div id="uploadProgress" class="hidden mt-3">
+                                <div class="flex justify-between text-xs text-zinc-500 mb-1">
+                                    <span>Reading image...</span>
+                                    <span id="uploadPct">0%</span>
+                                </div>
+                                <div class="bg-zinc-700 rounded-full h-1.5 overflow-hidden">
+                                    <div id="uploadBar" class="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full transition-all duration-200" style="width:0%"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -438,13 +448,37 @@ function handleFileSelect(e) {
     if (!file) return;
     if (file.size > 10 * 1024 * 1024) { alert('Image too large. Max 10MB.'); return; }
     const reader = new FileReader();
+
+    // Show progress bar
+    const progressWrap = document.getElementById('uploadProgress');
+    const bar = document.getElementById('uploadBar');
+    const pct = document.getElementById('uploadPct');
+    progressWrap.classList.remove('hidden');
+    document.getElementById('uploadPlaceholder').classList.add('hidden');
+
+    reader.onprogress = function(ev) {
+        if (ev.lengthComputable) {
+            const p = Math.round((ev.loaded / ev.total) * 100);
+            bar.style.width = p + '%';
+            pct.textContent = p + '%';
+        }
+    };
     reader.onload = function(ev) {
-        uploadedImageBase64 = ev.target.result; // full data URL
-        document.getElementById('uploadedThumb').src = uploadedImageBase64;
-        document.getElementById('uploadedName').textContent = file.name;
-        document.getElementById('uploadPlaceholder').classList.add('hidden');
-        document.getElementById('uploadPreview').classList.remove('hidden');
-        document.getElementById('dropZone').classList.add('has-image');
+        bar.style.width = '100%';
+        pct.textContent = '100%';
+        setTimeout(() => {
+            progressWrap.classList.add('hidden');
+            uploadedImageBase64 = ev.target.result;
+            document.getElementById('uploadedThumb').src = uploadedImageBase64;
+            document.getElementById('uploadedName').textContent = file.name;
+            document.getElementById('uploadPreview').classList.remove('hidden');
+            document.getElementById('dropZone').classList.add('has-image');
+        }, 300);
+    };
+    reader.onerror = function() {
+        progressWrap.classList.add('hidden');
+        document.getElementById('uploadPlaceholder').classList.remove('hidden');
+        alert('Failed to read image.');
     };
     reader.readAsDataURL(file);
 }
@@ -454,6 +488,8 @@ function clearUpload(e) {
     document.getElementById('fileInput').value = '';
     document.getElementById('uploadPlaceholder').classList.remove('hidden');
     document.getElementById('uploadPreview').classList.add('hidden');
+    document.getElementById('uploadProgress').classList.add('hidden');
+    document.getElementById('uploadBar').style.width = '0%';
     document.getElementById('dropZone').classList.remove('has-image');
 }
 
