@@ -573,6 +573,8 @@
         loadCaptcha();
         loadUserLimit();
         loadModels();
+        loadEditCaptcha();
+        loadEditModels();
 
         function showSection(name) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -580,7 +582,7 @@
             document.getElementById('sec-' + name).classList.add('active');
             const navEl = document.getElementById('nav-' + name);
             if (navEl) navEl.classList.add('active');
-            if (name === 'edit') { loadEditCaptcha(); loadEditModels(); }
+            if (name === 'edit') { loadEditUsage(); }
             return false;
         }
 
