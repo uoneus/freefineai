@@ -716,7 +716,10 @@
                             showImage(`${IMG_BASE}${img.image_url}`);
                             return;
                         }
-                        if (img.status === 'failed') throw new Error('Generation failed. Please try again.');
+                        if (img.status === 'failed') {
+                            const msg = img.error_message || 'This model is in high demand right now. Please try a different model or come back later.';
+                            throw new Error(msg);
+                        }
                     }
                 } catch(e) {
                     if (e.message.includes('failed')) throw e;
@@ -955,7 +958,7 @@
                         clearInterval(editPollingTimer); clearInterval(editProgressInterval);
                         document.getElementById('editLoadingState').classList.add('hidden');
                         document.getElementById('editErrorState').classList.remove('hidden');
-                        document.getElementById('editErrorMsg').textContent = 'Editing failed. Please try again.';
+                        document.getElementById('editErrorMsg').textContent = d.error_message || 'This model is in high demand right now. Please try a different model or come back later.';
                         document.getElementById('editBtn').disabled = false;
                         loadEditCaptcha();
                     }

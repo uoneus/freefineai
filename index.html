@@ -992,16 +992,20 @@
         initAuthUI();
 
         // Load and display daily usage limit
-        async function loadUserLimit() {
+        async function loadUserLimit(retries = 3) {
             try {
                 const headers = {};
                 if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
                 const res = await fetch(`${API_BASE_URL}/v1/limit`, { headers });
+                if (res.status === 429 && retries > 0) {
+                    setTimeout(() => loadUserLimit(retries - 1), 2000);
+                    return;
+                }
                 if (!res.ok) return;
                 const data = await res.json();
                 updateUsageBar(data.today_usage, data.daily_limit, data.role);
             } catch (e) {
-                console.log('Failed to load limit:', e);
+                if (retries > 0) setTimeout(() => loadUserLimit(retries - 1), 2000);
             }
         }
 
@@ -1185,11 +1189,15 @@
         refreshCaptcha();
 
         // Load available models from backend
-        async function loadModels() {
+        async function loadModels(retries = 3) {
             try {
                 const headers = {};
                 if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
                 const response = await fetch(`${API_BASE_URL}/v1/models`, { headers });
+                if (response.status === 429 && retries > 0) {
+                    setTimeout(() => loadModels(retries - 1), 2000);
+                    return;
+                }
                 const data = await response.json();
                 if (data.success && data.models && data.models.length > 0) {
                     const modelSelect = document.getElementById('model');
@@ -1202,7 +1210,7 @@
                     });
                 }
             } catch (err) {
-                console.log('Failed to load models:', err);
+                if (retries > 0) setTimeout(() => loadModels(retries - 1), 2000);
             }
         }
 
@@ -1321,7 +1329,8 @@
                             showResult(`${IMAGE_BASE_URL}${img.image_url}`);
                             return;
                         } else if (img.status === 'failed') {
-                            showError('Image generation failed. Please try again.');
+                            const msg = img.error_message || 'Image generation failed. Please try again.';
+                            showError(msg);
                             return;
                         }
                     }

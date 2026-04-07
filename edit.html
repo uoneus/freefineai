@@ -510,18 +510,39 @@ dz.addEventListener('drop', e => {
 });
 
 // Daily limit
-async function loadUserLimit() {
+async function loadUserLimit(retries = 3) {
     try {
         const headers = authToken ? { 'Authorization': 'Bearer ' + authToken } : {};
         const r = await fetch(`${API_BASE_URL}/v1/limit`, { headers });
+        if (r.status === 429 && retries > 0) {
+            setTimeout(() => loadUserLimit(retries - 1), 2000);
+            return;
+        }
+        if (!r.ok) return;
         const d = await r.json();
         if (d.today_usage !== undefined) {
             const bar = document.getElementById('dailyLimitBar');
+            const btn = document.getElementById('editBtn');
             bar.classList.remove('hidden');
-            document.getElementById('usageText').textContent = `${d.today_usage} / ${d.daily_limit}`;
-            document.getElementById('usageBar').style.width = Math.min(100, (d.today_usage / d.daily_limit) * 100) + '%';
+            const roleLabel = d.role === 'vip' ? ' · VIP' : d.role === 'member' ? ' · Member' : ' · Guest';
+            document.getElementById('usageText').textContent = `${d.today_usage} / ${d.daily_limit}${roleLabel}`;
+            const pct = d.daily_limit > 0 ? Math.min(100, (d.today_usage / d.daily_limit) * 100) : 0;
+            const fill = document.getElementById('usageBar');
+            fill.style.width = pct + '%';
+            fill.className = 'h-1.5 rounded-full transition-all duration-500 ' +
+                (pct >= 100 ? 'bg-red-500' : pct >= 70 ? 'bg-yellow-500' : 'bg-cyan-500');
+            if (pct >= 100) {
+                btn.disabled = true;
+                btn.classList.add('opacity-50');
+            } else {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+            }
         }
-    } catch(e) {}
+    } catch(e) {
+        if (retries > 0) setTimeout(() => loadUserLimit(retries - 1), 2000);
+        // Don't hide the bar on error, keep last known value
+    }
 }
 
 // Main edit function
@@ -595,7 +616,8 @@ function pollResult(imageId) {
                 document.getElementById('editBtn').disabled = false;
             } else if (d.status === 'failed') {
                 clearInterval(pollingTimer);
-                showError('Editing failed. Please try again.');
+                const msg = d.error_message || 'This model is in high demand right now. Please try a different model or come back later.';
+                showError(msg);
                 document.getElementById('editBtn').disabled = false;
                 refreshCaptcha();
             }
