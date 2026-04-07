@@ -22,14 +22,7 @@
         .drop-zone:hover, .drop-zone.drag-over { border-color: #06b6d4; background: rgba(6,182,212,0.05); }
         .drop-zone.has-image { border-style: solid; border-color: rgba(6,182,212,0.6); }
     </style>
-    <script>
-    fetch('https://api.robotai.my/api/v1/public/config').then(r=>r.json()).then(d=>{
-        if(d.config&&d.config.seo_json_ld){
-            var s=document.createElement('script');s.type='application/ld+json';
-            s.textContent=d.config.seo_json_ld;document.head.appendChild(s);
-        }
-    }).catch(()=>{});
-    </script>
+    <script src="common.js"></script>
 </head>
 <body class="min-h-screen">
 <canvas id="particle-canvas"></canvas>
@@ -396,6 +389,7 @@ function logout() {
     authToken = ''; authUser = null;
     localStorage.removeItem('userToken'); localStorage.removeItem('userInfo');
     updateAuthUI();
+    loadUserLimit();
 }
 
 // Captcha
@@ -644,27 +638,6 @@ function resetEditor() {
     showState('default');
     refreshCaptcha();
 }
-
-// Visitor tracking
-(function() {
-    const ua = navigator.userAgent;
-    let dt = 'Desktop', os = 'Unknown', br = 'Unknown';
-    if (/Mobile|Android|iPhone/i.test(ua)) dt = 'Mobile';
-    else if (/Tablet|iPad/i.test(ua)) dt = 'Tablet';
-    if (/Windows/i.test(ua)) os = 'Windows';
-    else if (/Android/i.test(ua)) os = 'Android';
-    else if (/iPhone|iPad|iPod/i.test(ua)) os = 'iOS';
-    else if (/Mac OS X/i.test(ua)) os = 'macOS';
-    else if (/Linux/i.test(ua)) os = 'Linux';
-    if (/Edg\//i.test(ua)) br = 'Edge';
-    else if (/Chrome\//i.test(ua)) br = 'Chrome';
-    else if (/Firefox\//i.test(ua)) br = 'Firefox';
-    else if (/Safari\//i.test(ua)) br = 'Safari';
-    fetch(`${API_BASE_URL}/v1/track`, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({device_type: dt, os, browser: br})
-    }).catch(()=>{});
-})();
 </script>
 </body>
 </html>

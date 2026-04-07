@@ -28,14 +28,7 @@
         body { position: relative; }
         nav, header, section, footer { position: relative; z-index: 2; }
     </style>
-    <script>
-    fetch('https://api.robotai.my/api/v1/public/config').then(r=>r.json()).then(d=>{
-        if(d.config&&d.config.seo_json_ld){
-            var s=document.createElement('script');s.type='application/ld+json';
-            s.textContent=d.config.seo_json_ld;document.head.appendChild(s);
-        }
-    }).catch(()=>{});
-    </script>
+    <script src="common.js"></script>
 </head>
 
 <body>
@@ -229,37 +222,6 @@
             animate();
         });
     </script>
-    <script>
-    (function() {
-        function getDeviceType(ua) {
-            if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
-                return /iPad|Tablet/i.test(ua) ? 'tablet' : 'mobile';
-            }
-            return 'desktop';
-        }
-        function getOS(ua) {
-            if (/Windows/i.test(ua)) return 'Windows';
-            if (/Android/i.test(ua)) return 'Android';
-            if (/iPhone|iPad|iPod/i.test(ua)) return 'iOS';
-            if (/Mac OS X/i.test(ua)) return 'macOS';
-            if (/Linux/i.test(ua)) return 'Linux';
-            return 'Unknown';
-        }
-        function getBrowser(ua) {
-            if (/Edg\//i.test(ua)) return 'Edge';
-            if (/OPR\//i.test(ua)) return 'Opera';
-            if (/Chrome\//i.test(ua)) return 'Chrome';
-            if (/Firefox\//i.test(ua)) return 'Firefox';
-            if (/Safari\//i.test(ua)) return 'Safari';
-            return 'Unknown';
-        }
-        var ua = navigator.userAgent;
-        fetch('/api/v1/track', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ device_type: getDeviceType(ua), os: getOS(ua), browser: getBrowser(ua) })
-        }).catch(function(){});
-    })();
     </script>
 </body>
 </html>

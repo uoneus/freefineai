@@ -33,14 +33,7 @@
         #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: #18181b; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 20px; font-size: 13px; color: #e4e4e7; opacity: 0; transition: all .3s; z-index: 100; white-space: nowrap; pointer-events: none; }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
-    <script>
-    fetch('https://api.robotai.my/api/v1/public/config').then(r=>r.json()).then(d=>{
-        if(d.config&&d.config.seo_json_ld){
-            var s=document.createElement('script');s.type='application/ld+json';
-            s.textContent=d.config.seo_json_ld;document.head.appendChild(s);
-        }
-    }).catch(()=>{});
-    </script>
+    <script src="common.js"></script>
 </head>
 <body class="pb-20">
 
@@ -763,29 +756,6 @@
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 2500);
         }
-
-        // Track visitor device info
-        (function() {
-            const ua = navigator.userAgent;
-            let deviceType = 'Desktop', os = 'Unknown', browser = 'Unknown';
-            if (/Mobile|Android|iPhone/i.test(ua)) deviceType = 'Mobile';
-            else if (/Tablet|iPad/i.test(ua)) deviceType = 'Tablet';
-            if (/Windows/i.test(ua)) os = 'Windows';
-            else if (/Android/i.test(ua)) os = 'Android';
-            else if (/iPhone|iPad|iPod/i.test(ua)) os = 'iOS';
-            else if (/Mac OS X/i.test(ua)) os = 'macOS';
-            else if (/Linux/i.test(ua)) os = 'Linux';
-            if (/Edg\//i.test(ua)) browser = 'Edge';
-            else if (/OPR\//i.test(ua)) browser = 'Opera';
-            else if (/Chrome\//i.test(ua)) browser = 'Chrome';
-            else if (/Firefox\//i.test(ua)) browser = 'Firefox';
-            else if (/Safari\//i.test(ua)) browser = 'Safari';
-            fetch(`${API_BASE}/v1/track`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ device_type: deviceType, os, browser })
-            }).catch(function(){});
-        })();
 
         // ---- Image-to-Image (Edit) ----
         let editCaptchaToken = '';
