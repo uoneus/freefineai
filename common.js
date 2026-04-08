@@ -1,17 +1,20 @@
 // ==================== API Configuration ====================
 
 // Multiple API endpoints for load balancing and failover
+// IMPORTANT: Update these endpoints to match your actual backend servers
 const API_ENDPOINTS = [
-    'https://api.robotai.my/api',
-    'https://api.freefineai.com/api',
-    'https://cloud.sourcespring.cn/api'
+    'http://localhost:6080/api',  // Local development
+    // 'https://api.robotai.my/api',
+    // 'https://api.freefineai.com/api',
+    // 'https://cloud.sourcespring.cn/api'
     // Add more endpoints here as needed
 ];
 
 const IMAGE_BASE_URLS = [
-    'https://api.robotai.my',
-    'https://api.freefineai.com',
-    'https://cloud.sourcespring.cn'
+    'http://localhost:6080',  // Local development
+    // 'https://api.robotai.my',
+    // 'https://api.freefineai.com',
+    // 'https://cloud.sourcespring.cn'
     // Add more image base URLs here
 ];
 
@@ -160,7 +163,6 @@ async function apiFetch(path, options = {}, maxRetries = 3) {
             const response = await fetch(url, {
                 ...options,
                 headers: {
-                    'Content-Type': 'application/json',
                     ...options.headers
                 }
             });
@@ -212,16 +214,32 @@ async function apiFetch(path, options = {}, maxRetries = 3) {
  * Convenience method for GET requests
  */
 async function apiGet(path, options = {}) {
-    return apiFetch(path, { ...options, method: 'GET' });
+    // Merge headers properly
+    const headers = {
+        ...(options.headers || {})
+    };
+    
+    return apiFetch(path, { 
+        ...options, 
+        method: 'GET',
+        headers: headers
+    });
 }
 
 /**
  * Convenience method for POST requests
  */
 async function apiPost(path, data, options = {}) {
+    // Merge headers properly
+    const headers = {
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+    };
+    
     return apiFetch(path, {
         ...options,
         method: 'POST',
+        headers: headers,
         body: JSON.stringify(data)
     });
 }

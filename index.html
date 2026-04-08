@@ -847,8 +847,8 @@
     <script>
         // Use new API load balancing system from common.js
         // Legacy variables for backward compatibility
-        const API_BASE_URL = window.API ? window.API.getEndpoint() : 'https://api.robotai.my/api';
-        const IMAGE_BASE_URL = window.API ? window.API.getImageBaseURL(API_BASE_URL) : 'https://api.robotai.my';
+        const API_BASE_URL = window.API ? window.API.getEndpoint() : 'http://localhost:6080/api';
+        const IMAGE_BASE_URL = window.API ? window.API.getImageBaseURL(API_BASE_URL) : 'http://localhost:6080';
 
         // Set load balancing strategy (RANDOM for better distribution)
         if (window.API) {

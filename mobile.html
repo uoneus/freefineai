@@ -434,8 +434,8 @@
 
     <script>
         // Use new API load balancing system from common.js
-        const API_BASE = window.API ? window.API.getEndpoint() : 'https://api.robotai.my/api';
-        const IMG_BASE = window.API ? window.API.getImageBaseURL(API_BASE) : 'https://api.robotai.my';
+        const API_BASE = window.API ? window.API.getEndpoint() : 'http://localhost:6080/api';
+        const IMG_BASE = window.API ? window.API.getImageBaseURL(API_BASE) : 'http://localhost:6080';
 
         // Set load balancing strategy
         if (window.API) {
