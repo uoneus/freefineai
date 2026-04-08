@@ -845,8 +845,15 @@
 
     <!-- Text-to-Image Generation Script -->
     <script>
-        const API_BASE_URL = 'https://api.robotai.my/api';
-        const IMAGE_BASE_URL = 'https://api.robotai.my';
+        // Use new API load balancing system from common.js
+        // Legacy variables for backward compatibility
+        const API_BASE_URL = window.API ? window.API.getEndpoint() : 'https://api.robotai.my/api';
+        const IMAGE_BASE_URL = window.API ? window.API.getImageBaseURL(API_BASE_URL) : 'https://api.robotai.my';
+
+        // Set load balancing strategy (RANDOM for better distribution)
+        if (window.API) {
+            window.API.setStrategy(window.API.STRATEGY.RANDOM);
+        }
 
         // Auth state
         let authToken = localStorage.getItem('userToken') || '';
@@ -893,10 +900,13 @@
             errEl.style.display = 'none';
             if (!username || !password) { errEl.textContent = 'Please fill all fields'; errEl.style.display = 'block'; return; }
             try {
-                const r = await fetch(`${API_BASE_URL}/v1/user/login`, {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({username, password})
-                });
+                // Use new API system with automatic retry
+                const r = window.API 
+                    ? await window.API.post('/v1/user/login', {username, password})
+                    : await fetch(`${API_BASE_URL}/v1/user/login`, {
+                        method: 'POST', headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({username, password})
+                    });
                 const d = await r.json();
                 if (d.success) {
                     authToken = d.token;
@@ -921,10 +931,12 @@
             btn.disabled = true;
             btn.textContent = 'Sending...';
             try {
-                const r = await fetch(`${API_BASE_URL}/v1/user/send-code`, {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({email})
-                });
+                const r = window.API 
+                    ? await window.API.post('/v1/user/send-code', {email})
+                    : await fetch(`${API_BASE_URL}/v1/user/send-code`, {
+                        method: 'POST', headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({email})
+                    });
                 const d = await r.json();
                 if (d.success) {
                     btn.textContent = '60s';
@@ -957,10 +969,12 @@
             errEl.style.display = 'none'; okEl.style.display = 'none';
             if (!username || !email || !password || !code) { errEl.textContent = 'Please fill all fields'; errEl.style.display = 'block'; return; }
             try {
-                const r = await fetch(`${API_BASE_URL}/v1/user/register`, {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({username, email, password, code})
-                });
+                const r = window.API 
+                    ? await window.API.post('/v1/user/register', {username, email, password, code})
+                    : await fetch(`${API_BASE_URL}/v1/user/register`, {
+                        method: 'POST', headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({username, email, password, code})
+                    });
                 const d = await r.json();
                 if (d.success) {
                     authToken = d.token;
@@ -996,7 +1010,9 @@
             try {
                 const headers = {};
                 if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
-                const res = await fetch(`${API_BASE_URL}/v1/limit`, { headers });
+                const res = window.API 
+                    ? await window.API.get('/v1/limit', { headers })
+                    : await fetch(`${API_BASE_URL}/v1/limit`, { headers });
                 if (res.status === 429 && retries > 0) {
                     setTimeout(() => loadUserLimit(retries - 1), 2000);
                     return;
@@ -1068,15 +1084,21 @@
         async function trackUser() {
             const userInfo = getUserAgent();
             try {
-                await fetch(`${API_BASE_URL}/v1/track`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
+                await (window.API 
+                    ? window.API.post('/v1/track', {
                         device_type: userInfo.deviceType,
                         os: userInfo.os,
                         browser: userInfo.browser
                     })
-                });
+                    : fetch(`${API_BASE_URL}/v1/track`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            device_type: userInfo.deviceType,
+                            os: userInfo.os,
+                            browser: userInfo.browser
+                        })
+                    }));
             } catch (err) {
                 console.log('User tracking failed:', err);
             }
@@ -1088,7 +1110,9 @@
         // Load and inject ads
         async function loadAndInjectAds() {
             try {
-                const r = await fetch(`${API_BASE_URL}/v1/ads`);
+                const r = window.API 
+                    ? await window.API.get('/v1/ads')
+                    : await fetch(`${API_BASE_URL}/v1/ads`);
                 const d = await r.json();
                 if (!d.success || !d.ads) return;
 
@@ -1172,7 +1196,9 @@
         // Fetch captcha from server
         async function refreshCaptcha() {
             try {
-                const res = await fetch(`${API_BASE_URL}/v1/captcha`);
+                const res = window.API 
+                    ? await window.API.get('/v1/captcha')
+                    : await fetch(`${API_BASE_URL}/v1/captcha`);
                 const data = await res.json();
                 currentCaptchaToken = data.token;
                 currentCaptchaCode = data.code;
@@ -1193,7 +1219,9 @@
             try {
                 const headers = {};
                 if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
-                const response = await fetch(`${API_BASE_URL}/v1/models`, { headers });
+                const response = window.API 
+                    ? await window.API.get('/v1/models', { headers })
+                    : await fetch(`${API_BASE_URL}/v1/models`, { headers });
                 if (response.status === 429 && retries > 0) {
                     setTimeout(() => loadModels(retries - 1), 2000);
                     return;
@@ -1260,11 +1288,13 @@
             try {
                 const headers = { 'Content-Type': 'application/json' };
                 if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
-                const response = await fetch(`${API_BASE_URL}/generate`, {
-                    method: 'POST',
-                    headers,
-                    body: JSON.stringify(formData)
-                });
+                const response = window.API 
+                    ? await window.API.post('/generate', formData, { headers })
+                    : await fetch(`${API_BASE_URL}/generate`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify(formData)
+                    });
 
                 if (response.status === 429) {
                     const errData = await response.json();
@@ -1322,7 +1352,9 @@
             
             while (attempts < maxAttempts) {
                 try {
-                    const response = await fetch(`${API_BASE_URL}/images/${imageId}`);
+                    const response = window.API 
+                        ? await window.API.get(`/images/${imageId}`)
+                        : await fetch(`${API_BASE_URL}/images/${imageId}`);
                     if (response.ok) {
                         const img = await response.json();
                         if (img.status === 'completed' && img.image_url) {

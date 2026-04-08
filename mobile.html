@@ -433,8 +433,14 @@
     </div>
 
     <script>
-        const API_BASE = 'https://api.robotai.my/api';
-        const IMG_BASE = 'https://api.robotai.my';
+        // Use new API load balancing system from common.js
+        const API_BASE = window.API ? window.API.getEndpoint() : 'https://api.robotai.my/api';
+        const IMG_BASE = window.API ? window.API.getImageBaseURL(API_BASE) : 'https://api.robotai.my';
+
+        // Set load balancing strategy
+        if (window.API) {
+            window.API.setStrategy(window.API.STRATEGY.RANDOM);
+        }
 
         // Mobile auth
         let mAuthToken = localStorage.getItem('userToken') || '';
@@ -479,10 +485,12 @@
             errEl.style.display = 'none';
             if (!username || !password) { errEl.textContent = 'Please fill all fields'; errEl.style.display = 'block'; return; }
             try {
-                const r = await fetch(`${API_BASE}/v1/user/login`, {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({username, password})
-                });
+                const r = window.API 
+                    ? await window.API.post('/v1/user/login', {username, password})
+                    : await fetch(`${API_BASE}/v1/user/login`, {
+                        method: 'POST', headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({username, password})
+                    });
                 const d = await r.json();
                 if (d.success) {
                     mAuthToken = d.token;
@@ -506,10 +514,12 @@
             if (!email) { errEl.textContent = 'Please enter email'; errEl.style.display = 'block'; return; }
             btn.disabled = true; btn.textContent = '...';
             try {
-                const r = await fetch(`${API_BASE}/v1/user/send-code`, {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({email})
-                });
+                const r = window.API 
+                    ? await window.API.post('/v1/user/send-code', {email})
+                    : await fetch(`${API_BASE}/v1/user/send-code`, {
+                        method: 'POST', headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({email})
+                    });
                 const d = await r.json();
                 if (d.success) {
                     let t = 60;
@@ -536,10 +546,12 @@
             errEl.style.display = 'none'; okEl.style.display = 'none';
             if (!username || !email || !code || !password) { errEl.textContent = 'Please fill all fields'; errEl.style.display = 'block'; return; }
             try {
-                const r = await fetch(`${API_BASE}/v1/user/register`, {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({username, email, password, code})
-                });
+                const r = window.API 
+                    ? await window.API.post('/v1/user/register', {username, email, password, code})
+                    : await fetch(`${API_BASE}/v1/user/register`, {
+                        method: 'POST', headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({username, email, password, code})
+                    });
                 const d = await r.json();
                 if (d.success) {
                     mAuthToken = d.token;
@@ -593,7 +605,9 @@
 
         async function loadCaptcha() {
             try {
-                const r = await fetch(`${API_BASE}/v1/captcha`);
+                const r = window.API 
+                    ? await window.API.get('/v1/captcha')
+                    : await fetch(`${API_BASE}/v1/captcha`);
                 const d = await r.json();
                 captchaToken = d.token;
                 captchaCode = d.code;
@@ -605,7 +619,9 @@
 
         async function loadModels() {
             try {
-                const r = await fetch(`${API_BASE}/v1/models`);
+                const r = window.API 
+                    ? await window.API.get('/v1/models')
+                    : await fetch(`${API_BASE}/v1/models`);
                 const d = await r.json();
                 if (d.success && d.models?.length) {
                     const sel = document.getElementById('model');
@@ -619,7 +635,9 @@
                 const headers = {};
                 const token = localStorage.getItem('userToken');
                 if (token) headers['Authorization'] = `Bearer ${token}`;
-                const r = await fetch(`${API_BASE}/v1/limit`, { headers });
+                const r = window.API 
+                    ? await window.API.get('/v1/limit', { headers })
+                    : await fetch(`${API_BASE}/v1/limit`, { headers });
                 const d = await r.json();
                 updateUsage(d.today_usage, d.daily_limit, d.role);
             } catch(e) {}
@@ -668,17 +686,25 @@
             try {
                 const reqHeaders = { 'Content-Type': 'application/json' };
                 if (mAuthToken) reqHeaders['Authorization'] = `Bearer ${mAuthToken}`;
-                const resp = await fetch(`${API_BASE}/generate`, {
-                    method: 'POST',
-                    headers: reqHeaders,
-                    body: JSON.stringify({
+                const resp = window.API 
+                    ? await window.API.post('/generate', {
                         prompt,
                         model: document.getElementById('model').value,
                         width: w, height: h,
                         captcha_token: captchaToken,
                         captcha_code: userCode
-                    })
-                });
+                    }, { headers: reqHeaders })
+                    : await fetch(`${API_BASE}/generate`, {
+                        method: 'POST',
+                        headers: reqHeaders,
+                        body: JSON.stringify({
+                            prompt,
+                            model: document.getElementById('model').value,
+                            width: w, height: h,
+                            captcha_token: captchaToken,
+                            captcha_code: userCode
+                        })
+                    });
 
                 if (resp.status === 429) {
                     const d = await resp.json();
@@ -709,7 +735,9 @@
             for (let i = 0; i < max; i++) {
                 await new Promise(r => setTimeout(r, 2000));
                 try {
-                    const r = await fetch(`${API_BASE}/images/${id}`);
+                    const r = window.API 
+                        ? await window.API.get(`/images/${id}`)
+                        : await fetch(`${API_BASE}/images/${id}`);
                     if (r.ok) {
                         const img = await r.json();
                         if (img.status === 'completed' && img.image_url) {
@@ -768,7 +796,9 @@
 
         async function loadEditCaptcha() {
             try {
-                const r = await fetch(`${API_BASE}/v1/captcha`);
+                const r = window.API 
+                    ? await window.API.get('/v1/captcha')
+                    : await fetch(`${API_BASE}/v1/captcha`);
                 const d = await r.json();
                 editCaptchaToken = d.token;
                 document.getElementById('editCaptchaDisplay').innerHTML =
@@ -782,7 +812,9 @@
         async function loadEditUsage() {
             try {
                 const headers = mAuthToken ? { 'Authorization': 'Bearer ' + mAuthToken } : {};
-                const r = await fetch(`${API_BASE}/v1/limit`, { headers });
+                const r = window.API 
+                    ? await window.API.get('/v1/limit', { headers })
+                    : await fetch(`${API_BASE}/v1/limit`, { headers });
                 const d = await r.json();
                 if (d.today_usage !== undefined) {
                     const wrap = document.getElementById('editUsageWrap');
@@ -808,7 +840,9 @@
 
         async function loadEditModels() {
             try {
-                const r = await fetch(`${API_BASE}/v1/img2img/models`);
+                const r = window.API 
+                    ? await window.API.get('/v1/img2img/models')
+                    : await fetch(`${API_BASE}/v1/img2img/models`);
                 const d = await r.json();
                 if (d.success && d.models && d.models.length > 0) {
                     const sel = document.getElementById('editModel');
@@ -890,15 +924,22 @@
             try {
                 const headers = { 'Content-Type': 'application/json' };
                 if (mAuthToken) headers['Authorization'] = 'Bearer ' + mAuthToken;
-                const r = await fetch(`${API_BASE}/v1/img2img`, {
-                    method: 'POST', headers,
-                    body: JSON.stringify({
+                const r = window.API
+                    ? await window.API.post('/v1/img2img', {
                         prompt, image_url: editImageBase64, model,
                         width: w, height: h,
                         captcha_token: editCaptchaToken,
                         captcha_code: code.toUpperCase()
-                    })
-                });
+                    }, headers)
+                    : await fetch(`${API_BASE}/v1/img2img`, {
+                        method: 'POST', headers,
+                        body: JSON.stringify({
+                            prompt, image_url: editImageBase64, model,
+                            width: w, height: h,
+                            captcha_token: editCaptchaToken,
+                            captcha_code: code.toUpperCase()
+                        })
+                    });
                 const d = await r.json();
                 if (d.image_id) {
                     editPollResult(d.image_id);

@@ -305,8 +305,14 @@ window.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
-const API_BASE_URL = 'https://api.robotai.my/api';
-const IMAGE_BASE_URL = 'https://api.robotai.my';
+// Use new API load balancing system from common.js
+const API_BASE_URL = window.API ? window.API.getEndpoint() : 'https://api.robotai.my/api';
+const IMAGE_BASE_URL = window.API ? window.API.getImageBaseURL(API_BASE_URL) : 'https://api.robotai.my';
+
+// Set load balancing strategy
+if (window.API) {
+    window.API.setStrategy(window.API.STRATEGY.RANDOM);
+}
 
 let authToken = localStorage.getItem('userToken') || '';
 let authUser = JSON.parse(localStorage.getItem('userInfo') || 'null');
@@ -346,10 +352,12 @@ async function doLogin() {
     const password = document.getElementById('loginPassword').value;
     const errEl = document.getElementById('loginError');
     try {
-        const r = await fetch(`${API_BASE_URL}/v1/user/login`, {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({username, password})
-        });
+        const r = window.API 
+            ? await window.API.post('/v1/user/login', {username, password})
+            : await fetch(`${API_BASE_URL}/v1/user/login`, {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({username, password})
+            });
         const d = await r.json();
         if (d.success) {
             authToken = d.token; authUser = d.user;
@@ -366,7 +374,9 @@ async function sendEmailCode() {
     btn.disabled = true; btn.textContent = '60s';
     let t = 60;
     const iv = setInterval(() => { t--; btn.textContent = t + 's'; if (t <= 0) { clearInterval(iv); btn.disabled = false; btn.textContent = 'Send Code'; } }, 1000);
-    await fetch(`${API_BASE_URL}/v1/user/send-code`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email}) });
+    await (window.API 
+        ? window.API.post('/v1/user/send-code', {email})
+        : fetch(`${API_BASE_URL}/v1/user/send-code`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email}) }));
 }
 async function doRegister() {
     const username = document.getElementById('regUsername').value;
@@ -376,10 +386,12 @@ async function doRegister() {
     const errEl = document.getElementById('regError');
     const okEl = document.getElementById('regSuccess');
     try {
-        const r = await fetch(`${API_BASE_URL}/v1/user/register`, {
-            method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({username, email, code, password})
-        });
+        const r = window.API 
+            ? await window.API.post('/v1/user/register', {username, email, code, password})
+            : await fetch(`${API_BASE_URL}/v1/user/register`, {
+                method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({username, email, code, password})
+            });
         const d = await r.json();
         if (d.success) { okEl.textContent = 'Registered! Please sign in.'; okEl.style.display = 'block'; errEl.style.display = 'none'; setTimeout(() => switchTab('login'), 1500); }
         else { errEl.textContent = d.message || 'Registration failed'; errEl.style.display = 'block'; }
@@ -395,7 +407,9 @@ function logout() {
 // Captcha
 async function refreshCaptcha() {
     try {
-        const r = await fetch(`${API_BASE_URL}/v1/captcha`);
+        const r = window.API 
+            ? await window.API.get('/v1/captcha')
+            : await fetch(`${API_BASE_URL}/v1/captcha`);
         const d = await r.json();
         if (d.token) {
             captchaToken = d.token;
@@ -410,7 +424,9 @@ async function refreshCaptcha() {
 async function loadModels() {
     try {
         const headers = authToken ? { 'Authorization': 'Bearer ' + authToken } : {};
-        const r = await fetch(`${API_BASE_URL}/v1/img2img/models`, { headers });
+        const r = window.API 
+            ? await window.API.get('/v1/img2img/models', { headers })
+            : await fetch(`${API_BASE_URL}/v1/img2img/models`, { headers });
         const d = await r.json();
         if (d.success && d.models && d.models.length > 0) {
             const sel = document.getElementById('model');
@@ -513,7 +529,9 @@ dz.addEventListener('drop', e => {
 async function loadUserLimit(retries = 3) {
     try {
         const headers = authToken ? { 'Authorization': 'Bearer ' + authToken } : {};
-        const r = await fetch(`${API_BASE_URL}/v1/limit`, { headers });
+        const r = window.API 
+            ? await window.API.get('/v1/limit', { headers })
+            : await fetch(`${API_BASE_URL}/v1/limit`, { headers });
         if (r.status === 429 && retries > 0) {
             setTimeout(() => loadUserLimit(retries - 1), 2000);
             return;
@@ -565,10 +583,8 @@ async function startEdit() {
         const headers = { 'Content-Type': 'application/json' };
         if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
 
-        const r = await fetch(`${API_BASE_URL}/v1/img2img`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({
+        const r = window.API 
+            ? await window.API.post('/v1/img2img', {
                 prompt,
                 image_url: uploadedImageBase64,
                 model,
@@ -576,8 +592,20 @@ async function startEdit() {
                 height,
                 captcha_token: captchaToken,
                 captcha_code: captchaCode.toUpperCase()
-            })
-        });
+            }, { headers })
+            : await fetch(`${API_BASE_URL}/v1/img2img`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({
+                    prompt,
+                    image_url: uploadedImageBase64,
+                    model,
+                    width,
+                    height,
+                    captcha_token: captchaToken,
+                    captcha_code: captchaCode.toUpperCase()
+                })
+            });
         const d = await r.json();
 
         if (d.image_id) {
@@ -605,7 +633,9 @@ function pollResult(imageId) {
         attempts++;
         if (attempts > 120) { clearInterval(pollingTimer); showError('Timeout. Please try again.'); document.getElementById('editBtn').disabled = false; return; }
         try {
-            const r = await fetch(`${IMAGE_BASE_URL}/api/v1/images/${imageId}`);
+            const r = window.API 
+                ? await window.API.get(`/v1/images/${imageId}`)
+                : await fetch(`${IMAGE_BASE_URL}/api/v1/images/${imageId}`);
             const d = await r.json();
             if (d.status === 'completed' && d.image_url) {
                 clearInterval(pollingTimer);
