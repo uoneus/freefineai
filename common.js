@@ -3,7 +3,7 @@
 // Multiple API endpoints for load balancing and failover
 // IMPORTANT: Update these endpoints to match your actual backend servers
 const API_ENDPOINTS = [
-    'http://localhost:6080/api',  // Local development
+    'https://api.robotai.my/api',  // Local development
     // 'https://api.robotai.my/api',
     // 'https://api.freefineai.com/api',
     // 'https://cloud.sourcespring.cn/api'
@@ -11,7 +11,7 @@ const API_ENDPOINTS = [
 ];
 
 const IMAGE_BASE_URLS = [
-    'http://localhost:6080',  // Local development
+    'https://api.robotai.my',  // Local development
     // 'https://api.robotai.my',
     // 'https://api.freefineai.com',
     // 'https://cloud.sourcespring.cn'
@@ -328,5 +328,6 @@ if (typeof window !== 'undefined') {
 // ==================== Legacy Compatibility ====================
 
 // For backward compatibility with existing code
-const API_BASE_URL = getAPIEndpoint();
-const IMAGE_BASE_URL = getImageBaseURL(API_BASE_URL);
+// Note: These are defined in each HTML file to avoid conflicts
+// const API_BASE_URL = getAPIEndpoint();
+// const IMAGE_BASE_URL = getImageBaseURL(API_BASE_URL);
