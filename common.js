@@ -3,19 +3,15 @@
 // Multiple API endpoints for load balancing and failover
 // IMPORTANT: Update these endpoints to match your actual backend servers
 const API_ENDPOINTS = [
-    'https://api.robotai.my/api',  // Local development
-    // 'https://api.robotai.my/api',
-    // 'https://api.freefineai.com/api',
-    // 'https://cloud.sourcespring.cn/api'
-    // Add more endpoints here as needed
+    'https://api.robotai.my/api',
+    'https://api.freefineai.com/api',
+    'https://cloud.sourcespring.cn/api'
 ];
 
 const IMAGE_BASE_URLS = [
-    'https://api.robotai.my',  // Local development
-    // 'https://api.robotai.my',
-    // 'https://api.freefineai.com',
-    // 'https://cloud.sourcespring.cn'
-    // Add more image base URLs here
+    'https://api.robotai.my',
+    'https://api.freefineai.com',
+    'https://cloud.sourcespring.cn'
 ];
 
 // API endpoint selection strategy
@@ -289,22 +285,10 @@ async function checkEndpointHealth() {
     return results;
 }
 
-// ==================== Initialization ====================
-
-// Check endpoint health on page load
-if (typeof window !== 'undefined') {
-    window.addEventListener('DOMContentLoaded', () => {
-        // Initial health check
-        checkEndpointHealth();
-        
-        // Periodic health check every 5 minutes
-        setInterval(checkEndpointHealth, 5 * 60 * 1000);
-    });
-}
-
 // ==================== Exports ====================
 
-// For use in other scripts
+// Expose window.API immediately (not inside DOMContentLoaded) so HTML scripts
+// that run synchronously can call window.API.getEndpoint() right away.
 if (typeof window !== 'undefined') {
     window.API = {
         fetch: apiFetch,
@@ -323,6 +307,16 @@ if (typeof window !== 'undefined') {
         getHealth: () => ({ ...endpointHealth }),
         STRATEGY: API_STRATEGY
     };
+}
+
+// ==================== Initialization ====================
+
+// Kick off health checks after DOM is ready
+if (typeof window !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', () => {
+        checkEndpointHealth();
+        setInterval(checkEndpointHealth, 5 * 60 * 1000);
+    });
 }
 
 // ==================== Legacy Compatibility ====================
