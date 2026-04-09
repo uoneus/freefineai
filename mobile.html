@@ -434,7 +434,7 @@
 
         // Mobile auth
         let mAuthToken = localStorage.getItem('userToken') || '';
-        let mAuthUser = JSON.parse(localStorage.getItem('userInfo') || 'null');
+        let mAuthUser = (() => { try { const v = localStorage.getItem('userInfo'); return (v && v !== 'undefined') ? JSON.parse(v) : null; } catch(e) { return null; } })();
 
         function initMobileAuthUI() {
             if (mAuthUser && mAuthToken) {

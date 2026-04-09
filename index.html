@@ -729,7 +729,7 @@
 
         // Auth state
         let authToken = localStorage.getItem('userToken') || '';
-        let authUser = JSON.parse(localStorage.getItem('userInfo') || 'null');
+        let authUser = (() => { try { const v = localStorage.getItem('userInfo'); return (v && v !== 'undefined') ? JSON.parse(v) : null; } catch(e) { return null; } })();
 
         function initAuthUI() {
             if (authUser && authToken) {

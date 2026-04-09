@@ -307,7 +307,7 @@ if (window.API) {
 }
 
 let authToken = localStorage.getItem('userToken') || '';
-let authUser = JSON.parse(localStorage.getItem('userInfo') || 'null');
+let authUser = (() => { try { const v = localStorage.getItem('userInfo'); return (v && v !== 'undefined') ? JSON.parse(v) : null; } catch(e) { return null; } })();
 let captchaToken = '';
 let uploadedImageBase64 = '';
 let currentWidth = 1024, currentHeight = 1024;
