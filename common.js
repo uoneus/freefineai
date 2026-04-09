@@ -3,13 +3,11 @@
 // Multiple API endpoints for load balancing and failover
 // IMPORTANT: Update these endpoints to match your actual backend servers
 const API_ENDPOINTS = [
-   // 'https://api.robotai.my/api',
     'https://api.freefineai.com/api',
     'https://cloud.sourcespring.cn/api'
 ];
 
 const IMAGE_BASE_URLS = [
-    //'https://api.robotai.my',
     'https://api.freefineai.com',
     'https://cloud.sourcespring.cn'
 ];
