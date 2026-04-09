@@ -486,10 +486,7 @@
                                     name="model"
                                     class="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition appearance-none cursor-pointer"
                                 >
-                                    <option value="flux-schnell">FLUX.1-schnell</option>
-                                    <option value="flux-kontext">FLUX.1-Kontext</option>
-                                    <option value="flux-krea">FLUX.1-Krea</option>
-                                    <option value="flux-dev">FLUX.2-dev</option>
+                                    <option value="">Loading models...</option>
                                 </select>
                             </div>
                             
@@ -1220,8 +1217,8 @@
                 const headers = {};
                 if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
                 const response = window.API 
-                    ? await window.API.get('/v1/models', { headers })
-                    : await fetch(`${API_BASE_URL}/v1/models`, { headers });
+                    ? await window.API.get('/v1/t2i/models', { headers })
+                    : await fetch(`${API_BASE_URL}/v1/t2i/models`, { headers });
                 if (response.status === 429 && retries > 0) {
                     setTimeout(() => loadModels(retries - 1), 2000);
                     return;
@@ -1232,8 +1229,9 @@
                     modelSelect.innerHTML = '';
                     data.models.forEach(m => {
                         const option = document.createElement('option');
-                        option.value = m;
-                        option.textContent = m.toUpperCase();
+                        option.value = m.model_id;
+                        option.textContent = m.available ? m.display_name : m.display_name + '（不可用）';
+                        if (!m.available) option.disabled = true;
                         modelSelect.appendChild(option);
                     });
                 }
