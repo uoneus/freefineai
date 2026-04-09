@@ -1,0 +1,82 @@
+/* ==================== FreeFineAI Common Styles ==================== */
+
+* { box-sizing: border-box; }
+
+body {
+    background-color: #050505;
+    color: #a1a1aa;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Navigation */
+.nav-glass {
+    background: rgba(5,5,5,0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Typography */
+.gradient-text {
+    background: linear-gradient(135deg, #06b6d4 0%, #a78bfa 50%, #06b6d4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, #06b6d4, #dceaed);
+    transition: all 0.3s ease;
+}
+.btn-primary:hover {
+    box-shadow: 0 8px 30px rgba(6,182,212,0.4);
+    transform: translateY(-2px);
+}
+
+/* Cards */
+.card-hover { transition: all 0.3s ease; }
+.card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+
+.image-card { transition: all 0.4s ease; }
+.image-card:hover { transform: scale(1.02); }
+.image-card img { transition: transform 0.4s ease; }
+.image-card:hover img { transform: scale(1.05); }
+
+/* Particle Canvas */
+#particle-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+nav, header, section, footer { position: relative; z-index: 2; }
+
+/* Animations */
+.section-fade { animation: fadeInUp 0.6s ease forwards; opacity: 0; }
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Size preset buttons */
+.size-preset-btn.active {
+    background: rgba(6,182,212,0.2);
+    border-color: #06b6d4;
+    color: #22d3ee;
+}
+
+/* Auth Modal */
+.auth-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 9997;
+    align-items: center;
+    justify-content: center;
+}

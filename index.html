@@ -30,28 +30,9 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6801877918959856" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="common.css">
     <style>
-        * { box-sizing: border-box; }
-        body { background-color: #050505; color: #a1a1aa; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
-        .nav-glass { background: rgba(5,5,5,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.06); }
-        .gradient-text { background: linear-gradient(135deg, #06b6d4 0%, #a78bfa 50%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .card-hover { transition: all 0.3s ease; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        .image-card { transition: all 0.4s ease; }
-        .image-card:hover { transform: scale(1.02); }
-        .image-card img { transition: transform 0.4s ease; }
-        .image-card:hover img { transform: scale(1.05); }
-        .btn-primary { background: linear-gradient(135deg, #06b6d4, #dceaed); transition: all 0.3s ease; }
-        .btn-primary:hover { box-shadow: 0 8px 30px rgba(6,182,212,0.4); transform: translateY(-2px); }
-        .size-preset-btn.active { background: rgba(6,182,212,0.2); border-color: #06b6d4; color: #22d3ee; }
-        .section-fade { animation: fadeInUp 0.6s ease forwards; opacity: 0; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .testimonial-card { background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.08); }
-        /* Particle Canvas */
-        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        body { position: relative; }
-        nav, header, section, footer { position: relative; z-index: 2; }
-        /* Ad Popup Modal */
         .ad-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
         .ad-popup-overlay.show { opacity: 1; visibility: visible; }
         .ad-popup-modal { background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; max-width: 560px; width: 90%; overflow: hidden; transform: scale(0.9); transition: transform 0.3s ease; }
@@ -279,112 +260,6 @@
         // Close popup when clicking outside
         document.getElementById('adPopup').addEventListener('click', function(e) {
             if (e.target === this) closeAdPopup();
-        });
-    </script>
-    
-    <!-- Particle Animation Script -->
-    <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            var canvas = document.getElementById('particle-canvas');
-            if (!canvas) return;
-            var ctx = canvas.getContext('2d');
-            var particles = [];
-            var stars = [];
-            var mouseX = 0, mouseY = 0;
-            
-            function resize() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            
-            function Particle() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.5 + 0.5;
-                this.speedX = Math.random() * 0.3 - 0.15;
-                this.speedY = Math.random() * 0.3 - 0.15;
-                this.opacity = Math.random() * 0.4 + 0.2;
-            }
-            
-            Particle.prototype.update = function() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
-                if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
-            };
-            
-            Particle.prototype.draw = function() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(6, 182, 212, ' + this.opacity + ')';
-                ctx.fill();
-            };
-            
-            // Star trail effect
-            function Star(x, y) {
-                this.x = x;
-                this.y = y;
-                this.size = Math.random() * 3 + 2;
-                this.opacity = 1;
-                this.decay = Math.random() * 0.02 + 0.015;
-            }
-            
-            Star.prototype.update = function() {
-                this.opacity -= this.decay;
-            };
-            
-            Star.prototype.draw = function() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(Date.now() * 0.005);
-                ctx.beginPath();
-                // Draw 5-pointed star
-                for (var i = 0; i < 5; i++) {
-                    ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * this.size, -Math.sin((18 + i * 72) * Math.PI / 180) * this.size);
-                    ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * this.size * 0.4, -Math.sin((54 + i * 72) * Math.PI / 180) * this.size * 0.4);
-                }
-                ctx.closePath();
-                ctx.fillStyle = 'rgba(250, 204, 21, ' + this.opacity + ')';
-                ctx.shadowColor = 'rgba(250, 204, 21, ' + this.opacity + ')';
-                ctx.shadowBlur = 10;
-                ctx.fill();
-                ctx.restore();
-            };
-            
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                // Draw floating particles
-                for (var i = 0; i < particles.length; i++) {
-                    particles[i].update();
-                    particles[i].draw();
-                }
-                // Draw star trails
-                for (var i = stars.length - 1; i >= 0; i--) {
-                    stars[i].update();
-                    stars[i].draw();
-                    if (stars[i].opacity <= 0) {
-                        stars.splice(i, 1);
-                    }
-                }
-                requestAnimationFrame(animate);
-            }
-            
-            // Mouse move handler
-            document.addEventListener('mousemove', function(e) {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-                // Add new star every few pixels of movement
-                if (Math.random() > 0.5) {
-                    stars.push(new Star(mouseX, mouseY));
-                }
-            });
-            
-            resize();
-            window.addEventListener('resize', resize);
-            for (var i = 0; i < 120; i++) {
-                particles.push(new Particle());
-            }
-            animate();
         });
     </script>
     
