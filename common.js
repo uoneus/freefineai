@@ -309,13 +309,16 @@ if (typeof window !== 'undefined') {
 
 // ==================== Initialization ====================
 
-// Kick off health checks after DOM is ready
-if (typeof window !== 'undefined') {
-    window.addEventListener('DOMContentLoaded', () => {
-        checkEndpointHealth();
-        setInterval(checkEndpointHealth, 5 * 60 * 1000);
-    });
-}
+// Health checks are disabled by default to avoid marking endpoints as unhealthy
+// when the /v1/health route doesn't exist on the backend.
+// To enable: window.API.checkHealth() or uncomment below.
+//
+// if (typeof window !== 'undefined') {
+//     window.addEventListener('DOMContentLoaded', () => {
+//         checkEndpointHealth();
+//         setInterval(checkEndpointHealth, 5 * 60 * 1000);
+//     });
+// }
 
 // ==================== Legacy Compatibility ====================
 
