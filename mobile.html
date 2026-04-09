@@ -80,11 +80,7 @@
             <div>
                 <label class="block text-zinc-400 text-xs mb-1">Model</label>
                 <select id="model" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500">
-                    <option value="CogView4_6B">CogView4</option>
-                    <option value="flux-1-schnell">FLUX.1-schnell</option>
-                    <option value="FLUX.2-dev">FLUX.2-dev</option>
-                    <option value="gemini-3.1-flash-image-preview">Gemini Flash</option>
-                    <option value="flux-2-dev">CF Flux-2</option>
+                    <option value="">Loading models...</option>
                 </select>
             </div>
             <div>
@@ -619,13 +615,16 @@
 
         async function loadModels() {
             try {
+                const headers = mAuthToken ? { 'Authorization': 'Bearer ' + mAuthToken } : {};
                 const r = window.API 
-                    ? await window.API.get('/v1/models')
-                    : await fetch(`${API_BASE}/v1/models`);
+                    ? await window.API.get('/v1/t2i/models', { headers })
+                    : await fetch(`${API_BASE}/v1/t2i/models`, { headers });
                 const d = await r.json();
                 if (d.success && d.models?.length) {
                     const sel = document.getElementById('model');
-                    sel.innerHTML = d.models.map(m => `<option value="${m}">${m}</option>`).join('');
+                    sel.innerHTML = d.models.map(m =>
+                        `<option value="${m.model_id}" ${!m.available ? 'disabled' : ''}>${m.display_name}${!m.available ? '（不可用）' : ''}</option>`
+                    ).join('');
                 }
             } catch(e) {}
         }
@@ -840,16 +839,19 @@
 
         async function loadEditModels() {
             try {
+                const headers = mAuthToken ? { 'Authorization': 'Bearer ' + mAuthToken } : {};
                 const r = window.API 
-                    ? await window.API.get('/v1/img2img/models')
-                    : await fetch(`${API_BASE}/v1/img2img/models`);
+                    ? await window.API.get('/v1/i2i/models', { headers })
+                    : await fetch(`${API_BASE}/v1/i2i/models`, { headers });
                 const d = await r.json();
                 if (d.success && d.models && d.models.length > 0) {
                     const sel = document.getElementById('editModel');
                     sel.innerHTML = '';
                     d.models.forEach(m => {
                         const o = document.createElement('option');
-                        o.value = m; o.textContent = m;
+                        o.value = m.model_id;
+                        o.textContent = m.available ? m.display_name : m.display_name + '（不可用）';
+                        if (!m.available) o.disabled = true;
                         sel.appendChild(o);
                     });
                 }
