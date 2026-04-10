@@ -572,12 +572,65 @@
         let pollInterval = null;
         let progressVal = 0;
 
+        function getOrCreateSessionId() {
+            let sid = sessionStorage.getItem('ffai_session_id');
+            if (!sid) {
+                sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+                sessionStorage.setItem('ffai_session_id', sid);
+            }
+            return sid;
+        }
+
+        function getUserAgentInfo() {
+            const ua = navigator.userAgent;
+            let os = 'Unknown';
+            let browser = 'Unknown';
+            let deviceType = 'Desktop';
+            if (ua.indexOf('Win') > -1) os = 'Windows';
+            else if (ua.indexOf('Mac') > -1) os = 'macOS';
+            else if (ua.indexOf('Linux') > -1) os = 'Linux';
+            else if (ua.indexOf('Android') > -1) os = 'Android';
+            else if (ua.indexOf('iOS') > -1 || ua.indexOf('iPhone') > -1 || ua.indexOf('iPad') > -1) os = 'iOS';
+            if (ua.indexOf('Chrome') > -1) browser = 'Chrome';
+            else if (ua.indexOf('Firefox') > -1) browser = 'Firefox';
+            else if (ua.indexOf('Safari') > -1) browser = 'Safari';
+            else if (ua.indexOf('Edge') > -1) browser = 'Edge';
+            if (ua.indexOf('Mobile') > -1 || ua.indexOf('Android') > -1 || ua.indexOf('iPhone') > -1) deviceType = 'Mobile';
+            else if (ua.indexOf('Tablet') > -1 || ua.indexOf('iPad') > -1) deviceType = 'Tablet';
+            return { os, browser, deviceType };
+        }
+
+        async function trackUser() {
+            const userInfo = getUserAgentInfo();
+            const sessionId = getOrCreateSessionId();
+            try {
+                await (window.API
+                    ? window.API.post('/v1/track', {
+                        session_id: sessionId,
+                        device_type: userInfo.deviceType,
+                        os: userInfo.os,
+                        browser: userInfo.browser
+                    })
+                    : fetch(`${API_BASE}/v1/track`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            session_id: sessionId,
+                            device_type: userInfo.deviceType,
+                            os: userInfo.os,
+                            browser: userInfo.browser
+                        })
+                    }));
+            } catch(e) { console.log('User tracking failed:', e); }
+        }
+
         // Init
         loadCaptcha();
         loadUserLimit();
         loadModels();
         loadEditCaptcha();
         loadEditModels();
+        trackUser();
 
         function showSection(name) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));

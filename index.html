@@ -923,6 +923,15 @@
         loadUserLimit();
 
         // User tracking info
+        function getOrCreateSessionId() {
+            let sid = sessionStorage.getItem('ffai_session_id');
+            if (!sid) {
+                sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+                sessionStorage.setItem('ffai_session_id', sid);
+            }
+            return sid;
+        }
+
         function getUserAgent() {
             const ua = navigator.userAgent;
             let os = 'Unknown';
@@ -955,9 +964,11 @@
         // Track user on page load
         async function trackUser() {
             const userInfo = getUserAgent();
+            const sessionId = getOrCreateSessionId();
             try {
                 await (window.API 
                     ? window.API.post('/v1/track', {
+                        session_id: sessionId,
                         device_type: userInfo.deviceType,
                         os: userInfo.os,
                         browser: userInfo.browser
@@ -966,6 +977,7 @@
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
+                            session_id: sessionId,
                             device_type: userInfo.deviceType,
                             os: userInfo.os,
                             browser: userInfo.browser
