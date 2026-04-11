@@ -478,7 +478,7 @@ async function loadModels() {
             d.models.forEach(m => {
                 const opt = document.createElement('option');
                 opt.value = m.model_id;
-                opt.textContent = m.available ? m.display_name : m.display_name + '（不可用）';
+                opt.textContent = m.available ? m.display_name : m.display_name + ' (waiting...)';
                 if (!m.available) opt.disabled = true;
                 sel.appendChild(opt);
             });

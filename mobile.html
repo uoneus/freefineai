@@ -670,7 +670,7 @@
                 if (d.success && d.models?.length) {
                     const sel = document.getElementById('model');
                     sel.innerHTML = d.models.map(m =>
-                        `<option value="${m.model_id}" ${!m.available ? 'disabled' : ''}>${m.display_name}${!m.available ? '（不可用）' : ''}</option>`
+                        `<option value="${m.model_id}" ${!m.available ? 'disabled' : ''}>${m.display_name}${!m.available ? ' (waiting...)' : ''}</option>`
                     ).join('');
                 }
             } catch(e) {}
@@ -897,7 +897,7 @@
                     d.models.forEach(m => {
                         const o = document.createElement('option');
                         o.value = m.model_id;
-                        o.textContent = m.available ? m.display_name : m.display_name + '（不可用）';
+                        o.textContent = m.available ? m.display_name : m.display_name + ' (waiting...)';
                         if (!m.available) o.disabled = true;
                         sel.appendChild(o);
                     });

@@ -1117,7 +1117,7 @@
                     data.models.forEach(m => {
                         const option = document.createElement('option');
                         option.value = m.model_id;
-                        option.textContent = m.available ? m.display_name : m.display_name + '（不可用）';
+                        option.textContent = m.available ? m.display_name : m.display_name + ' (waiting...)';
                         if (!m.available) option.disabled = true;
                         modelSelect.appendChild(option);
                     });
