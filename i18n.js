@@ -236,11 +236,18 @@ function applyI18n(){
 function renderLangSwitcher(containerId){
   const c=document.getElementById(containerId);
   if(!c)return;
-  c.innerHTML=Object.entries(LANG_META).map(([code,meta])=>
-    `<button onclick="setLang('${code}')" title="${meta.name}" style="background:none;border:none;cursor:pointer;font-size:1.1rem;padding:1px 3px;opacity:${currentLang===code?'1':'0.45'};transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${currentLang===code?'1':'0.45'}'">
-      ${meta.flag}
-    </button>`
-  ).join('');
+  const sel=document.createElement('select');
+  sel.style.cssText='background:#1a1a2e;color:#e4e4e7;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:4px 8px;font-size:0.8rem;cursor:pointer;outline:none;';
+  sel.onchange=function(){setLang(this.value);};
+  Object.entries(LANG_META).forEach(([code,meta])=>{
+    const opt=document.createElement('option');
+    opt.value=code;
+    opt.textContent=meta.flag+' '+meta.name;
+    if(code===currentLang)opt.selected=true;
+    sel.appendChild(opt);
+  });
+  c.innerHTML='';
+  c.appendChild(sel);
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
