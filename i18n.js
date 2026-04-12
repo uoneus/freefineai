@@ -248,9 +248,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderLangSwitcher('langSwitcher');
   if(document.getElementById('mobileLangSwitcher'))renderLangSwitcher('mobileLangSwitcher');
 });
-const I18N = {
-  en: {
-    'nav.home': 'Home', 'nav.editor': 'Image Editor', 'nav.gallery': 'Gallery',
     'nav.about': 'About US', 'nav.terms': 'Terms of Service', 'nav.signin': 'Sign In', 'nav.logout': 'Logout',
     'hero.title1': 'Premium Flux.1', 'hero.title2': 'Digital Assets',
     'hero.desc': 'Curated, high-fidelity AI assets for creators. Free for the community, built by visionaries.',
