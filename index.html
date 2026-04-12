@@ -273,24 +273,24 @@
             
             <!-- Menu - Minimal -->
             <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-                <a href="index.html" class="text-white hover:text-cyan-400 transition">Home</a>
-                <a href="edit.html" class="text-zinc-400 hover:text-white transition">Image Editor</a>
-                <a href="gallery.html" class="text-zinc-400 hover:text-white transition">Gallery</a>
-                <a href="about.html" class="text-zinc-400 hover:text-white transition">About US</a>
+                <a href="index.html" class="text-white hover:text-cyan-400 transition" data-i18n="nav.home">Home</a>
+                <a href="edit.html" class="text-zinc-400 hover:text-white transition" data-i18n="nav.editor">Image Editor</a>
+                <a href="gallery.html" class="text-zinc-400 hover:text-white transition" data-i18n="nav.gallery">Gallery</a>
+                <a href="about.html" class="text-zinc-400 hover:text-white transition" data-i18n="nav.about">About US</a>
             </div>
             
             <!-- CTA -->
             <div id="langSwitcher" style="display:flex;align-items:center;gap:2px;"></div>
-            <button onclick="showTerms()" class="bg-white/10 hover:bg-white/15 border border-white/10 text-white font-medium text-sm px-5 py-2 rounded-lg transition">
+            <button onclick="showTerms()" class="bg-white/10 hover:bg-white/15 border border-white/10 text-white font-medium text-sm px-5 py-2 rounded-lg transition" data-i18n="nav.terms">
                 Terms of Service
             </button>
-            <button id="loginNavBtn" onclick="showAuthModal('login')" class="btn-primary text-black font-bold text-sm px-5 py-2 rounded-lg">
+            <button id="loginNavBtn" onclick="showAuthModal('login')" class="btn-primary text-black font-bold text-sm px-5 py-2 rounded-lg" data-i18n="nav.signin">
                 Sign In
             </button>
             <div id="userNavInfo" class="hidden items-center gap-2">
                 <span id="navUsername" class="text-white text-sm font-medium"></span>
                 <span id="navRole" class="text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400"></span>
-                <button onclick="logout()" class="text-zinc-400 hover:text-white text-xs ml-1">退出</button>
+                <button onclick="logout()" class="text-zinc-400 hover:text-white text-xs ml-1" data-i18n="nav.logout">退出</button>
             </div>
         </div>
     </nav>
@@ -319,13 +319,13 @@
     <!-- Text-to-Image Generation Section -->
     <section class="py-10 px-6">
         <div class="max-w-6xl mx-auto">
-            <h2 class="text-2xl md:text-3xl font-bold text-white mb-6 text-center">Create Your Image</h2>
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-6 text-center" data-i18n="gen.title">Create Your Image</h2>
             <div class="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 md:p-8">
                 <div class="grid md:grid-cols-2 gap-8">
                     <!-- Left Column: Prompt & Controls -->
                     <div class="space-y-4">
                         <div>
-                            <label for="prompt" class="block text-white font-medium text-sm mb-2">Prompt</label>
+                            <label for="prompt" class="block text-white font-medium text-sm mb-2" data-i18n="gen.prompt">Prompt</label>
                             <textarea
                                 id="prompt"
                                 name="prompt"
@@ -356,7 +356,7 @@
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label for="model" class="block text-white font-medium text-xs mb-1">Model</label>
+                                <label for="model" class="block text-white font-medium text-xs mb-1" data-i18n="gen.model">Model</label>
                                 <select
                                     id="model"
                                     name="model"
@@ -431,7 +431,7 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                 </svg>
-                                Generate
+                                <span data-i18n="gen.generate">Generate</span>
                             </button>
                             <button type="button" onclick="resetGenerator()" class="bg-zinc-700 hover:bg-zinc-600 text-white font-medium px-4 py-3 rounded-xl text-xs transition">
                                 Reset
