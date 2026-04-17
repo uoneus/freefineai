@@ -267,6 +267,17 @@
         function closeTerms() {
             document.getElementById('termsModal').style.display = 'none';
         }
+        function toggleAiTools(e) {
+            e.stopPropagation();
+            const d = document.getElementById('aiToolsDropdown');
+            d.style.display = d.style.display === 'none' ? 'grid' : 'none';
+        }
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('aiToolsMenu');
+            if (menu && !menu.contains(e.target)) {
+                document.getElementById('aiToolsDropdown').style.display = 'none';
+            }
+        });
         document.getElementById('termsModal').addEventListener('click', function(e) {
             if (e.target === this) closeTerms();
         });
@@ -289,36 +300,8 @@
     </script>
     
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 nav-glass">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Logo -->
-            <a href="https://www.freefineai.com" class="text-white font-black text-xl tracking-tight">
-                FREEFINE<span class="text-cyan-400">AI</span>
-            </a>
-            
-            <!-- Menu - Minimal -->
-            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-                <a href="https://www.freefineai.com" class="text-white hover:text-cyan-400 transition" data-i18n="nav.home">Home</a>
-                <a href="edit.html" class="text-zinc-400 hover:text-white transition" data-i18n="nav.editor">Image Editor</a>
-                <a href="gallery.html" class="text-zinc-400 hover:text-white transition" data-i18n="nav.gallery">Gallery</a>
-                <a href="about.html" class="text-zinc-400 hover:text-white transition" data-i18n="nav.about">About US</a>
-            </div>
-            
-            <!-- CTA -->
-            <div id="langSwitcher" style="display:flex;align-items:center;gap:2px;"></div>
-            <button onclick="showTerms()" class="bg-white/10 hover:bg-white/15 border border-white/10 text-white font-medium text-sm px-5 py-2 rounded-lg transition" data-i18n="nav.terms">
-                Terms of Service
-            </button>
-            <button id="loginNavBtn" onclick="showAuthModal('login')" class="btn-primary text-black font-bold text-sm px-5 py-2 rounded-lg" data-i18n="nav.signin">
-                Sign In
-            </button>
-            <div id="userNavInfo" class="hidden items-center gap-2">
-                <span id="navUsername" class="text-white text-sm font-medium"></span>
-                <span id="navRole" class="text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400"></span>
-                <button onclick="logout()" class="text-zinc-400 hover:text-white text-xs ml-1" data-i18n="nav.logout">退出</button>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-placeholder"></div>
+    <script>loadNavbar();</script>
 
     <!-- Hero Section -->
     <header class="pt-40 pb-10 px-6">
@@ -454,11 +437,14 @@
                         
                         <!-- Buttons Row — 4-col grid: generate=3, reset=1 -->
                         <div class="grid grid-cols-4 gap-2 pt-2">
-                            <button type="submit" form="imageGeneratorForm" id="generateBtn"
-                                class="col-span-3 h-10 btn-primary text-black font-bold px-6 rounded-xl text-sm uppercase tracking-wider flex items-center gap-2 justify-center">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                                <span data-i18n="gen.generate">Generate</span>
-                            </button>
+                            <div class="col-span-3 relative">
+                                <span class="absolute -top-2.5 left-4 z-10 bg-orange-500 text-white text-xs font-normal px-2 py-0.5 rounded-full leading-none">FREE</span>
+                                <button type="submit" form="imageGeneratorForm" id="generateBtn"
+                                    class="w-full h-10 bg-cyan-500/15 border-2 border-cyan-500/60 hover:bg-cyan-500/25 hover:border-cyan-400 text-cyan-400 hover:text-cyan-300 font-bold px-6 rounded-xl text-sm uppercase tracking-wider flex items-center gap-2 justify-center transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                    <span data-i18n="gen.generate">Generate Image</span>
+                                </button>
+                            </div>
                             <button type="button" onclick="resetGenerator()" class="h-10 bg-zinc-700 hover:bg-zinc-600 text-white font-medium px-4 rounded-xl text-xs transition">
                                 Reset
                             </button>

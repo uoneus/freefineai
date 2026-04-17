@@ -1,0 +1,208 @@
+<!-- ============================================================
+     FreeFineAI Shared Navbar
+     Include via: <div id="navbar-placeholder"></div>
+     + <script>loadNavbar()</script>
+     ============================================================ -->
+
+<!-- Navigation -->
+<nav class="fixed top-0 w-full z-50 nav-glass">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="/index.html" class="text-white font-black text-2xl tracking-tight shrink-0">
+            FREEFINE<span class="text-cyan-400">AI</span>
+        </a>
+        <div class="hidden md:flex items-center gap-1 text-base font-medium">
+            <a href="/edit.html" class="nav-link-editor text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5">AI Photo Editor</a>
+            <a href="/gallery.html" class="nav-link-gallery text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5">Gallery</a>
+            <a href="#" class="relative text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5">
+                Video Generator
+                <span class="absolute -top-1.5 -right-1 bg-orange-500 text-white font-normal px-1.5 py-0.5 rounded-full leading-none" style="font-size:0.6rem;">NEW</span>
+            </a>
+            <div class="relative" id="aiToolsMenu">
+                <button onclick="toggleAiTools(event)" class="relative text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5 flex items-center gap-1">
+                    AI Tools
+                    <svg class="w-3.5 h-3.5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <span class="absolute -top-1.5 -right-1 bg-cyan-500 text-white font-normal px-1.5 py-0.5 rounded-full leading-none" style="font-size:0.6rem;">SOON</span>
+                </button>
+                <div id="aiToolsDropdown" style="display:none" class="absolute top-full left-0 mt-2 w-[520px] bg-zinc-900 border border-zinc-700/60 rounded-2xl p-4 shadow-2xl z-50 grid grid-cols-2 gap-2">
+                    <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition group">
+                        <div class="w-9 h-9 bg-zinc-800 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-zinc-700 transition"><svg class="w-4 h-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg></div>
+                        <div><div class="text-white text-sm font-semibold">Expand Image</div><div class="text-zinc-500 text-xs mt-0.5">Extend your images beyond their original borders</div></div>
+                    </a>
+                    <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition group">
+                        <div class="w-9 h-9 bg-zinc-800 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-zinc-700 transition"><svg class="w-4 h-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"/></svg></div>
+                        <div><div class="text-white text-sm font-semibold">Remove Background</div><div class="text-zinc-500 text-xs mt-0.5">Remove background from any image instantly</div></div>
+                    </a>
+                    <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition group">
+                        <div class="w-9 h-9 bg-zinc-800 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-zinc-700 transition"><svg class="w-4 h-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></div>
+                        <div><div class="text-white text-sm font-semibold">AI 3D Model Generator</div><div class="text-zinc-500 text-xs mt-0.5">Turn text or images into 3D models in seconds</div></div>
+                    </a>
+                    <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition group">
+                        <div class="w-9 h-9 bg-zinc-800 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-zinc-700 transition"><svg class="w-4 h-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg></div>
+                        <div><div class="text-white text-sm font-semibold">AI Voice Cloning</div><div class="text-zinc-500 text-xs mt-0.5">Clone any voice from just 3 seconds of audio</div></div>
+                    </a>
+                    <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition group">
+                        <div class="w-9 h-9 bg-zinc-800 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-zinc-700 transition"><svg class="w-4 h-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                        <div><div class="text-white text-sm font-semibold">Face Swap Online</div><div class="text-zinc-500 text-xs mt-0.5">Swap faces in photos &amp; videos instantly</div></div>
+                    </a>
+                    <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition group">
+                        <div class="w-9 h-9 bg-zinc-800 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-zinc-700 transition"><svg class="w-4 h-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></div>
+                        <div><div class="text-white text-sm font-semibold">AI Video Generator</div><div class="text-zinc-500 text-xs mt-0.5">Turn images or text into professional videos</div></div>
+                    </a>
+                    <a href="#" class="col-span-2 flex items-start gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition group">
+                        <div class="w-9 h-9 bg-zinc-800 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-zinc-700 transition"><svg class="w-4 h-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+                        <div><div class="text-white text-sm font-semibold flex items-center gap-2">Promptless AI Art <span class="bg-red-500 text-white text-xs font-normal px-2 py-0.5 rounded-full">NEW</span></div><div class="text-zinc-500 text-xs mt-0.5">Generate dozens of images from a rough idea - just pick</div></div>
+                    </a>
+                </div>
+            </div>
+            <button onclick="showTerms()" class="text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5">Terms of Service</button>
+        </div>
+        <div class="flex items-center gap-2">
+            <div id="langSwitcher" style="display:flex;align-items:center;gap:2px;"></div>
+            <button id="loginNavBtn" onclick="showAuthModal('login')" class="bg-cyan-500/15 border border-cyan-500/40 hover:bg-cyan-500/25 text-cyan-400 font-medium text-sm px-5 py-2 rounded-lg transition">Sign In</button>
+            <div id="userNavInfo" class="hidden items-center gap-2">
+                <span id="navUsername" class="text-white text-sm font-medium"></span>
+                <span id="navRole" class="text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400"></span>
+                <button onclick="logout()" class="text-zinc-400 hover:text-white text-xs ml-1">Sign Out</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Terms Modal -->
+<div id="termsModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9998;align-items:center;justify-content:center;">
+    <div style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:16px;max-width:680px;width:92%;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;">
+        <div style="padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;">
+            <h2 style="color:#fff;font-size:1.1rem;font-weight:700;margin:0;">FreeFineAI Terms of Service</h2>
+            <button onclick="closeTerms()" style="background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:18px;cursor:pointer;line-height:1;">×</button>
+        </div>
+        <div style="padding:24px;overflow-y:auto;flex:1;color:#a1a1aa;font-size:0.875rem;line-height:1.7;">
+            <p style="color:#71717a;font-size:0.75rem;margin-bottom:16px;">Last Updated: April 5, 2026</p>
+            <h3 style="color:#e4e4e7;margin:0 0 8px;">1. Scope of Services</h3>
+            <p>FreeFineAI provides AI-driven tools including Text-to-Image (T2I), Image-to-Image (I2I), and computational power services.</p>
+            <h3 style="color:#e4e4e7;margin:16px 0 8px;">2. Acceptable Use and Safety Compliance</h3>
+            <p>You agree to use the Services only for lawful purposes. You must not generate harmful, illegal, or rights-infringing content.</p>
+            <h3 style="color:#e4e4e7;margin:16px 0 8px;">3. User Responsibility</h3>
+            <p>You are solely responsible for any content you generate. FreeFineAI provides neutral technical tools and bears no liability for misuse.</p>
+            <h3 style="color:#e4e4e7;margin:16px 0 8px;">4. Privacy</h3>
+            <p>We follow a zero data retention policy. Your prompts and generated images are not stored on our servers.</p>
+            <div style="margin-top:20px;padding:16px;background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.2);border-radius:10px;color:#22d3ee;font-size:0.8rem;">
+                By using FreeFineAI services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
+            </div>
+        </div>
+        <div style="padding:16px 24px;border-top:1px solid rgba(255,255,255,0.08);text-align:right;">
+            <button onclick="closeTerms()" style="background:linear-gradient(135deg,#06b6d4,#22d3ee);color:#000;font-weight:700;padding:10px 28px;border:none;border-radius:8px;cursor:pointer;font-size:0.875rem;">I Understand and Agree</button>
+        </div>
+    </div>
+</div>
+
+<!-- Auth Modal -->
+<div id="authModal" style="display:none;position:fixed;inset:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9997;align-items:center;justify-content:center;padding:24px;">
+    <div style="position:relative;background:linear-gradient(180deg,rgba(31,24,18,0.98),rgba(22,17,14,0.98));border:1px solid rgba(255,255,255,0.1);border-radius:24px;width:100%;max-width:440px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.45);">
+        <div id="authWelcomeScreen" style="padding:38px 32px 30px;text-align:center;">
+            <div style="width:68px;height:68px;border-radius:9999px;margin:0 auto 18px;background:linear-gradient(135deg,#fb923c,#f472b6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.6rem;font-weight:800;">F</div>
+            <h2 style="color:#fff;font-size:2rem;font-weight:800;line-height:1.1;margin:0 0 10px;">Welcome to FreeFineAI</h2>
+            <p style="color:#f6ad55;font-size:1rem;margin:0 0 28px;">Sign in to get free credits</p>
+            <div id="authWelcomeError" style="display:none;color:#fca5a5;font-size:0.82rem;margin:0 0 14px;padding:10px 12px;background:rgba(127,29,29,0.35);border-radius:12px;text-align:left;"></div>
+            <div id="googleSignInButton" style="display:flex;justify-content:center;min-height:44px;margin-bottom:20px;"></div>
+            <div style="display:flex;align-items:center;gap:12px;margin:0 0 18px;">
+                <div style="height:1px;background:rgba(255,255,255,0.12);flex:1;"></div>
+                <span style="color:#a1a1aa;font-size:0.82rem;">OR</span>
+                <div style="height:1px;background:rgba(255,255,255,0.12);flex:1;"></div>
+            </div>
+            <button onclick="openEmailAuth('login')" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:15px 18px;color:#d4d4d8;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;">
+                <span style="font-size:1rem;line-height:1;">&#9993;</span>
+                <span>Continue with Email</span>
+            </button>
+        </div>
+        <div id="authEmailScreen" style="display:none;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px 0;">
+                <button onclick="showAuthWelcome()" style="background:none;border:none;color:#a1a1aa;font-size:0.88rem;cursor:pointer;padding:8px 6px;">&larr; Back</button>
+                <div style="color:#26c4f5;font-size:0.78rem;">【FreeFineAi Email Service】</div>
+                <div style="width:52px;"></div>
+            </div>
+            <div style="display:flex;border-bottom:1px solid rgba(255,255,255,0.08);">
+                <button id="tabLogin" onclick="switchTab('login')" style="flex:1;padding:16px;background:rgba(6,182,212,0.1);color:#22d3ee;font-weight:700;font-size:0.875rem;border:none;cursor:pointer;border-bottom:2px solid #06b6d4;">Sign In</button>
+                <button id="tabRegister" onclick="switchTab('register')" style="flex:1;padding:16px;background:transparent;color:#71717a;font-weight:600;font-size:0.875rem;border:none;cursor:pointer;border-bottom:2px solid transparent;">Register</button>
+            </div>
+            <div id="loginForm" style="padding:24px;">
+                <p style="color:#71717a;font-size:0.8rem;margin:0 0 20px;">Sign in to get 10 images/day</p>
+                <div style="margin-bottom:12px;"><label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Username or Email</label>
+                    <input type="text" id="loginUsername" placeholder="Enter username or email" style="width:100%;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;"></div>
+                <div style="margin-bottom:16px;"><label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter password" style="width:100%;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;"></div>
+                <div id="loginError" style="display:none;color:#f87171;font-size:0.8rem;margin-bottom:12px;padding:10px;background:rgba(239,68,68,0.1);border-radius:8px;"></div>
+                <button onclick="doLogin()" style="width:100%;background:linear-gradient(135deg,#06b6d4,#22d3ee);color:#000;font-weight:700;padding:12px;border:none;border-radius:10px;cursor:pointer;font-size:0.875rem;">Sign In</button>
+                <p style="text-align:center;color:#52525b;font-size:0.75rem;margin:12px 0 0;">No account? <a href="#" onclick="switchTab('register')" style="color:#06b6d4;">Register free</a></p>
+            </div>
+            <div id="registerForm" style="padding:24px;display:none;">
+                <p style="color:#71717a;font-size:0.8rem;margin:0 0 20px;">Create account — get 10 images/day free</p>
+                <div style="margin-bottom:12px;"><label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Username</label>
+                    <input type="text" id="regUsername" placeholder="3-20 characters" style="width:100%;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;"></div>
+                <div style="margin-bottom:12px;"><label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Email</label>
+                    <div style="display:flex;gap:8px;">
+                        <input type="email" id="regEmail" placeholder="your@email.com" style="flex:1;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;">
+                        <button onclick="sendEmailCode()" id="sendCodeBtn" style="background:#18181b;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#06b6d4;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;">Send Code</button>
+                    </div></div>
+                <div style="margin-bottom:12px;"><label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Verification Code</label>
+                    <input type="text" id="regCode" placeholder="6-digit code from email" maxlength="6" style="width:100%;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;letter-spacing:4px;"></div>
+                <div style="margin-bottom:16px;"><label style="display:block;color:#a1a1aa;font-size:0.75rem;margin-bottom:6px;">Password</label>
+                    <input type="password" id="regPassword" placeholder="At least 6 characters" style="width:100%;background:#1a1a1a;border:1px solid #3f3f46;border-radius:10px;padding:10px 14px;color:#fff;font-size:0.875rem;outline:none;box-sizing:border-box;"></div>
+                <div id="regError" style="display:none;color:#f87171;font-size:0.8rem;margin-bottom:12px;padding:10px;background:rgba(239,68,68,0.1);border-radius:8px;"></div>
+                <div id="regSuccess" style="display:none;color:#4ade80;font-size:0.8rem;margin-bottom:12px;padding:10px;background:rgba(74,222,128,0.1);border-radius:8px;"></div>
+                <button onclick="doRegister()" style="width:100%;background:linear-gradient(135deg,#06b6d4,#22d3ee);color:#000;font-weight:700;padding:12px;border:none;border-radius:10px;cursor:pointer;font-size:0.875rem;">Create Account</button>
+                <p style="text-align:center;color:#52525b;font-size:0.75rem;margin:12px 0 0;">Already have account? <a href="#" onclick="switchTab('login')" style="color:#06b6d4;">Sign in</a></p>
+            </div>
+        </div>
+        <button onclick="closeAuthModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#71717a;font-size:20px;cursor:pointer;">×</button>
+    </div>
+</div>
+
+<script>
+// ── Navbar shared JS ──────────────────────────────────────────
+function showTerms() { document.getElementById('termsModal').style.display = 'flex'; }
+function closeTerms() { document.getElementById('termsModal').style.display = 'none'; }
+document.getElementById('termsModal').addEventListener('click', function(e) { if(e.target===this) closeTerms(); });
+
+function showAuthModal() { document.getElementById('authModal').style.display = 'flex'; showAuthWelcome(); }
+function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
+function showAuthWelcome() {
+    document.getElementById('authWelcomeScreen').style.display = 'block';
+    document.getElementById('authEmailScreen').style.display = 'none';
+}
+function openEmailAuth(tab) {
+    document.getElementById('authWelcomeScreen').style.display = 'none';
+    document.getElementById('authEmailScreen').style.display = 'block';
+    switchTab(tab || 'login');
+}
+function switchTab(tab) {
+    document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+    document.getElementById('tabLogin').style.borderBottomColor = tab === 'login' ? '#06b6d4' : 'transparent';
+    document.getElementById('tabRegister').style.borderBottomColor = tab === 'register' ? '#06b6d4' : 'transparent';
+}
+document.getElementById('authModal').addEventListener('click', function(e) { if(e.target===this) closeAuthModal(); });
+
+function toggleAiTools(e) {
+    e.stopPropagation();
+    const d = document.getElementById('aiToolsDropdown');
+    d.style.display = d.style.display === 'none' ? 'grid' : 'none';
+}
+document.addEventListener('click', function(e) {
+    const menu = document.getElementById('aiToolsMenu');
+    if (menu && !menu.contains(e.target)) {
+        document.getElementById('aiToolsDropdown').style.display = 'none';
+    }
+});
+
+// Highlight active nav link
+(function() {
+    const path = window.location.pathname;
+    if (path.includes('edit.html')) {
+        const el = document.querySelector('.nav-link-editor');
+        if (el) { el.classList.remove('text-zinc-400'); el.classList.add('text-white', 'bg-white/5'); }
+    } else if (path.includes('gallery.html')) {
+        const el = document.querySelector('.nav-link-gallery');
+        if (el) { el.classList.remove('text-zinc-400'); el.classList.add('text-white', 'bg-white/5'); }
+    }
+})();
+</script>
