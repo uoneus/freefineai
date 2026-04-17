@@ -434,17 +434,17 @@
                             </div>
                         </div>
 
-                        <!-- Verification Code — 4-col grid row: input=3, captcha+refresh=1 -->
+                        <!-- Verification Code — 4-col grid row: input=2, captcha+refresh=2 -->
                         <div class="grid grid-cols-4 gap-2 items-end">
-                            <div class="col-span-3">
+                            <div class="col-span-2">
                                 <label for="captcha" class="block text-white font-medium text-xs mb-1">Verification Code</label>
                                 <input type="text" id="captcha" name="captcha" placeholder="Enter code"
                                     class="w-full h-10 bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition uppercase"
                                     maxlength="4" />
                             </div>
-                            <div class="flex items-center gap-1">
+                            <div class="col-span-2 flex items-center gap-1">
                                 <div id="captchaDisplay" class="flex-1 h-10 bg-zinc-800 border border-zinc-700 rounded-lg px-2 cursor-pointer select-none flex items-center justify-center" onclick="refreshCaptcha()">
-                                    <span class="text-cyan-400 font-bold text-sm tracking-wider" style="font-family:monospace;">ABCD</span>
+                                    <span class="text-cyan-400 font-bold text-sm tracking-widest whitespace-nowrap" style="font-family:monospace;">ABCD</span>
                                 </div>
                                 <button type="button" onclick="refreshCaptcha()" class="text-zinc-500 hover:text-white transition p-1.5" title="Refresh">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
