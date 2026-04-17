@@ -330,13 +330,22 @@
             <p class="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
                 Curated, high-fidelity AI assets for creators. Free for the community, built by visionaries.
             </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="https://www.freefineai.com" class="btn-primary text-black font-bold px-8 py-4 rounded-lg text-sm uppercase tracking-wider">
-                    Start Free
-                </a>
-                <a href="gallery.html" class="bg-white/10 hover:bg-white/15 border border-white/10 text-white font-medium px-8 py-4 rounded-lg text-sm transition">
-                    Explore Gallery
-                </a>
+            <div class="flex flex-nowrap gap-3 justify-center mt-2">
+                <span class="flex items-center gap-2 bg-green-500/15 border border-green-500/30 text-green-300 text-sm font-medium px-5 py-2.5 rounded-full whitespace-nowrap">
+                    <span class="text-base">✦</span> 100% Free
+                </span>
+                <span class="flex items-center gap-2 bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-sm font-medium px-5 py-2.5 rounded-full whitespace-nowrap">
+                    <span class="text-base">⚡</span> Powered by Nano Banana
+                </span>
+                <span class="flex items-center gap-2 bg-purple-500/15 border border-purple-500/30 text-purple-300 text-sm font-medium px-5 py-2.5 rounded-full whitespace-nowrap">
+                    <span class="text-base">🔓</span> No Login Required
+                </span>
+                <span class="flex items-center gap-2 bg-yellow-500/15 border border-yellow-500/30 text-yellow-300 text-sm font-medium px-5 py-2.5 rounded-full whitespace-nowrap">
+                    <span class="text-base">🖼️</span> HD Output
+                </span>
+                <span class="flex items-center gap-2 bg-pink-500/15 border border-pink-500/30 text-pink-300 text-sm font-medium px-5 py-2.5 rounded-full whitespace-nowrap">
+                    <span class="text-base">🎨</span> Multiple AI Models
+                </span>
             </div>
         </div>
     </header>
@@ -359,45 +368,53 @@
                                 placeholder="A beautiful sunset over the ocean with vibrant orange and pink colors..."
                                 required
                             ></textarea>
+                            <!-- Prompt Helper — 4-col grid row -->
+                            <div class="mt-2 grid grid-cols-4 gap-2">
+                                <select id="promptThemeSelect" class="col-span-2 h-10 bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 text-zinc-300 text-xs focus:outline-none focus:border-cyan-500 transition cursor-pointer appearance-none">
+                                    <option value="landscape">🏔️ Landscape</option>
+                                    <option value="portrait">👤 Portrait</option>
+                                    <option value="flora">🌸 Flora</option>
+                                    <option value="animal">🦁 Animal</option>
+                                    <option value="architecture">🏛️ Architecture</option>
+                                    <option value="fantasy">✨ Fantasy</option>
+                                </select>
+                                <button type="button" onclick="randomPrompt()" class="col-span-2 h-10 flex items-center justify-center gap-1.5 text-xs text-zinc-400 hover:text-cyan-400 border border-zinc-700 hover:border-cyan-500 bg-zinc-800/50 px-3 rounded-lg transition">
+                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                    Random Prompt
+                                </button>
+                            </div>
                         </div>
                         
                         <div>
                             <label class="block text-white font-medium text-xs mb-2">Size Presets</label>
-                            <div class="flex flex-wrap gap-2">
-                                <button type="button" onclick="setSize(768, 1344)" class="size-preset-btn bg-zinc-800/50 border border-zinc-700 hover:border-cyan-500 rounded-lg px-3 py-2 text-xs text-zinc-300 transition">
-                                    📱 Phone Vertical<br><span class="text-zinc-500">768×1344</span>
+                            <!-- 4-col grid row -->
+                            <div class="grid grid-cols-4 gap-2">
+                                <button type="button" onclick="setSize(768, 1344)" class="size-preset-btn bg-zinc-800/50 border border-zinc-700 hover:border-cyan-500 rounded-lg px-2 py-2 text-xs text-zinc-300 transition text-center">
+                                    📱 Phone<br><span class="text-zinc-500">768×1344</span>
                                 </button>
-                                <button type="button" onclick="setSize(1024, 1024)" class="size-preset-btn active size-preset-btn bg-cyan-500/20 border border-cyan-500 rounded-lg px-3 py-2 text-xs text-cyan-400 transition">
+                                <button type="button" onclick="setSize(1024, 1024)" class="size-preset-btn active bg-cyan-500/20 border border-cyan-500 rounded-lg px-2 py-2 text-xs text-cyan-400 transition text-center">
                                     ⬜ Standard<br><span class="text-cyan-300">1024×1024</span>
                                 </button>
-                                <button type="button" onclick="setSize(1920, 1080)" class="size-preset-btn bg-zinc-800/50 border border-zinc-700 hover:border-cyan-500 rounded-lg px-3 py-2 text-xs text-zinc-300 transition">
+                                <button type="button" onclick="setSize(1920, 1080)" class="size-preset-btn bg-zinc-800/50 border border-zinc-700 hover:border-cyan-500 rounded-lg px-2 py-2 text-xs text-zinc-300 transition text-center">
                                     🖥️ HD 1080p<br><span class="text-zinc-500">1920×1080</span>
                                 </button>
-                                <button type="button" onclick="setSize(1536, 1536)" class="size-preset-btn bg-zinc-800/50 border border-zinc-700 hover:border-cyan-500 rounded-lg px-3 py-2 text-xs text-zinc-300 transition">
+                                <button type="button" onclick="setSize(1536, 1536)" class="size-preset-btn bg-zinc-800/50 border border-zinc-700 hover:border-cyan-500 rounded-lg px-2 py-2 text-xs text-zinc-300 transition text-center">
                                     🖼️ Default<br><span class="text-zinc-500">1536×1536</span>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
+                        <!-- Model / Width / Height — 4-col grid row: model=2, width=1, height=1 -->
+                        <div class="grid grid-cols-4 gap-2">
+                            <div class="col-span-2">
                                 <label for="model" class="block text-white font-medium text-xs mb-1" data-i18n="gen.model">Model</label>
-                                <select
-                                    id="model"
-                                    name="model"
-                                    class="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition appearance-none cursor-pointer"
-                                >
+                                <select id="model" name="model" class="w-full h-10 bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 text-white text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition appearance-none cursor-pointer">
                                     <option value="">Loading models...</option>
                                 </select>
                             </div>
-                            
                             <div>
                                 <label for="width" class="block text-white font-medium text-xs mb-1">Width</label>
-                                <select
-                                    id="width"
-                                    name="width"
-                                    class="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition appearance-none cursor-pointer"
-                                >
+                                <select id="width" name="width" class="w-full h-10 bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 text-white text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition appearance-none cursor-pointer">
                                     <option value="768">768px</option>
                                     <option value="1024" selected>1024px</option>
                                     <option value="1344">1344px</option>
@@ -405,14 +422,9 @@
                                     <option value="1920">1920px</option>
                                 </select>
                             </div>
-                            
-                            <div class="col-span-2">
+                            <div>
                                 <label for="height" class="block text-white font-medium text-xs mb-1">Height</label>
-                                <select
-                                    id="height"
-                                    name="height"
-                                    class="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition appearance-none cursor-pointer"
-                                >
+                                <select id="height" name="height" class="w-full h-10 bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 text-white text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition appearance-none cursor-pointer">
                                     <option value="768">768px</option>
                                     <option value="1024" selected>1024px</option>
                                     <option value="1344">1344px</option>
@@ -422,43 +434,32 @@
                             </div>
                         </div>
 
-                        <!-- Verification Code -->
-                        <div class="flex items-center gap-3">
-                            <div class="flex-1">
+                        <!-- Verification Code — 4-col grid row: input=3, captcha+refresh=1 -->
+                        <div class="grid grid-cols-4 gap-2 items-end">
+                            <div class="col-span-3">
                                 <label for="captcha" class="block text-white font-medium text-xs mb-1">Verification Code</label>
-                                <input
-                                    type="text"
-                                    id="captcha"
-                                    name="captcha"
-                                    placeholder="Enter code"
-                                    class="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition uppercase"
-                                    maxlength="4"
-                                />
+                                <input type="text" id="captcha" name="captcha" placeholder="Enter code"
+                                    class="w-full h-10 bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition uppercase"
+                                    maxlength="4" />
                             </div>
-                            <div id="captchaDisplay" class="bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2.5 cursor-pointer select-none" onclick="refreshCaptcha()">
-                                <span class="text-cyan-400 font-bold text-lg tracking-wider" style="font-family: monospace;">ABCD</span>
+                            <div class="flex items-center gap-1">
+                                <div id="captchaDisplay" class="flex-1 h-10 bg-zinc-800 border border-zinc-700 rounded-lg px-2 cursor-pointer select-none flex items-center justify-center" onclick="refreshCaptcha()">
+                                    <span class="text-cyan-400 font-bold text-sm tracking-wider" style="font-family:monospace;">ABCD</span>
+                                </div>
+                                <button type="button" onclick="refreshCaptcha()" class="text-zinc-500 hover:text-white transition p-1.5" title="Refresh">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                </button>
                             </div>
-                            <button type="button" onclick="refreshCaptcha()" class="text-zinc-500 hover:text-white transition p-2" title="Refresh">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                </svg>
-                            </button>
                         </div>
                         
-                        <!-- Buttons Row -->
-                        <div class="flex items-center gap-3 pt-2">
-                            <button
-                                type="submit"
-                                form="imageGeneratorForm"
-                                id="generateBtn"
-                                class="btn-primary text-black font-bold px-6 py-3 rounded-xl text-sm uppercase tracking-wider flex items-center gap-2 flex-1 justify-center"
-                            >
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                </svg>
+                        <!-- Buttons Row — 4-col grid: generate=3, reset=1 -->
+                        <div class="grid grid-cols-4 gap-2 pt-2">
+                            <button type="submit" form="imageGeneratorForm" id="generateBtn"
+                                class="col-span-3 h-10 btn-primary text-black font-bold px-6 rounded-xl text-sm uppercase tracking-wider flex items-center gap-2 justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                                 <span data-i18n="gen.generate">Generate</span>
                             </button>
-                            <button type="button" onclick="resetGenerator()" class="bg-zinc-700 hover:bg-zinc-600 text-white font-medium px-4 py-3 rounded-xl text-xs transition">
+                            <button type="button" onclick="resetGenerator()" class="h-10 bg-zinc-700 hover:bg-zinc-600 text-white font-medium px-4 rounded-xl text-xs transition">
                                 Reset
                             </button>
                         </div>
@@ -563,173 +564,371 @@
         <div class="max-w-6xl mx-auto">
             <h2 class="text-2xl md:text-3xl font-bold text-white mb-10 text-center">Available Models</h2>
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
                 <!-- FLUX.1-schnell -->
                 <div class="relative group">
                     <div class="absolute inset-0 bg-gradient-to-br from-yellow-300/20 to-amber-400/20 rounded-2xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="relative bg-yellow-50/10 border border-yellow-400/30 rounded-2xl p-6 hover:border-yellow-400/60 transition-colors backdrop-blur-sm">
-                        <div class="flex items-center justify-between mb-4">
+                    <div class="relative bg-yellow-50/10 border border-yellow-400/30 rounded-2xl p-6 hover:border-yellow-400/60 transition-colors backdrop-blur-sm flex flex-col h-full">
+                        <div class="flex items-center justify-between mb-3">
                             <h3 class="text-white font-bold text-lg">FLUX.1-schnell</h3>
-                            <span class="bg-gradient-to-r from-yellow-300 to-amber-300 text-black text-xs font-bold px-3 py-1 rounded-full">Free</span>
+                            <span class="bg-gradient-to-r from-yellow-300 to-amber-300 text-black text-xs font-bold px-3 py-1 rounded-full shrink-0">Free</span>
                         </div>
-                        <p class="text-zinc-300 text-sm mb-4 leading-relaxed">Black Forest Labs' 12B model generates top-quality images in 1–4 steps, Apache 2.0 licensed.</p>
-                        <div class="flex flex-wrap gap-2 mb-3">
-                            <span class="text-xs bg-yellow-400/20 text-yellow-100 px-3 py-1 rounded-full border border-yellow-400/40">1536x1536</span>
+                        <p class="text-zinc-300 text-sm leading-relaxed flex-1">Black Forest Labs' open-source 12B model, generates top-quality images in 1–4 steps. Apache 2.0 licensed.</p>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="text-xs bg-yellow-400/20 text-yellow-100 px-3 py-1 rounded-full border border-yellow-400/40">1536×1536</span>
                             <span class="text-xs bg-amber-400/20 text-amber-100 px-3 py-1 rounded-full border border-amber-400/40">LoRA</span>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
                             <span class="text-xs bg-yellow-400/20 text-yellow-100 px-3 py-1 rounded-full border border-yellow-400/40">Face Transfer</span>
                         </div>
-                        <div class="mt-4 pt-4 border-t border-yellow-400/20 text-xs text-zinc-400">English</div>
+                        <div class="mt-4 pt-4 border-t border-yellow-400/20 text-xs text-zinc-400">Text-to-Image</div>
                     </div>
                 </div>
-                
-                <!-- FLUX.1-Kontext-dev -->
+
+                <!-- FLUX.1-Kontext -->
                 <div class="relative group">
                     <div class="absolute inset-0 bg-gradient-to-br from-yellow-300/20 to-amber-400/20 rounded-2xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="relative bg-yellow-50/10 border border-yellow-400/30 rounded-2xl p-6 hover:border-yellow-400/60 transition-colors backdrop-blur-sm">
-                        <div class="flex items-center justify-between mb-4">
+                    <div class="relative bg-yellow-50/10 border border-yellow-400/30 rounded-2xl p-6 hover:border-yellow-400/60 transition-colors backdrop-blur-sm flex flex-col h-full">
+                        <div class="flex items-center justify-between mb-3">
                             <h3 class="text-white font-bold text-lg">FLUX.1-Kontext</h3>
-                            <span class="bg-gradient-to-r from-yellow-300 to-amber-300 text-black text-xs font-bold px-3 py-1 rounded-full">Free</span>
+                            <span class="bg-gradient-to-r from-yellow-300 to-amber-300 text-black text-xs font-bold px-3 py-1 rounded-full shrink-0">Free</span>
                         </div>
-                        <p class="text-zinc-300 text-sm mb-4 leading-relaxed">12B parameter Flow Transformer model with image editing support for high-quality generation.</p>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="text-xs bg-yellow-400/20 text-yellow-100 px-3 py-1 rounded-full border border-yellow-400/40">1024x1024</span>
+                        <p class="text-zinc-300 text-sm leading-relaxed flex-1">12B Flow Transformer with image editing and context understanding. Precisely modify specific parts of an image.</p>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="text-xs bg-yellow-400/20 text-yellow-100 px-3 py-1 rounded-full border border-yellow-400/40">1024×1024</span>
+                            <span class="text-xs bg-amber-400/20 text-amber-100 px-3 py-1 rounded-full border border-amber-400/40">Image Edit</span>
                         </div>
-                        <div class="mt-4 pt-4 border-t border-yellow-400/20 text-xs text-zinc-400">English</div>
+                        <div class="mt-4 pt-4 border-t border-yellow-400/20 text-xs text-zinc-400">Text-to-Image · Image-to-Image</div>
                     </div>
                 </div>
-                
-                <!-- FLUX.1-Krea-dev -->
+
+                <!-- FLUX.1-Krea -->
                 <div class="relative group">
                     <div class="absolute inset-0 bg-gradient-to-br from-yellow-300/20 to-amber-400/20 rounded-2xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="relative bg-yellow-50/10 border border-amber-400/30 rounded-2xl p-6 hover:border-amber-400/60 transition-colors backdrop-blur-sm">
-                        <div class="flex items-center justify-between mb-4">
+                    <div class="relative bg-yellow-50/10 border border-amber-400/30 rounded-2xl p-6 hover:border-amber-400/60 transition-colors backdrop-blur-sm flex flex-col h-full">
+                        <div class="flex items-center justify-between mb-3">
                             <h3 class="text-white font-bold text-lg">FLUX.1-Krea</h3>
-                            <span class="bg-gradient-to-r from-amber-300 to-yellow-300 text-black text-xs font-bold px-3 py-1 rounded-full">Free</span>
+                            <span class="bg-gradient-to-r from-amber-300 to-yellow-300 text-black text-xs font-bold px-3 py-1 rounded-full shrink-0">Free</span>
                         </div>
-                        <p class="text-zinc-300 text-sm mb-4 leading-relaxed">Large multimodal visual language model optimized for image generation and editing.</p>
-                        <div class="flex flex-wrap gap-2 mb-3">
-                            <span class="text-xs bg-yellow-400/20 text-yellow-100 px-3 py-1 rounded-full border border-yellow-400/40">1024x1024</span>
-                            <span class="text-xs bg-yellow-400/20 text-yellow-100 px-3 py-1 rounded-full border border-yellow-400/40">1536x1536</span>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
+                        <p class="text-zinc-300 text-sm leading-relaxed flex-1">Multimodal visual language model by Krea AI, optimized for stylized generation and image editing.</p>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="text-xs bg-yellow-400/20 text-yellow-100 px-3 py-1 rounded-full border border-yellow-400/40">1024×1024</span>
+                            <span class="text-xs bg-yellow-400/20 text-yellow-100 px-3 py-1 rounded-full border border-yellow-400/40">1536×1536</span>
                             <span class="text-xs bg-amber-400/20 text-amber-100 px-3 py-1 rounded-full border border-amber-400/40">LoRA</span>
                         </div>
-                        <div class="mt-4 pt-4 border-t border-amber-400/20 text-xs text-zinc-400">English</div>
+                        <div class="mt-4 pt-4 border-t border-amber-400/20 text-xs text-zinc-400">Text-to-Image</div>
                     </div>
                 </div>
-                
+
                 <!-- FLUX.2-dev -->
                 <div class="relative group">
                     <div class="absolute inset-0 bg-gradient-to-br from-yellow-300/20 to-amber-400/20 rounded-2xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="relative bg-yellow-50/10 border border-yellow-400/30 rounded-2xl p-6 hover:border-yellow-400/60 transition-colors backdrop-blur-sm">
-                        <div class="flex items-center justify-between mb-4">
+                    <div class="relative bg-yellow-50/10 border border-yellow-400/30 rounded-2xl p-6 hover:border-yellow-400/60 transition-colors backdrop-blur-sm flex flex-col h-full">
+                        <div class="flex items-center justify-between mb-3">
                             <h3 class="text-white font-bold text-lg">FLUX.2-dev</h3>
-                            <span class="bg-gradient-to-r from-yellow-300 to-amber-300 text-black text-xs font-bold px-3 py-1 rounded-full">Free</span>
+                            <span class="bg-gradient-to-r from-yellow-300 to-amber-300 text-black text-xs font-bold px-3 py-1 rounded-full shrink-0">Free</span>
                         </div>
-                        <p class="text-zinc-300 text-sm mb-4 leading-relaxed">Next-generation high-quality text-to-image model developed by Black Forest Labs.</p>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="text-xs bg-yellow-400/20 text-yellow-100 px-3 py-1 rounded-full border border-yellow-400/40">1024x1024</span>
+                        <p class="text-zinc-300 text-sm leading-relaxed flex-1">Black Forest Labs' next-generation flagship model with higher detail and stronger prompt-following capability.</p>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="text-xs bg-yellow-400/20 text-yellow-100 px-3 py-1 rounded-full border border-yellow-400/40">1024×1024</span>
+                            <span class="text-xs bg-amber-400/20 text-amber-100 px-3 py-1 rounded-full border border-amber-400/40">High Detail</span>
                         </div>
-                        <div class="mt-4 pt-4 border-t border-yellow-400/20 text-xs text-zinc-400">English</div>
+                        <div class="mt-4 pt-4 border-t border-yellow-400/20 text-xs text-zinc-400">Text-to-Image</div>
                     </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Discover Something New Section -->
+    <section class="py-16 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-white">Discover something new</h2>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <!-- Card 1 -->
+                <div onclick="openDiscoverModal('Create a holiday card','Fill in your photo and create a unique holiday greeting card','Create a beautiful holiday greeting card with festive decorations, warm lighting, elegant typography, professional photography style')" class="flex items-center gap-3 bg-zinc-900/60 border border-zinc-800 hover:border-zinc-600 rounded-xl p-3 cursor-pointer transition group">
+                    <div class="w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-zinc-800">
+                        <img src="https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=80&h=80&fit=crop" alt="" class="w-full h-full object-cover">
+                    </div>
+                    <span class="text-white text-sm font-medium group-hover:text-cyan-400 transition">Create a holiday card</span>
+                </div>
+                <!-- Card 2 -->
+                <div onclick="openDiscoverModal('Create an album cover','Upload a photo to start styling','Artistic music album cover, dramatic lighting, bold typography, cinematic composition, high contrast, professional studio photography')" class="flex items-center gap-3 bg-zinc-900/60 border border-zinc-800 hover:border-zinc-600 rounded-xl p-3 cursor-pointer transition group">
+                    <div class="w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-zinc-800">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=80&h=80&fit=crop" alt="" class="w-full h-full object-cover">
+                    </div>
+                    <span class="text-white text-sm font-medium group-hover:text-cyan-400 transition">Create an album cover</span>
+                </div>
+                <!-- Card 3 -->
+                <div onclick="openDiscoverModal('Redecorate my room','Reimagine your living space with AI','Modern interior design, minimalist style, natural lighting, cozy atmosphere, Scandinavian decor, high-end furniture, architectural photography')" class="flex items-center gap-3 bg-zinc-900/60 border border-zinc-800 hover:border-zinc-600 rounded-xl p-3 cursor-pointer transition group">
+                    <div class="w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-zinc-800">
+                        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=80&h=80&fit=crop" alt="" class="w-full h-full object-cover">
+                    </div>
+                    <span class="text-white text-sm font-medium group-hover:text-cyan-400 transition">Redecorate my room</span>
+                </div>
+                <!-- Card 4 -->
+                <div onclick="openDiscoverModal('K-Pop star portrait','Transform yourself into a K-Pop idol','K-Pop idol portrait, professional stage makeup, stylish outfit, dramatic studio lighting, high-gloss magazine cover style, ultra-detailed')" class="flex items-center gap-3 bg-zinc-900/60 border border-zinc-800 hover:border-zinc-600 rounded-xl p-3 cursor-pointer transition group">
+                    <div class="w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-zinc-800">
+                        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=80&h=80&fit=crop" alt="" class="w-full h-full object-cover">
+                    </div>
+                    <span class="text-white text-sm font-medium group-hover:text-cyan-400 transition">What would I look like as a K-Pop star?</span>
+                </div>
+                <!-- Card 5 -->
+                <div onclick="openDiscoverModal('Style me','Get a fashion makeover with AI','Fashion editorial portrait, high-end clothing, professional stylist, studio lighting, Vogue magazine style, elegant and modern')" class="flex items-center gap-3 bg-zinc-900/60 border border-zinc-800 hover:border-zinc-600 rounded-xl p-3 cursor-pointer transition group">
+                    <div class="w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-zinc-800">
+                        <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=80&h=80&fit=crop" alt="" class="w-full h-full object-cover">
+                    </div>
+                    <span class="text-white text-sm font-medium group-hover:text-cyan-400 transition">Style me</span>
+                </div>
+                <!-- Card 6 -->
+                <div onclick="openDiscoverModal('Give us a matching outfit','Create coordinated couple outfits','Couple wearing matching outfits, coordinated color palette, stylish casual fashion, outdoor lifestyle photography, warm natural light')" class="flex items-center gap-3 bg-zinc-900/60 border border-zinc-800 hover:border-zinc-600 rounded-xl p-3 cursor-pointer transition group">
+                    <div class="w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-zinc-800">
+                        <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=80&h=80&fit=crop" alt="" class="w-full h-full object-cover">
+                    </div>
+                    <span class="text-white text-sm font-medium group-hover:text-cyan-400 transition">Give us a matching outfit</span>
+                </div>
+                <!-- Card 7 -->
+                <div onclick="openDiscoverModal('Me as The Girl with a Pearl','Reimagine yourself in a classic painting','Portrait in the style of Vermeer\'s Girl with a Pearl Earring, oil painting texture, soft dramatic lighting, Renaissance composition, museum quality')" class="flex items-center gap-3 bg-zinc-900/60 border border-zinc-800 hover:border-zinc-600 rounded-xl p-3 cursor-pointer transition group">
+                    <div class="w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-zinc-800">
+                        <img src="https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=80&h=80&fit=crop" alt="" class="w-full h-full object-cover">
+                    </div>
+                    <span class="text-white text-sm font-medium group-hover:text-cyan-400 transition">Me as The Girl with a Pearl</span>
+                </div>
+                <!-- Card 8 -->
+                <div onclick="openDiscoverModal('Create a professional product photo','Showcase your product beautifully','Professional product photography, clean white background, studio lighting, sharp focus, commercial advertising style, high resolution')" class="flex items-center gap-3 bg-zinc-900/60 border border-zinc-800 hover:border-zinc-600 rounded-xl p-3 cursor-pointer transition group">
+                    <div class="w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-zinc-800">
+                        <img src="https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=80&h=80&fit=crop" alt="" class="w-full h-full object-cover">
+                    </div>
+                    <span class="text-white text-sm font-medium group-hover:text-cyan-400 transition">Create a professional product photo</span>
+                </div>
+                <!-- Card 9 -->
+                <div onclick="openDiscoverModal('Create a professional job photo','Get a polished headshot for your profile','Professional headshot, business attire, neutral background, soft studio lighting, confident expression, LinkedIn profile photo style')" class="flex items-center gap-3 bg-zinc-900/60 border border-zinc-800 hover:border-zinc-600 rounded-xl p-3 cursor-pointer transition group">
+                    <div class="w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-zinc-800">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop" alt="" class="w-full h-full object-cover">
+                    </div>
+                    <span class="text-white text-sm font-medium group-hover:text-cyan-400 transition">Create a professional job photo</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Core Features Section -->
-    <section class="py-20 px-6 bg-gradient-to-b from-transparent via-zinc-900/20 to-transparent">
-        <div class="max-w-5xl mx-auto">
-            <h2 class="text-2xl md:text-3xl font-bold text-white mb-12 text-center">Why Choose Us</h2>
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="card-hover bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8 text-center">
-                    <div class="w-14 h-14 bg-cyan-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                        <svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <!-- Discover Modal -->
+    <div id="discoverModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9990;align-items:center;justify-content:center;">
+        <div style="background:#2a1f14;border-radius:16px;padding:40px 32px;width:90%;max-width:480px;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,0.5);">
+            <h3 id="discoverModalTitle" style="color:#fff;font-size:1.4rem;font-weight:800;margin:0 0 10px;"></h3>
+            <p id="discoverModalSub" style="color:#a1a1aa;font-size:0.875rem;margin:0 0 28px;"></p>
+            <button onclick="applyDiscoverPrompt()" style="width:100%;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#000;font-weight:700;padding:14px;border:none;border-radius:50px;cursor:pointer;font-size:0.95rem;margin-bottom:14px;">Try this prompt</button>
+            <button onclick="closeDiscoverModal()" style="background:none;border:none;color:#a1a1aa;font-size:0.875rem;cursor:pointer;padding:4px 12px;">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        let _discoverPrompt = '';
+        function openDiscoverModal(title, sub, prompt) {
+            _discoverPrompt = prompt;
+            document.getElementById('discoverModalTitle').textContent = title;
+            document.getElementById('discoverModalSub').textContent = sub;
+            document.getElementById('discoverModal').style.display = 'flex';
+        }
+        function closeDiscoverModal() {
+            document.getElementById('discoverModal').style.display = 'none';
+        }
+        function applyDiscoverPrompt() {
+            const ta = document.getElementById('prompt');
+            if (ta) {
+                ta.value = _discoverPrompt;
+                closeDiscoverModal();
+                ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                ta.focus();
+            }
+        }
+        document.getElementById('discoverModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDiscoverModal();
+        });
+    </script>
+
+
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-3 text-center">Key Features of FreeFineAI</h2>
+            <p class="text-zinc-400 text-sm text-center mb-12 max-w-2xl mx-auto">Experience next-generation AI image creation — powerful, free, and built for everyone.</p>
+            <div class="grid md:grid-cols-3 gap-8">
+
+                <div class="card-hover bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
+                    <div class="w-12 h-12 bg-cyan-500/10 border border-cyan-500/20 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
-                    <h3 class="text-white font-bold text-lg mb-3">100% Free</h3>
-                    <p class="text-zinc-500 text-sm leading-relaxed">No hidden costs. Access premium AI assets without any payment.</p>
+                    <h3 class="text-white font-bold text-base mb-2">Zero-Cost Creation</h3>
+                    <p class="text-zinc-500 text-sm leading-relaxed">Completely free with no usage limits or registration required. Generate as many images as you want, anytime.</p>
                 </div>
-                <div class="card-hover bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8 text-center">
-                    <div class="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                        <svg class="w-7 h-7 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+
+                <div class="card-hover bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
+                    <div class="w-12 h-12 bg-purple-500/10 border border-purple-500/20 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
                     </div>
-                    <h3 class="text-white font-bold text-lg mb-3">High Quality</h3>
-                    <p class="text-zinc-500 text-sm leading-relaxed">Curated assets at the highest resolution for professional use.</p>
+                    <h3 class="text-white font-bold text-base mb-2">State-of-the-Art Quality</h3>
+                    <p class="text-zinc-500 text-sm leading-relaxed">Powered by the latest Flux.1 models to deliver photorealistic, high-detail images up to 1920×1080.</p>
                 </div>
-                <div class="card-hover bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8 text-center">
-                    <div class="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                        <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+
+                <div class="card-hover bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
+                    <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
                     </div>
-                    <h3 class="text-white font-bold text-lg mb-3">Daily Updates</h3>
-                    <p class="text-zinc-500 text-sm leading-relaxed">Fresh assets added regularly to keep your portfolio growing.</p>
+                    <h3 class="text-white font-bold text-base mb-2">Advanced Prompt Understanding</h3>
+                    <p class="text-zinc-500 text-sm leading-relaxed">Superior text-to-image capabilities with accurate interpretation of complex prompts and multi-language support.</p>
                 </div>
+
+                <div class="card-hover bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
+                    <div class="w-12 h-12 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <h3 class="text-white font-bold text-base mb-2">Lightning-Fast Generation</h3>
+                    <p class="text-zinc-500 text-sm leading-relaxed">Optimized inference pipeline delivers rapid image generation without compromising quality. Most images ready in seconds.</p>
+                </div>
+
+                <div class="card-hover bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
+                    <div class="w-12 h-12 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    </div>
+                    <h3 class="text-white font-bold text-base mb-2">Privacy First</h3>
+                    <p class="text-zinc-500 text-sm leading-relaxed">Zero data retention policy — your prompts and generated images are never stored on our servers.</p>
+                </div>
+
+                <div class="card-hover bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
+                    <div class="w-12 h-12 bg-pink-500/10 border border-pink-500/20 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </div>
+                    <h3 class="text-white font-bold text-base mb-2">Multi-Style Support</h3>
+                    <p class="text-zinc-500 text-sm leading-relaxed">From photorealistic to anime, oil paintings to digital art — create images across any artistic style with ease.</p>
+                </div>
+
             </div>
         </div>
     </section>
 
     <!-- Stats Section -->
     <section class="py-20 px-6">
-        <div class="max-w-4xl mx-auto">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                <div>
-                    <div class="text-3xl md:text-4xl font-black text-white mb-2">15+</div>
-                    <div class="text-zinc-500 text-sm uppercase tracking-wider">Assets</div>
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-3">Trusted by Creators Worldwide</h2>
+            <p class="text-zinc-400 text-sm mb-14">Join the world's fastest-growing free AI Image Generator community</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">Active Users</div>
+                    <div class="text-4xl md:text-5xl font-black mb-2" style="color:#d4a96a;">25K+</div>
+                    <div class="text-zinc-400 text-sm">Monthly Active Users</div>
                 </div>
-                <div>
-                    <div class="text-3xl md:text-4xl font-black text-white mb-2">10K+</div>
-                    <div class="text-zinc-500 text-sm uppercase tracking-wider">Community</div>
+                <div class="text-center">
+                    <div class="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">Images Created</div>
+                    <div class="text-4xl md:text-5xl font-black mb-2" style="color:#d4a96a;">500K+</div>
+                    <div class="text-zinc-400 text-sm">Images Generated in Total</div>
                 </div>
-                <div>
-                    <div class="text-3xl md:text-4xl font-black text-white mb-2">50K+</div>
-                    <div class="text-zinc-500 text-sm uppercase tracking-wider">Downloads</div>
+                <div class="text-center">
+                    <div class="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">User Rating</div>
+                    <div class="text-4xl md:text-5xl font-black mb-2" style="color:#d4a96a;">4.9</div>
+                    <div class="text-zinc-400 text-sm">Average Image Quality Score</div>
                 </div>
-                <div>
-                    <div class="text-3xl md:text-4xl font-black text-white mb-2">24/7</div>
-                    <div class="text-zinc-500 text-sm uppercase tracking-wider">Access</div>
+                <div class="text-center">
+                    <div class="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">Availability</div>
+                    <div class="text-4xl md:text-5xl font-black mb-2" style="color:#d4a96a;">24/7</div>
+                    <div class="text-zinc-400 text-sm">Always Online, Always Free</div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- What Users Say Section -->
-    <section class="py-20 px-6 bg-gradient-to-b from-transparent via-zinc-900/20 to-transparent">
-        <div class="max-w-5xl mx-auto">
-            <h2 class="text-2xl md:text-3xl font-bold text-white mb-12 text-center">What Users Say About FreeFineAI</h2>
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="testimonial-card rounded-3xl p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-cyan-500/20 rounded-full flex items-center justify-center text-cyan-400 font-bold">J</div>
-                        <div>
-                            <div class="text-white font-medium text-sm">Jessica M.</div>
-                            <div class="text-zinc-500 text-xs">Digital Artist</div>
-                        </div>
-                    </div>
-                    <p class="text-zinc-400 text-sm leading-relaxed">"Amazing quality assets for free. This is exactly what the community needed. The Flux models produce stunning results."</p>
-                </div>
-                <div class="testimonial-card rounded-3xl p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center text-purple-400 font-bold">M</div>
-                        <div>
-                            <div class="text-white font-medium text-sm">Marcus K.</div>
-                            <div class="text-zinc-500 text-xs">Game Developer</div>
-                        </div>
-                    </div>
-                    <p class="text-zinc-400 text-sm leading-relaxed">"I've been using these assets in my projects for months. The quality rivals paid alternatives. Highly recommend!"</p>
-                </div>
-                <div class="testimonial-card rounded-3xl p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 font-bold">A</div>
-                        <div>
-                            <div class="text-white font-medium text-sm">Alex R.</div>
-                            <div class="text-zinc-500 text-xs">Content Creator</div>
-                        </div>
-                    </div>
-                    <p class="text-zinc-400 text-sm leading-relaxed">"Finally, a free resource that doesn't compromise on quality. The curation is excellent and updates are frequent."</p>
+    <section class="py-20 px-6 bg-gradient-to-b from-transparent via-zinc-900/20 to-transparent overflow-hidden">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-3 text-center">What Users Say About FreeFineAI</h2>
+            <p class="text-zinc-400 text-sm text-center mb-2">See how creators use FreeFineAI to boost their productivity</p>
+            <p class="text-zinc-500 text-xs text-center mb-10">⭐⭐⭐⭐⭐ Rated 4.9/5 by 25,000+ users</p>
+
+            <!-- Scrolling columns wrapper — fade top/bottom -->
+            <div class="relative" style="height:520px;">
+                <div class="absolute inset-x-0 top-0 h-20 z-10 pointer-events-none" style="background:linear-gradient(to bottom,#09090b,transparent)"></div>
+                <div class="absolute inset-x-0 bottom-0 h-20 z-10 pointer-events-none" style="background:linear-gradient(to top,#09090b,transparent)"></div>
+                <div class="grid grid-cols-3 gap-4 h-full">
+                    <div class="review-col overflow-hidden"><div class="review-track" id="col0"></div></div>
+                    <div class="review-col overflow-hidden"><div class="review-track" id="col1"></div></div>
+                    <div class="review-col overflow-hidden"><div class="review-track" id="col2"></div></div>
                 </div>
             </div>
         </div>
     </section>
+
+    <style>
+        .review-track { display:flex; flex-direction:column; gap:14px; }
+        .review-card { background:rgba(28,28,30,0.85); border:1px solid rgba(63,63,70,0.5); border-radius:16px; padding:20px; flex-shrink:0; }
+        .review-card p { color:#d4d4d8; font-size:0.95rem; line-height:1.7; margin:0 0 16px; font-weight:400; }
+        .review-card .reviewer { display:flex; align-items:center; gap:10px; }
+        .review-card .avatar { width:42px; height:42px; border-radius:50%; object-fit:cover; flex-shrink:0; border:2px solid rgba(255,255,255,0.1); }
+        .review-card .name { color:#f4f4f5; font-size:0.875rem; font-weight:700; }
+        .review-card .role { color:#71717a; font-size:0.75rem; margin-top:1px; }
+        @keyframes scrollUp { from { transform:translateY(0) } to { transform:translateY(-50%) } }
+    </style>
+
+    <script>
+    (function(){
+        const reviews = [
+            { name:'u/sarah_creates', role:'Digital Artist · r/AIArt', avatar:'https://i.pravatar.cc/80?img=1', text:'FreeFineAI boosted my creative efficiency by 10x! The image quality is beyond imagination and perfectly meets commercial requirements.' },
+            { name:'u/emma_zhang_cx', role:'Content Creator · r/StableDiffusion', avatar:'https://i.pravatar.cc/80?img=5', text:'The speed is amazing! Professional-quality images in seconds, dramatically shortening my project cycles. Nothing else comes close for free.' },
+            { name:'u/jess_digital', role:'Marketing Expert · r/artificial', avatar:'https://i.pravatar.cc/80?img=9', text:"I've tried many tools, but FreeFineAI is a true game-changer. The Flux models produce stunning results every single time." },
+            { name:'u/sophie_designs', role:'Freelance Designer · r/graphic_design', avatar:'https://i.pravatar.cc/80?img=16', text:'With FreeFineAI I can precisely control every detail. It is the most powerful AI image generator available — and it is completely free.' },
+            { name:'u/kevin_concept', role:'Game Concept Artist · r/gamedev', avatar:'https://i.pravatar.cc/80?img=12', text:"The detail expression is unparalleled. As a game developer, FreeFineAI has become our go-to tool for concept design. Flux.1-Krea is insane." },
+            { name:'u/tom_adcreative', role:'Ad Creative Director · r/marketing', avatar:'https://i.pravatar.cc/80?img=15', text:'FreeFineAI makes realizing ad creatives so simple. It generates images that reach commercial photography standards without any cost.' },
+            { name:'u/lily_ux', role:'UI/UX Designer · r/userexperience', avatar:'https://i.pravatar.cc/80?img=20', text:'No login, no payment, unlimited creativity. I use FreeFineAI every single day for mockups and design inspiration. Absolute must-have.' },
+            { name:'u/marcus_k_dev', role:'Game Developer · r/indiegaming', avatar:'https://i.pravatar.cc/80?img=11', text:"I've been using these assets in my projects for months. The quality rivals paid alternatives. Highly recommend to every indie dev!" },
+            { name:'u/alex_content', role:'Content Creator · r/ContentCreation', avatar:'https://i.pravatar.cc/80?img=25', text:"Finally, a free resource that doesn't compromise on quality. The curation is excellent and the Flux models keep getting better." },
+            { name:'u/david_photo', role:'Photographer · r/photography', avatar:'https://i.pravatar.cc/80?img=13', text:'The Flux.1-Kontext model is incredible for image editing. I can transform any photo with just a text description. Mind-blowing.' },
+            { name:'u/mia_social', role:'Social Media Manager · r/socialmedia', avatar:'https://i.pravatar.cc/80?img=23', text:'My engagement rates doubled after I started using FreeFineAI for content creation. The quality is unreal for a completely free tool.' },
+            { name:'u/ryan_indie', role:'Indie Developer · r/gamedev', avatar:'https://i.pravatar.cc/80?img=8', text:'As an indie developer with a tight budget, FreeFineAI is a lifesaver. Professional assets without the professional price tag. Love it.' },
+            { name:'u/zoe_artdir', role:'Art Director · r/Design', avatar:'https://i.pravatar.cc/80?img=27', text:'The variety of models available is impressive. I switch between them depending on the style I need. Kontext for editing, Krea for style.' },
+            { name:'u/james_startup', role:'Startup Founder · r/startups', avatar:'https://i.pravatar.cc/80?img=14', text:'We use FreeFineAI for all our marketing visuals. It saves us thousands of dollars in design costs every month. Incredible value.' },
+            { name:'u/nina_blogs', role:'Blogger · r/Blogging', avatar:'https://i.pravatar.cc/80?img=29', text:'The random prompt feature is genius! I discover new creative directions I never would have thought of on my own. So much fun.' },
+            { name:'u/chris_video', role:'Video Producer · r/videography', avatar:'https://i.pravatar.cc/80?img=7', text:'Thumbnail creation used to take hours. Now with FreeFineAI it takes minutes and the results are consistently stunning. Game changer.' },
+            { name:'u/yuki_illust', role:'Illustrator · r/DigitalArt', avatar:'https://i.pravatar.cc/80?img=32', text:'The anime and artistic styles are spot on. FreeFineAI understands complex style prompts better than any other tool I have used.' },
+            { name:'u/lucas_brand', role:'Brand Designer · r/branding', avatar:'https://i.pravatar.cc/80?img=18', text:'Client presentations have never been easier. I can generate concept visuals on the fly during meetings. Absolutely incredible tool.' },
+            { name:'u/priya_motion', role:'Motion Designer · r/AfterEffects', avatar:'https://i.pravatar.cc/80?img=33', text:'I use FreeFineAI to generate storyboard frames and style references. It saves me hours of sketching every single week.' },
+            { name:'u/oliver_arch', role:'Architect · r/architecture', avatar:'https://i.pravatar.cc/80?img=3', text:'Generating architectural concept renders used to require expensive software. FreeFineAI does it in seconds with stunning realism.' },
+            { name:'u/grace_fashion', role:'Fashion Blogger · r/femalefashionadvice', avatar:'https://i.pravatar.cc/80?img=36', text:'I create all my outfit mood boards with FreeFineAI now. The style understanding is incredible — it nails every aesthetic I describe.' },
+            { name:'u/ben_copywriter', role:'Copywriter · r/copywriting', avatar:'https://i.pravatar.cc/80?img=6', text:'Even as a words person I rely on FreeFineAI daily. Having visuals that match my copy instantly makes my pitches so much stronger.' },
+            { name:'u/hana_educator', role:'Online Educator · r/Teachers', avatar:'https://i.pravatar.cc/80?img=40', text:'I create custom illustrations for my courses with FreeFineAI. My students love the visuals and engagement has gone through the roof.' },
+            { name:'u/mike_3d', role:'3D Artist · r/blender', avatar:'https://i.pravatar.cc/80?img=10', text:'I use FreeFineAI for concept exploration before committing to a full 3D model. It cuts my pre-production time in half easily.' },
+            { name:'u/chloe_ecom', role:'E-commerce Owner · r/ecommerce', avatar:'https://i.pravatar.cc/80?img=44', text:'Product photography used to cost me a fortune. Now I generate lifestyle shots with FreeFineAI and my conversion rate has improved.' },
+            { name:'u/dan_journalist', role:'Journalist · r/journalism', avatar:'https://i.pravatar.cc/80?img=17', text:'For article header images FreeFineAI is unbeatable. Fast, free, and the quality is consistently publication-ready.' },
+            { name:'u/ava_tattoo', role:'Tattoo Artist · r/tattoo', avatar:'https://i.pravatar.cc/80?img=47', text:'I use FreeFineAI to sketch out tattoo design concepts for clients. It helps them visualize ideas before we commit to anything.' },
+            { name:'u/sam_music', role:'Music Producer · r/WeAreTheMusicMakers', avatar:'https://i.pravatar.cc/80?img=19', text:'Album artwork, promo visuals, social posts — FreeFineAI handles all my visual needs. As a solo artist this is an absolute game changer.' },
+            { name:'u/fiona_ngo', role:'NGO Communications · r/nonprofit', avatar:'https://i.pravatar.cc/80?img=48', text:'Our small nonprofit cannot afford a design team. FreeFineAI gives us professional visuals for campaigns that actually move people.' },
+            { name:'u/leo_streamer', role:'Content Streamer · r/Twitch', avatar:'https://i.pravatar.cc/80?img=22', text:'Stream overlays, thumbnails, emotes — I generate everything with FreeFineAI. My channel branding has never looked this good.' },
+        ];
+
+        function shuffle(arr) {
+            const a = [...arr];
+            for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+            return a;
+        }
+
+        function buildCard(r) {
+            return `<div class="review-card">
+                <p>"${r.text}"</p>
+                <div class="reviewer">
+                    <img class="avatar" src="${r.avatar}" alt="${r.name}" loading="lazy">
+                    <div><div class="name">${r.name}</div><div class="role">${r.role}</div></div>
+                </div>
+            </div>`;
+        }
+
+        [0,1,2].forEach(function(i){
+            const col = document.getElementById('col'+i);
+            const shuffled = shuffle(reviews);
+            const html = shuffled.map(buildCard).join('') + shuffled.map(buildCard).join('');
+            col.innerHTML = html;
+            const speed = 55 + i * 8; // slow: 55s / 63s / 71s
+            col.style.animation = `scrollUp ${speed}s linear infinite`;
+        });
+    })();
+    </script>
+
 
     <!-- Footer -->
     <footer class="py-12 px-6 border-t border-zinc-800/50">
@@ -753,6 +952,80 @@
         if (window.API) {
             window.API.setStrategy(window.API.STRATEGY.RANDOM);
         }
+
+        // ── Random Prompt ──────────────────────────────────────────
+        const PROMPT_THEMES = {
+            landscape: [
+                "A breathtaking mountain range at golden hour, snow-capped peaks reflecting warm sunlight, dramatic clouds, photorealistic, 8k",
+                "Misty forest at dawn, rays of light filtering through ancient trees, moss-covered ground, cinematic atmosphere",
+                "Vast desert dunes under a starry night sky, Milky Way visible, long exposure photography style",
+                "Serene lake surrounded by autumn foliage, mirror-like reflections, soft morning mist, landscape photography",
+                "Dramatic coastal cliffs with crashing waves, stormy sky, moody lighting, ultra-detailed",
+                "Cherry blossom park in spring, petals falling, soft bokeh background, peaceful atmosphere",
+                "Tropical beach at sunset, turquoise water, palm trees silhouette, vibrant orange and pink sky",
+                "Rolling green hills of the countryside, wildflowers, fluffy clouds, idyllic pastoral scene",
+            ],
+            portrait: [
+                "Portrait of a young woman with flowing auburn hair, soft natural light, shallow depth of field, photorealistic",
+                "Elderly man with weathered face and kind eyes, black and white portrait, dramatic side lighting",
+                "Fantasy warrior woman in ornate armor, fierce expression, epic lighting, highly detailed",
+                "Cyberpunk girl with neon-lit face, futuristic city background, rain-soaked streets, cinematic",
+                "Elegant ballerina in white tutu, graceful pose, studio lighting, fine art photography",
+                "Street portrait of a musician playing guitar, candid moment, urban background, warm tones",
+                "Child laughing in a sunflower field, golden hour light, joyful expression, lifestyle photography",
+                "Mysterious woman in a masquerade mask, candlelit ballroom, baroque style, rich colors",
+            ],
+            flora: [
+                "Macro photography of a dew-covered rose, vibrant red petals, soft bokeh background, ultra-detailed",
+                "Field of lavender in Provence, purple rows stretching to the horizon, golden afternoon light",
+                "Exotic tropical flowers in a rainforest, vivid colors, lush green leaves, botanical illustration style",
+                "Cherry blossoms in full bloom against a blue sky, delicate pink petals, spring atmosphere",
+                "Sunflower field at sunrise, warm golden light, bees hovering, cheerful and vibrant",
+                "Autumn leaves in rich reds and oranges, forest floor covered in fallen foliage, moody light",
+                "Water lily floating on a still pond, reflections, impressionist painting style",
+                "Wildflower meadow with poppies and daisies, soft focus, dreamy pastel tones",
+            ],
+            animal: [
+                "Majestic lion resting on a rock at sunset, African savanna, golden hour, wildlife photography",
+                "Playful fox kit in a snowy forest, curious expression, soft winter light, adorable",
+                "Humpback whale breaching the ocean surface, dramatic splash, aerial view, nature documentary style",
+                "Colorful parrot perched on a tropical branch, vibrant plumage, lush jungle background",
+                "Wolf howling at the full moon, misty forest, dramatic silhouette, moody atmosphere",
+                "Baby elephant splashing in a watering hole, joyful, warm African light, wildlife photography",
+                "Owl perched on a branch at night, glowing eyes, moonlit forest, mysterious atmosphere",
+                "School of tropical fish in a coral reef, crystal clear water, vibrant colors, underwater photography",
+            ],
+            architecture: [
+                "Ancient Greek temple at sunrise, marble columns, dramatic sky, architectural photography",
+                "Futuristic skyscraper with glass facade, reflecting clouds, modern city skyline, blue hour",
+                "Cozy Japanese tea house in a bamboo garden, lanterns glowing, peaceful evening atmosphere",
+                "Gothic cathedral interior, stained glass windows, rays of colored light, awe-inspiring",
+                "Abandoned Victorian mansion overgrown with ivy, moody overcast sky, atmospheric",
+                "Traditional Moroccan riad courtyard, intricate tilework, fountain, warm afternoon light",
+                "Modern minimalist house in the mountains, floor-to-ceiling windows, snowy landscape",
+                "Ancient Roman colosseum at dusk, dramatic lighting, historical grandeur, wide angle",
+            ],
+            fantasy: [
+                "Floating islands in the sky with waterfalls, lush vegetation, magical atmosphere, concept art",
+                "Dragon soaring over a medieval castle, fire breath illuminating the night, epic fantasy art",
+                "Enchanted forest with glowing mushrooms and fairies, magical light, dreamlike atmosphere",
+                "Underwater kingdom with mermaids and bioluminescent creatures, ethereal blue light",
+                "Wizard's tower on a cliff, lightning storm, magical energy swirling, dark fantasy",
+                "Crystal cave with glowing gems, otherworldly colors, fantasy landscape, highly detailed",
+                "Phoenix rising from flames, majestic wings spread, vibrant orange and gold, mythical",
+                "Elven city in the treetops, elegant architecture, soft golden light, Lord of the Rings style",
+            ],
+        };
+
+        function randomPrompt() {
+            const theme = document.getElementById('promptThemeSelect').value;
+            const list = PROMPT_THEMES[theme] || PROMPT_THEMES.landscape;
+            const pick = list[Math.floor(Math.random() * list.length)];
+            const ta = document.getElementById('prompt');
+            ta.value = pick;
+            ta.focus();
+        }
+        // ───────────────────────────────────────────────────────────
 
         // Auth state
         let authToken = localStorage.getItem('userToken') || '';
