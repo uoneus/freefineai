@@ -163,25 +163,6 @@ function showTerms() { document.getElementById('termsModal').style.display = 'fl
 function closeTerms() { document.getElementById('termsModal').style.display = 'none'; }
 document.getElementById('termsModal').addEventListener('click', function(e) { if(e.target===this) closeTerms(); });
 
-function showAuthModal() { document.getElementById('authModal').style.display = 'flex'; showAuthWelcome(); }
-function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
-function showAuthWelcome() {
-    document.getElementById('authWelcomeScreen').style.display = 'block';
-    document.getElementById('authEmailScreen').style.display = 'none';
-}
-function openEmailAuth(tab) {
-    document.getElementById('authWelcomeScreen').style.display = 'none';
-    document.getElementById('authEmailScreen').style.display = 'block';
-    switchTab(tab || 'login');
-}
-function switchTab(tab) {
-    document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
-    document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
-    document.getElementById('tabLogin').style.borderBottomColor = tab === 'login' ? '#06b6d4' : 'transparent';
-    document.getElementById('tabRegister').style.borderBottomColor = tab === 'register' ? '#06b6d4' : 'transparent';
-}
-document.getElementById('authModal').addEventListener('click', function(e) { if(e.target===this) closeAuthModal(); });
-
 function toggleAiTools(e) {
     e.stopPropagation();
     const d = document.getElementById('aiToolsDropdown');
