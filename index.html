@@ -1085,8 +1085,10 @@
             loadUserLimit();
         }
 
-        document.getElementById('authModal').addEventListener('click', function(e) {
-            if (e.target === this) closeAuthModal();
+        // authModal click-outside handler — set up after navbar loads
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('authModal');
+            if (modal && e.target === modal) closeAuthModal();
         });
 
         // initAuthUI is called by loadNavbar callback after navbar DOM is ready
