@@ -68,27 +68,27 @@
     <header class="pt-40 pb-10 px-6">
         <div class="max-w-4xl mx-auto text-center section-fade">
             <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 tracking-tight leading-tight">
-                Premium Flux.1<br>
-                <span class="gradient-text">Digital Assets</span>
+                <span data-i18n="hero.title1">Premium Flux.1</span><br>
+                <span class="gradient-text" data-i18n="hero.title2">Digital Assets</span>
             </h1>
-            <p class="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p class="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed" data-i18n="hero.desc">
                 Curated, high-fidelity AI assets for creators. Free for the community, built by visionaries.
             </p>
             <div class="flex flex-nowrap gap-3 justify-center mt-2">
                 <span class="flex items-center gap-2 bg-green-500/15 border border-green-500/30 text-green-300 text-sm font-medium px-5 py-2.5 rounded-full whitespace-nowrap">
-                    <span class="text-base">✦</span> 100% Free
+                    <span class="text-base">✦</span> <span data-i18n="badge.free">100% Free</span>
                 </span>
                 <span class="flex items-center gap-2 bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-sm font-medium px-5 py-2.5 rounded-full whitespace-nowrap">
-                    <span class="text-base">⚡</span> Powered by Nano Banana
+                    <span class="text-base">⚡</span> <span data-i18n="badge.powered">Powered by Nano Banana</span>
                 </span>
                 <span class="flex items-center gap-2 bg-purple-500/15 border border-purple-500/30 text-purple-300 text-sm font-medium px-5 py-2.5 rounded-full whitespace-nowrap">
-                    <span class="text-base">🔓</span> No Login Required
+                    <span class="text-base">🔓</span> <span data-i18n="badge.nologin">No Login Required</span>
                 </span>
                 <span class="flex items-center gap-2 bg-yellow-500/15 border border-yellow-500/30 text-yellow-300 text-sm font-medium px-5 py-2.5 rounded-full whitespace-nowrap">
-                    <span class="text-base">🖼️</span> HD Output
+                    <span class="text-base">🖼️</span> <span data-i18n="badge.hd">HD Output</span>
                 </span>
                 <span class="flex items-center gap-2 bg-pink-500/15 border border-pink-500/30 text-pink-300 text-sm font-medium px-5 py-2.5 rounded-full whitespace-nowrap">
-                    <span class="text-base">🎨</span> Multiple AI Models
+                    <span class="text-base">🎨</span> <span data-i18n="badge.models">Multiple AI Models</span>
                 </span>
             </div>
         </div>
@@ -109,28 +109,29 @@
                                 name="prompt"
                                 rows="4"
                                 class="w-full bg-zinc-800/50 border border-zinc-700 rounded-xl px-4 py-3 text-white text-sm placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition resize-none"
+                                data-i18n-placeholder="gen.placeholder"
                                 placeholder="A beautiful sunset over the ocean with vibrant orange and pink colors..."
                                 required
                             ></textarea>
                             <!-- Prompt Helper — 4-col grid row -->
                             <div class="mt-2 grid grid-cols-4 gap-2">
                                 <select id="promptThemeSelect" class="col-span-2 h-10 bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 text-zinc-300 text-xs focus:outline-none focus:border-cyan-500 transition cursor-pointer appearance-none">
-                                    <option value="landscape">🏔️ Landscape</option>
-                                    <option value="portrait">👤 Portrait</option>
-                                    <option value="flora">🌸 Flora</option>
-                                    <option value="animal">🦁 Animal</option>
-                                    <option value="architecture">🏛️ Architecture</option>
-                                    <option value="fantasy">✨ Fantasy</option>
+                                    <option value="landscape" data-i18n="theme.landscape">🏔️ Landscape</option>
+                                    <option value="portrait" data-i18n="theme.portrait">👤 Portrait</option>
+                                    <option value="flora" data-i18n="theme.flora">🌸 Flora</option>
+                                    <option value="animal" data-i18n="theme.animal">🦁 Animal</option>
+                                    <option value="architecture" data-i18n="theme.architecture">🏛️ Architecture</option>
+                                    <option value="fantasy" data-i18n="theme.fantasy">✨ Fantasy</option>
                                 </select>
                                 <button type="button" onclick="randomPrompt()" class="col-span-2 h-10 flex items-center justify-center gap-1.5 text-xs text-zinc-400 hover:text-cyan-400 border border-zinc-700 hover:border-cyan-500 bg-zinc-800/50 px-3 rounded-lg transition">
                                     <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                                    Random Prompt
+                                    <span data-i18n="gen.random">Random Prompt</span>
                                 </button>
                             </div>
                         </div>
                         
                         <div>
-                            <label class="block text-white font-medium text-xs mb-2">Size Presets</label>
+                            <label class="block text-white font-medium text-xs mb-2" data-i18n="gen.size">Size Presets</label>
                             <!-- 4-col grid row -->
                             <div class="grid grid-cols-4 gap-2">
                                 <button type="button" onclick="setSize(768, 1344)" class="size-preset-btn bg-zinc-800/50 border border-zinc-700 hover:border-cyan-500 rounded-lg px-2 py-2 text-xs text-zinc-300 transition text-center">
@@ -157,7 +158,7 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="width" class="block text-white font-medium text-xs mb-1">Width</label>
+                                <label for="width" class="block text-white font-medium text-xs mb-1" data-i18n="gen.width">Width</label>
                                 <select id="width" name="width" class="w-full h-10 bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 text-white text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition appearance-none cursor-pointer">
                                     <option value="768">768px</option>
                                     <option value="1024" selected>1024px</option>
@@ -167,7 +168,7 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="height" class="block text-white font-medium text-xs mb-1">Height</label>
+                                <label for="height" class="block text-white font-medium text-xs mb-1" data-i18n="gen.height">Height</label>
                                 <select id="height" name="height" class="w-full h-10 bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 text-white text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition appearance-none cursor-pointer">
                                     <option value="768">768px</option>
                                     <option value="1024" selected>1024px</option>
@@ -181,8 +182,10 @@
                         <!-- Verification Code — 4-col grid row: input=2, captcha+refresh=2 -->
                         <div class="grid grid-cols-4 gap-2 items-end">
                             <div class="col-span-2">
-                                <label for="captcha" class="block text-white font-medium text-xs mb-1">Verification Code</label>
-                                <input type="text" id="captcha" name="captcha" placeholder="Enter code"
+                                <label for="captcha" class="block text-white font-medium text-xs mb-1" data-i18n="gen.captcha">Verification Code</label>
+                                <input type="text" id="captcha" name="captcha"
+                                    data-i18n-placeholder="gen.captcha_placeholder"
+                                    placeholder="Enter code"
                                     class="w-full h-10 bg-zinc-800/50 border border-zinc-700 rounded-lg px-3 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition uppercase"
                                     maxlength="4" />
                             </div>
@@ -206,7 +209,7 @@
                                     <span data-i18n="gen.generate">Generate Image</span>
                                 </button>
                             </div>
-                            <button type="button" onclick="resetGenerator()" class="h-10 bg-zinc-700 hover:bg-zinc-600 text-white font-medium px-4 rounded-xl text-xs transition">
+                            <button type="button" onclick="resetGenerator()" class="h-10 bg-zinc-700 hover:bg-zinc-600 text-white font-medium px-4 rounded-xl text-xs transition" data-i18n="gen.reset">
                                 Reset
                             </button>
                         </div>
