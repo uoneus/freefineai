@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeFineAI | Pricing — Free AI Image Generator Plans</title>
+    <meta name="description" content="FreeFineAI pricing plans. Start free with no login required, or register for more daily generations. All plans include access to Flux.1 AI models.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="common.css">
+    <script src="common.js"></script>
+</head>
+<body class="min-h-screen">
+<canvas id="particle-canvas"></canvas>
+
+<div id="navbar-placeholder"></div>
+<script>loadNavbar();</script>
+
+<!-- Hero -->
+<header class="pt-40 pb-10 px-6 text-center">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-5xl md:text-6xl font-black text-white mb-4 tracking-tight">
+            Simple <span class="gradient-text">Pricing</span>
+        </h1>
+        <p class="text-zinc-400 text-lg mb-2">Start generating for free — no credit card required.</p>
+        <p class="text-zinc-500 text-sm">✨ Unlock More with FreeFineAI</p>
+    </div>
+</header>
+
+<!-- Pricing Cards -->
+<section class="py-10 px-6">
+    <div class="max-w-5xl mx-auto">
+        <div class="grid md:grid-cols-3 gap-6 items-start">
+
+            <!-- Free -->
+            <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-8 flex flex-col">
+                <div class="text-4xl mb-4 text-center">🎨</div>
+                <div class="text-zinc-400 text-xs font-bold uppercase tracking-widest text-center mb-2">Free</div>
+                <div class="text-white text-5xl font-black text-center mb-1">$0</div>
+                <div class="text-zinc-500 text-sm text-center mb-6">No login required</div>
+                <ul class="space-y-3 flex-1 mb-8">
+                    <li class="flex items-center gap-3 text-sm text-zinc-300"><span class="text-green-400 font-bold">✓</span> 3 images / day</li>
+                    <li class="flex items-center gap-3 text-sm text-zinc-300"><span class="text-green-400 font-bold">✓</span> Standard models</li>
+                    <li class="flex items-center gap-3 text-sm text-zinc-300"><span class="text-green-400 font-bold">✓</span> 1024×1024 max</li>
+                    <li class="flex items-center gap-3 text-sm text-zinc-500"><span class="text-zinc-600">✗</span> No account needed</li>
+                </ul>
+                <a href="/index.html" class="block text-center bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-3 rounded-xl text-sm transition">
+                    Start Generating
+                </a>
+            </div>
+
+            <!-- Member (Popular) -->
+            <div class="relative bg-gradient-to-b from-cyan-500/10 to-zinc-900/60 border-2 border-cyan-500 rounded-2xl p-8 flex flex-col shadow-lg shadow-cyan-500/10">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-cyan-400 text-black text-xs font-black px-4 py-1.5 rounded-full tracking-widest">POPULAR</div>
+                <div class="text-4xl mb-4 text-center">⚡</div>
+                <div class="text-cyan-400 text-xs font-bold uppercase tracking-widest text-center mb-2">Member</div>
+                <div class="text-white text-5xl font-black text-center mb-1">Free</div>
+                <div class="text-zinc-500 text-sm text-center mb-6">Register an account</div>
+                <ul class="space-y-3 flex-1 mb-8">
+                    <li class="flex items-center gap-3 text-sm text-zinc-300"><span class="text-cyan-400 font-bold">✓</span> 10 images / day</li>
+                    <li class="flex items-center gap-3 text-sm text-zinc-300"><span class="text-cyan-400 font-bold">✓</span> More models</li>
+                    <li class="flex items-center gap-3 text-sm text-zinc-300"><span class="text-cyan-400 font-bold">✓</span> Higher resolutions</li>
+                    <li class="flex items-center gap-3 text-sm text-zinc-300"><span class="text-cyan-400 font-bold">✓</span> Priority queue</li>
+                </ul>
+                <button onclick="showAuthModal && showAuthModal('register')" class="block w-full text-center bg-cyan-500/15 border-2 border-cyan-500/60 hover:bg-cyan-500/25 text-cyan-400 font-bold py-3 rounded-xl text-sm transition">
+                    Register Free
+                </button>
+            </div>
+
+            <!-- VIP -->
+            <div class="bg-gradient-to-b from-purple-500/10 to-zinc-900/60 border border-purple-500/40 rounded-2xl p-8 flex flex-col">
+                <div class="text-4xl mb-4 text-center">👑</div>
+                <div class="text-purple-400 text-xs font-bold uppercase tracking-widest text-center mb-2">VIP</div>
+                <div class="text-white text-5xl font-black text-center mb-1">Pro</div>
+                <div class="text-zinc-500 text-sm text-center mb-6">Coming soon</div>
+                <ul class="space-y-3 flex-1 mb-8">
+                    <li class="flex items-center gap-3 text-sm text-zinc-300"><span class="text-purple-400 font-bold">✓</span> 20 images / day</li>
+                    <li class="flex items-center gap-3 text-sm text-zinc-300"><span class="text-purple-400 font-bold">✓</span> Latest AI models</li>
+                    <li class="flex items-center gap-3 text-sm text-zinc-300"><span class="text-purple-400 font-bold">✓</span> Max resolution</li>
+                    <li class="flex items-center gap-3 text-sm text-zinc-300"><span class="text-purple-400 font-bold">✓</span> Fastest generation</li>
+                </ul>
+                <button disabled class="block w-full text-center bg-zinc-800/50 border border-zinc-700 text-zinc-500 font-semibold py-3 rounded-xl text-sm cursor-not-allowed">
+                    Coming Soon
+                </button>
+            </div>
+
+        </div>
+
+        <!-- FAQ -->
+        <div class="mt-20 max-w-2xl mx-auto">
+            <h2 class="text-2xl font-bold text-white text-center mb-10">Frequently Asked Questions</h2>
+            <div class="space-y-4">
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5">
+                    <div class="text-white font-semibold text-sm mb-2">Do I need a credit card?</div>
+                    <p class="text-zinc-500 text-sm">No. All plans are completely free. No credit card or payment information is ever required.</p>
+                </div>
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5">
+                    <div class="text-white font-semibold text-sm mb-2">What happens when I hit the daily limit?</div>
+                    <p class="text-zinc-500 text-sm">Your limit resets every day at midnight UTC. Register a free account to get 10 images per day instead of 3.</p>
+                </div>
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5">
+                    <div class="text-white font-semibold text-sm mb-2">When will VIP / Pro be available?</div>
+                    <p class="text-zinc-500 text-sm">We're working on it. Pro will include higher daily limits, the latest models, and max resolution output. Stay tuned.</p>
+                </div>
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5">
+                    <div class="text-white font-semibold text-sm mb-2">Are my generated images stored?</div>
+                    <p class="text-zinc-500 text-sm">We follow a zero data retention policy. Your prompts and generated images are not stored on our servers.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-12 px-6 border-t border-zinc-800/50 mt-10">
+    <div class="max-w-6xl mx-auto text-center">
+        <a href="/index.html" class="inline-block text-white font-black text-lg tracking-tight mb-4">FREEFINE<span class="text-cyan-400">AI</span></a>
+        <p class="text-zinc-500 text-sm">© 2024-2026 FreeFineAI. Premium Flux.1 assets for the creative community.</p>
+    </div>
+</footer>
+
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+    var canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var particles = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    function Particle() {
+        this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height;
+        this.size = Math.random()*1.5+0.5; this.speedX = Math.random()*0.3-0.15;
+        this.speedY = Math.random()*0.3-0.15; this.opacity = Math.random()*0.4+0.2;
+    }
+    Particle.prototype.update = function() {
+        this.x += this.speedX; this.y += this.speedY;
+        if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+        if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+    };
+    Particle.prototype.draw = function() {
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(6,182,212,'+this.opacity+')'; ctx.fill();
+    };
+    function animate() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        particles.forEach(function(p){p.update();p.draw();});
+        requestAnimationFrame(animate);
+    }
+    resize(); window.addEventListener('resize', resize);
+    for (var i=0;i<120;i++) particles.push(new Particle());
+    animate();
+});
+</script>
+</body>
+</html>

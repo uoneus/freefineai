@@ -68,6 +68,32 @@
             <label class="block text-white text-xs font-semibold mb-1.5">Prompt</label>
             <textarea id="prompt" rows="4" placeholder="Describe the image you want to create..."
                 class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3.5 py-3 text-white text-sm placeholder-zinc-600 focus:outline-none focus:border-cyan-500 resize-none"></textarea>
+            <!-- Random Prompt -->
+            <div class="flex items-center gap-2 mt-2">
+                <select id="promptThemeSelect" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-300 text-xs focus:outline-none focus:border-cyan-500">
+                    <option value="landscape">🏔️ Landscape</option>
+                    <option value="portrait">👤 Portrait</option>
+                    <option value="flora">🌸 Flora</option>
+                    <option value="animal">🦁 Animal</option>
+                    <option value="architecture">🏛️ Architecture</option>
+                    <option value="fantasy">✨ Fantasy</option>
+                </select>
+                <button type="button" onclick="randomPrompt()" class="flex items-center gap-1.5 text-xs text-zinc-400 border border-zinc-700 bg-zinc-900 px-3 py-2 rounded-lg whitespace-nowrap">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    Random
+                </button>
+            </div>
+        </div>
+
+        <!-- Size Presets -->
+        <div class="mb-3">
+            <label class="block text-zinc-400 text-xs mb-1.5">Size Presets</label>
+            <div class="grid grid-cols-4 gap-1.5">
+                <button type="button" onclick="setMobileSize('768x1344')" class="mobile-size-btn bg-zinc-900 border border-zinc-700 rounded-lg py-2 text-xs text-zinc-400 text-center transition active:border-cyan-500">📱<br><span class="text-zinc-600" style="font-size:10px;">768×1344</span></button>
+                <button type="button" onclick="setMobileSize('1024x1024')" class="mobile-size-btn active-size bg-cyan-500/15 border border-cyan-500/50 rounded-lg py-2 text-xs text-cyan-400 text-center">⬜<br><span style="font-size:10px;">1024×1024</span></button>
+                <button type="button" onclick="setMobileSize('1920x1080')" class="mobile-size-btn bg-zinc-900 border border-zinc-700 rounded-lg py-2 text-xs text-zinc-400 text-center transition active:border-cyan-500">🖥️<br><span class="text-zinc-600" style="font-size:10px;">1920×1080</span></button>
+                <button type="button" onclick="setMobileSize('1536x1536')" class="mobile-size-btn bg-zinc-900 border border-zinc-700 rounded-lg py-2 text-xs text-zinc-400 text-center transition active:border-cyan-500">🖼️<br><span class="text-zinc-600" style="font-size:10px;">1536×1536</span></button>
+            </div>
         </div>
 
         <!-- Model + Size row -->
@@ -85,6 +111,7 @@
                     <option value="768x1344">768×1344 (Portrait)</option>
                     <option value="1344x768">1344×768 (Landscape)</option>
                     <option value="1536x1536">1536×1536</option>
+                    <option value="1920x1080">1920×1080 (HD)</option>
                 </select>
             </div>
         </div>
@@ -112,11 +139,14 @@
         </div>
 
         <!-- Generate button -->
-        <button id="generateBtn" onclick="generate()"
-            class="btn-primary w-full text-black font-bold py-3.5 rounded-xl text-sm uppercase tracking-wider flex items-center justify-center gap-2 mb-4">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            Generate
-        </button>
+        <div class="relative mb-4">
+            <span class="absolute -top-2.5 left-4 z-10 bg-orange-500 text-white text-xs font-normal px-2 py-0.5 rounded-full leading-none">FREE</span>
+            <button id="generateBtn" onclick="generate()"
+                class="w-full bg-cyan-500/15 border-2 border-cyan-500/60 hover:bg-cyan-500/25 text-cyan-400 font-bold py-3.5 rounded-xl text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Generate Image
+            </button>
+        </div>
 
         <!-- Result area -->
         <div id="resultArea" class="hidden">
@@ -432,6 +462,31 @@
         if (window.API) {
             window.API.setStrategy(window.API.STRATEGY.RANDOM);
         }
+
+        // ── Random Prompt (shared with index.html) ────────────────
+        const PROMPT_THEMES = {
+            landscape: ["A breathtaking mountain range at golden hour, snow-capped peaks, dramatic clouds, photorealistic, 8k","Misty forest at dawn, rays of light filtering through ancient trees, cinematic atmosphere","Vast desert dunes under a starry night sky, Milky Way visible, long exposure photography","Serene lake surrounded by autumn foliage, mirror-like reflections, soft morning mist","Tropical beach at sunset, turquoise water, palm trees silhouette, vibrant orange and pink sky","Cherry blossom park in spring, petals falling, soft bokeh background, peaceful atmosphere","Rolling green hills, wildflowers, fluffy clouds, idyllic pastoral scene","Dramatic coastal cliffs with crashing waves, stormy sky, moody lighting, ultra-detailed"],
+            portrait: ["Portrait of a young woman with flowing auburn hair, soft natural light, shallow depth of field, photorealistic","Elderly man with weathered face and kind eyes, black and white portrait, dramatic side lighting","Fantasy warrior woman in ornate armor, fierce expression, epic lighting, highly detailed","Cyberpunk girl with neon-lit face, futuristic city background, rain-soaked streets, cinematic","Elegant ballerina in white tutu, graceful pose, studio lighting, fine art photography","Mysterious woman in a masquerade mask, candlelit ballroom, baroque style, rich colors","Child laughing in a sunflower field, golden hour light, joyful expression, lifestyle photography","Street portrait of a musician playing guitar, candid moment, urban background, warm tones"],
+            flora: ["Macro photography of a dew-covered rose, vibrant red petals, soft bokeh background, ultra-detailed","Field of lavender in Provence, purple rows stretching to the horizon, golden afternoon light","Exotic tropical flowers in a rainforest, vivid colors, lush green leaves, botanical illustration","Cherry blossoms in full bloom against a blue sky, delicate pink petals, spring atmosphere","Sunflower field at sunrise, warm golden light, bees hovering, cheerful and vibrant","Autumn leaves in rich reds and oranges, forest floor covered in fallen foliage, moody light","Water lily floating on a still pond, reflections, impressionist painting style","Wildflower meadow with poppies and daisies, soft focus, dreamy pastel tones"],
+            animal: ["Majestic lion resting on a rock at sunset, African savanna, golden hour, wildlife photography","Playful fox kit in a snowy forest, curious expression, soft winter light, adorable","Humpback whale breaching the ocean surface, dramatic splash, aerial view, nature documentary","Colorful parrot perched on a tropical branch, vibrant plumage, lush jungle background","Wolf howling at the full moon, misty forest, dramatic silhouette, moody atmosphere","Baby elephant splashing in a watering hole, joyful, warm African light, wildlife photography","Owl perched on a branch at night, glowing eyes, moonlit forest, mysterious atmosphere","School of tropical fish in a coral reef, crystal clear water, vibrant colors, underwater photography"],
+            architecture: ["Ancient Greek temple at sunrise, marble columns, dramatic sky, architectural photography","Futuristic skyscraper with glass facade, reflecting clouds, modern city skyline, blue hour","Cozy Japanese tea house in a bamboo garden, lanterns glowing, peaceful evening atmosphere","Gothic cathedral interior, stained glass windows, rays of colored light, awe-inspiring","Traditional Moroccan riad courtyard, intricate tilework, fountain, warm afternoon light","Modern minimalist house in the mountains, floor-to-ceiling windows, snowy landscape","Ancient Roman colosseum at dusk, dramatic lighting, historical grandeur, wide angle","Abandoned Victorian mansion overgrown with ivy, moody overcast sky, atmospheric"],
+            fantasy: ["Floating islands in the sky with waterfalls, lush vegetation, magical atmosphere, concept art","Dragon soaring over a medieval castle, fire breath illuminating the night, epic fantasy art","Enchanted forest with glowing mushrooms and fairies, magical light, dreamlike atmosphere","Underwater kingdom with mermaids and bioluminescent creatures, ethereal blue light","Wizard's tower on a cliff, lightning storm, magical energy swirling, dark fantasy","Crystal cave with glowing gems, otherworldly colors, fantasy landscape, highly detailed","Phoenix rising from flames, majestic wings spread, vibrant orange and gold, mythical","Elven city in the treetops, elegant architecture, soft golden light, Lord of the Rings style"],
+        };
+        function randomPrompt() {
+            const theme = document.getElementById('promptThemeSelect').value;
+            const list = PROMPT_THEMES[theme] || PROMPT_THEMES.landscape;
+            document.getElementById('prompt').value = list[Math.floor(Math.random() * list.length)];
+        }
+        function setMobileSize(val) {
+            document.getElementById('size').value = val;
+            document.querySelectorAll('.mobile-size-btn').forEach(b => {
+                b.classList.remove('active-size','bg-cyan-500/15','border-cyan-500/50','text-cyan-400');
+                b.classList.add('bg-zinc-900','border-zinc-700','text-zinc-400');
+            });
+            event.currentTarget.classList.add('active-size','bg-cyan-500/15','border-cyan-500/50','text-cyan-400');
+            event.currentTarget.classList.remove('bg-zinc-900','border-zinc-700','text-zinc-400');
+        }
+        // ─────────────────────────────────────────────────────────
 
         // Mobile auth
         let mAuthToken = localStorage.getItem('userToken') || '';

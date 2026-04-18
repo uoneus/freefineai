@@ -57,67 +57,6 @@
     <!-- Particle Background -->
     <canvas id="particle-canvas"></canvas>
     
-    <!-- Membership Popup Modal -->
-    <div class="ad-popup-overlay" id="adPopup">
-        <div class="ad-popup-modal" style="max-width:660px;padding:0;overflow:hidden;background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);border:none;border-radius:20px;box-shadow:0 25px 60px rgba(0,0,0,0.4);">
-            <!-- Header -->
-            <div style="padding:28px 28px 0;display:flex;justify-content:space-between;align-items:flex-start;">
-                <div>
-                    <h2 style="color:#0f172a;font-size:1.3rem;font-weight:900;margin:0 0 4px;">✨ Unlock More with FreeFineAI</h2>
-                    <p style="color:#64748b;font-size:0.82rem;margin:0;">Choose the plan that fits your creative needs</p>
-                </div>
-                <button onclick="closeAdPopup()" style="background:rgba(0,0,0,0.08);border:none;border-radius:50%;width:32px;height:32px;color:#475569;font-size:18px;cursor:pointer;line-height:1;flex-shrink:0;margin-left:12px;">×</button>
-            </div>
-            <!-- Plans -->
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;padding:20px 28px 28px;">
-                <!-- Free -->
-                <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:14px;padding:20px 16px;text-align:center;">
-                    <div style="font-size:2rem;margin-bottom:10px;">🎨</div>
-                    <div style="color:#64748b;font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Free</div>
-                    <div style="color:#0f172a;font-size:1.8rem;font-weight:900;margin-bottom:2px;">$0</div>
-                    <div style="color:#94a3b8;font-size:0.72rem;margin-bottom:14px;">No login required</div>
-                    <ul style="list-style:none;padding:0;margin:0;text-align:left;font-size:0.78rem;color:#475569;">
-                        <li style="margin-bottom:7px;display:flex;align-items:center;gap:6px;"><span style="color:#22c55e;font-weight:700;">✓</span> 3 images / day</li>
-                        <li style="margin-bottom:7px;display:flex;align-items:center;gap:6px;"><span style="color:#22c55e;font-weight:700;">✓</span> Standard models</li>
-                        <li style="margin-bottom:7px;display:flex;align-items:center;gap:6px;"><span style="color:#22c55e;font-weight:700;">✓</span> 1024×1024 max</li>
-                        <li style="display:flex;align-items:center;gap:6px;color:#cbd5e1;"><span>✗</span> No account needed</li>
-                    </ul>
-                </div>
-                <!-- Member -->
-                <div style="background:linear-gradient(145deg,#ecfeff,#f0f9ff);border:2px solid #06b6d4;border-radius:14px;padding:20px 16px;text-align:center;position:relative;box-shadow:0 4px 20px rgba(6,182,212,0.15);">
-                    <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#06b6d4,#0284c7);color:#fff;font-size:0.65rem;font-weight:800;padding:4px 12px;border-radius:20px;white-space:nowrap;box-shadow:0 2px 8px rgba(6,182,212,0.4);">POPULAR</div>
-                    <div style="font-size:2rem;margin-bottom:10px;">⚡</div>
-                    <div style="color:#0891b2;font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Member</div>
-                    <div style="color:#0f172a;font-size:1.8rem;font-weight:900;margin-bottom:2px;">Free</div>
-                    <div style="color:#94a3b8;font-size:0.72rem;margin-bottom:14px;">Register an account</div>
-                    <ul style="list-style:none;padding:0;margin:0;text-align:left;font-size:0.78rem;color:#475569;">
-                        <li style="margin-bottom:7px;display:flex;align-items:center;gap:6px;"><span style="color:#06b6d4;font-weight:700;">✓</span> 10 images / day</li>
-                        <li style="margin-bottom:7px;display:flex;align-items:center;gap:6px;"><span style="color:#06b6d4;font-weight:700;">✓</span> More models</li>
-                        <li style="margin-bottom:7px;display:flex;align-items:center;gap:6px;"><span style="color:#06b6d4;font-weight:700;">✓</span> Higher resolutions</li>
-                        <li style="display:flex;align-items:center;gap:6px;"><span style="color:#06b6d4;font-weight:700;">✓</span> Priority queue</li>
-                    </ul>
-                </div>
-                <!-- VIP -->
-                <div style="background:linear-gradient(145deg,#faf5ff,#f5f3ff);border:2px solid #a78bfa;border-radius:14px;padding:20px 16px;text-align:center;box-shadow:0 4px 20px rgba(167,139,250,0.15);">
-                    <div style="font-size:2rem;margin-bottom:10px;">👑</div>
-                    <div style="color:#7c3aed;font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">VIP</div>
-                    <div style="color:#0f172a;font-size:1.8rem;font-weight:900;margin-bottom:2px;">Pro</div>
-                    <div style="color:#94a3b8;font-size:0.72rem;margin-bottom:14px;">Coming soon</div>
-                    <ul style="list-style:none;padding:0;margin:0;text-align:left;font-size:0.78rem;color:#475569;">
-                        <li style="margin-bottom:7px;display:flex;align-items:center;gap:6px;"><span style="color:#a78bfa;font-weight:700;">✓</span> 20 images / day</li>
-                        <li style="margin-bottom:7px;display:flex;align-items:center;gap:6px;"><span style="color:#a78bfa;font-weight:700;">✓</span> Latest AI models</li>
-                        <li style="margin-bottom:7px;display:flex;align-items:center;gap:6px;"><span style="color:#a78bfa;font-weight:700;">✓</span> Max resolution</li>
-                        <li style="display:flex;align-items:center;gap:6px;"><span style="color:#a78bfa;font-weight:700;">✓</span> Fastest generation</li>
-                    </ul>
-                </div>
-            </div>
-            <!-- Footer -->
-            <div style="padding:0 28px 24px;text-align:center;">
-                <p style="color:#94a3b8;font-size:0.75rem;margin:0;">Start generating for free — no credit card required.</p>
-            </div>
-        </div>
-    </div>
-
     <!-- Auth Modal (Login / Register) -->
     <div id="authModal" style="display:none;position:fixed;inset:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9997;align-items:center;justify-content:center;padding:24px;">
         <div style="position:relative;background:linear-gradient(180deg,rgba(31,24,18,0.98),rgba(22,17,14,0.98));border:1px solid rgba(255,255,255,0.1);border-radius:24px;width:100%;max-width:440px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.45);">
@@ -283,25 +222,9 @@
         });
     </script>
 
-    <script>
-        // Show ad popup after 1 minute (60000ms)
-        setTimeout(function() {
-            document.getElementById('adPopup').classList.add('show');
-        }, 120000);
-
-        function closeAdPopup() {
-            document.getElementById('adPopup').classList.remove('show');
-        }
-
-        // Close popup when clicking outside
-        document.getElementById('adPopup').addEventListener('click', function(e) {
-            if (e.target === this) closeAdPopup();
-        });
-    </script>
-    
     <!-- Navigation -->
     <div id="navbar-placeholder"></div>
-    <script>loadNavbar();</script>
+    <script>loadNavbar(function() { if (typeof initAuthUI === 'function') initAuthUI(); });</script>
 
     <!-- Hero Section -->
     <header class="pt-40 pb-10 px-6">
@@ -1331,7 +1254,7 @@
             if (e.target === this) closeAuthModal();
         });
 
-        initAuthUI();
+        // initAuthUI is called by loadNavbar callback after navbar DOM is ready
         window.addEventListener('load', initGoogleLogin);
 
         // Load and display daily usage limit
