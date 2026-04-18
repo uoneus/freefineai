@@ -328,21 +328,21 @@ if (typeof window !== 'undefined') {
 // const IMAGE_BASE_URL = getImageBaseURL(API_BASE_URL);
 
 // ── Shared Navbar Loader ──────────────────────────────────────
-function loadNavbar() {
+function loadNavbar(onLoaded) {
     const placeholder = document.getElementById('navbar-placeholder');
-    if (!placeholder) return;
+    if (!placeholder) { if (onLoaded) onLoaded(); return; }
     fetch('/navbar.html')
         .then(r => r.text())
         .then(html => {
-            placeholder.outerHTML = html;
-            // Re-run any inline scripts injected by navbar.html
-            document.querySelectorAll('#navbar-placeholder ~ script, nav ~ script').forEach(function(s) {
-                if (s.dataset.navbarLoaded) return;
-                const ns = document.createElement('script');
-                ns.textContent = s.textContent;
-                ns.dataset.navbarLoaded = '1';
-                document.body.appendChild(ns);
-            });
+            // Use a Range to parse and insert HTML with scripts executing properly
+            const range = document.createRange();
+            range.selectNode(document.body);
+            const fragment = range.createContextualFragment(html);
+            placeholder.replaceWith(fragment);
+            if (onLoaded) onLoaded();
         })
-        .catch(err => console.warn('Navbar load failed:', err));
+        .catch(function(err) {
+            console.warn('Navbar load failed:', err);
+            if (onLoaded) onLoaded();
+        });
 }
