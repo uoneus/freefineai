@@ -11,16 +11,16 @@
             FREEFINE<span class="text-cyan-400">AI</span>
         </a>
         <div class="hidden md:flex items-center gap-1 text-base font-medium">
-            <a href="/edit.html" class="nav-link-editor text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5">AI Photo Editor</a>
-            <a href="/gallery.html" class="nav-link-gallery text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5">Gallery</a>
-            <a href="/pricing.html" class="nav-link-pricing text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5">Pricing</a>
+            <a href="/edit.html" class="nav-link-editor text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5" data-i18n="nav.editor">AI Photo Editor</a>
+            <a href="/gallery.html" class="nav-link-gallery text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5" data-i18n="nav.gallery">Gallery</a>
+            <a href="/pricing.html" class="nav-link-pricing text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5" data-i18n="nav.pricing">Pricing</a>
             <a href="#" class="relative text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5">
-                Video Generator
+                <span data-i18n="nav.video">Video Generator</span>
                 <span class="absolute -top-1.5 -right-1 bg-orange-500 text-white font-normal px-1.5 py-0.5 rounded-full leading-none" style="font-size:0.6rem;">NEW</span>
             </a>
             <div class="relative" id="aiToolsMenu">
                 <button onclick="toggleAiTools(event)" class="relative text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5 flex items-center gap-1">
-                    AI Tools
+                    <span data-i18n="nav.aitools">AI Tools</span>
                     <svg class="w-3.5 h-3.5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     <span class="absolute -top-1.5 -right-1 bg-cyan-500 text-white font-normal px-1.5 py-0.5 rounded-full leading-none" style="font-size:0.6rem;">SOON</span>
                 </button>
@@ -55,15 +55,15 @@
                     </a>
                 </div>
             </div>
-            <button onclick="showTerms()" class="text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5">Terms of Service</button>
+            <button onclick="showTerms()" class="text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5" data-i18n="nav.terms">Terms of Service</button>
         </div>
         <div class="flex items-center gap-2">
             <div id="langSwitcher" style="display:flex;align-items:center;gap:2px;"></div>
-            <button id="loginNavBtn" onclick="showAuthModal('login')" class="bg-cyan-500/15 border border-cyan-500/40 hover:bg-cyan-500/25 text-cyan-400 font-medium text-sm px-5 py-2 rounded-lg transition">Sign In</button>
+            <button id="loginNavBtn" onclick="showAuthModal('login')" class="bg-cyan-500/15 border border-cyan-500/40 hover:bg-cyan-500/25 text-cyan-400 font-medium text-sm px-5 py-2 rounded-lg transition" data-i18n="nav.signin">Sign In</button>
             <div id="userNavInfo" class="hidden items-center gap-2">
                 <span id="navUsername" class="text-white text-sm font-medium"></span>
                 <span id="navRole" class="text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400"></span>
-                <button onclick="logout()" class="text-zinc-400 hover:text-white text-xs ml-1">Sign Out</button>
+                <button onclick="logout()" class="text-zinc-400 hover:text-white text-xs ml-1" data-i18n="nav.logout">Sign Out</button>
             </div>
         </div>
     </div>
@@ -187,5 +187,8 @@ document.addEventListener('click', function(e) {
         const el = document.querySelector('.nav-link-gallery');
         if (el) { el.classList.remove('text-zinc-400'); el.classList.add('text-white', 'bg-white/5'); }
     }
+    // Apply i18n after navbar is injected
+    if (typeof applyI18n === 'function') applyI18n();
+    if (typeof renderLangSwitcher === 'function') renderLangSwitcher('langSwitcher');
 })();
 </script>
