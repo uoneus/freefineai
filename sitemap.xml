@@ -2,33 +2,119 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
+  <!-- Core Pages -->
   <url>
     <loc>https://www.freefineai.com/</loc>
-    <lastmod>2026-04-14</lastmod>
+    <lastmod>2026-04-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://www.freefineai.com/gallery</loc>
-    <lastmod>2026-04-14</lastmod>
-    <changefreq>hourly</changefreq>
+    <loc>https://www.freefineai.com/gallery.html</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freefineai.com/edit.html</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.freefineai.com/pricing.html</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://www.freefineai.com/mobile.html</loc>
-    <lastmod>2026-04-14</lastmod>
-    <changefreq>mobile</changefreq>
-    <priority>0.7</priority>
+    <loc>https://www.freefineai.com/about.html</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 
+  <!-- Homepage with Gallery Images for Google Image Search -->
   <url>
     <loc>https://www.freefineai.com/</loc>
     <image:image>
+      <image:loc>https://www.freefineai.com/images/FLUX_1_DEV_095140_1770255710.png</image:loc>
+      <image:caption>AI generated fantasy landscape with dramatic lighting — created free with FreeFineAI Flux.1 image generator</image:caption>
+      <image:title>Free AI Image Generator — FreeFineAI Flux.1</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.freefineai.com/images/FLUX_1_DEV_100142_1769046968.png</image:loc>
+      <image:caption>High quality AI art created with Flux.1 dev model — FreeFineAI free text to image tool</image:caption>
+      <image:title>Flux.1 AI Art — FreeFineAI Free Generator</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.freefineai.com/images/FLUX_1_DEV_101934_1769047742.png</image:loc>
+      <image:caption>Photorealistic AI generated image using Flux.1 — FreeFineAI no login required</image:caption>
+      <image:title>Photorealistic AI Image Free — FreeFineAI</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.freefineai.com/images/FLUX_1_DEV_111300_1770087802.png</image:loc>
+      <image:caption>Stunning AI artwork generated for free with FreeFineAI Flux.1 dev model</image:caption>
+      <image:title>Free AI Artwork — FreeFineAI Flux.1 Dev</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.freefineai.com/images/FLUX_1_DEV_115004_1770090025.png</image:loc>
+      <image:caption>AI generated digital art with Flux.1 schnell model — FreeFineAI free image creator</image:caption>
+      <image:title>Free AI Digital Art — FreeFineAI Flux.1 Schnell</image:title>
+    </image:image>
+    <image:image>
       <image:loc>https://www.freefineai.com/images/FLUX_1_DEV_141622_1768889192.png</image:loc>
-      <image:caption>AI generated art using Flux.1 model on FreeFineAI</image:caption>
-      <image:title>Stunning AI Art Piece</image:title>
+      <image:caption>Premium quality AI image created free with FreeFineAI Flux.1 generator — no credit card needed</image:caption>
+      <image:title>Premium Free AI Image — FreeFineAI</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.freefineai.com/images/FLUX_1_DEV_151751_1768979292.png</image:loc>
+      <image:caption>AI generated portrait using Flux.1 dev — FreeFineAI free AI portrait generator</image:caption>
+      <image:title>Free AI Portrait Generator — FreeFineAI</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.freefineai.com/images/flux_113200_1768879345.png</image:loc>
+      <image:caption>Free AI generated artwork with Flux model — FreeFineAI no login required image generator</image:caption>
+      <image:title>Free AI Art No Login — FreeFineAI</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.freefineai.com/images/flux_113200_1768879346.png</image:loc>
+      <image:caption>High resolution AI image generated with Flux.1 — FreeFineAI free tool up to 1920x1080</image:caption>
+      <image:title>High Resolution Free AI Image — FreeFineAI</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.freefineai.com/images/flux_114540_1768880171.png</image:loc>
+      <image:caption>Creative AI art generated free using Flux.1 Krea model — FreeFineAI stylized image generator</image:caption>
+      <image:title>Free Flux.1 Krea AI Art — FreeFineAI</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.freefineai.com/images/flux_132848_1768886352.png</image:loc>
+      <image:caption>AI generated scene with Flux.1 Kontext model — FreeFineAI free image editor and generator</image:caption>
+      <image:title>Free AI Image Editor — FreeFineAI Flux.1 Kontext</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.freefineai.com/images/flux_133914_1768886983.png</image:loc>
+      <image:caption>Flux.1 AI generated image — FreeFineAI free text to image generator with multiple models</image:caption>
+      <image:title>Text to Image Free — FreeFineAI Flux.1</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.freefineai.com/images/flux_135018_1768887652.png</image:loc>
+      <image:caption>Beautiful AI artwork made with FreeFineAI Flux.1 — free no registration no credit card</image:caption>
+      <image:title>Free AI Art No Registration — FreeFineAI</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.freefineai.com/images/flux_p40_patched.png</image:loc>
+      <image:caption>AI generated image with Flux.2 dev model — FreeFineAI next generation free AI image tool</image:caption>
+      <image:title>Flux.2 AI Image Generator Free — FreeFineAI</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.freefineai.com/images/flux_p40_patched2.png</image:loc>
+      <image:caption>Premium AI image generated free with FreeFineAI — Flux.2 dev model high quality output</image:caption>
+      <image:title>Free Premium AI Images — FreeFineAI Flux.2</image:title>
     </image:image>
   </url>
 
