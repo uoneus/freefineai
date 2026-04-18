@@ -59,7 +59,10 @@
     
     <!-- Navigation (Auth Modal, Terms Modal loaded via navbar.html) -->
     <div id="navbar-placeholder"></div>
-    <script>loadNavbar(function() { if (typeof initAuthUI === 'function') initAuthUI(); });</script>
+    <script>loadNavbar(function() {
+        if (typeof initAuthUI === 'function') initAuthUI();
+        if (typeof initGoogleLogin === 'function') initGoogleLogin();
+    });</script>
 
     <!-- Hero Section -->
     <header class="pt-40 pb-10 px-6">
@@ -888,10 +891,13 @@
             const hint = document.getElementById('googleLoginHint');
             const buttonEl = document.getElementById('googleSignInButton');
             const closeBtn = document.querySelector('#authModal > div > button');
-            if (!hint || !buttonEl) return;
+            if (!hint || !buttonEl) {
+                // navbar not ready yet, retry
+                setTimeout(initGoogleLogin, 200);
+                return;
+            }
 
             if (closeBtn) closeBtn.innerHTML = '&times;';
-
             buttonEl.innerHTML = '';
 
             if (!isGoogleClientConfigured()) {
@@ -902,6 +908,7 @@
             if (!window.google || !google.accounts || !google.accounts.id) {
                 hint.style.display = 'block';
                 hint.textContent = 'Google sign-in script is still loading.';
+                setTimeout(initGoogleLogin, 500);
                 return;
             }
 
