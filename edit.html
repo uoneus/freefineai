@@ -416,7 +416,7 @@ function updateAuthUI() {
         document.getElementById('userNavInfo').classList.add('hidden');
     }
 }
-updateAuthUI();
+// updateAuthUI called by loadNavbar callback after navbar DOM is ready
 
 function showAuthModal(tab) {
     document.getElementById('authModal').style.display = 'flex';
