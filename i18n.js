@@ -10,7 +10,7 @@
     'badge.hd':'HD Output','badge.models':'Multiple AI Models',
     'gen.title':'Create Your Image','gen.prompt':'Prompt','gen.model':'Model',
     'gen.width':'Width','gen.height':'Height',
-    'gen.size':'Size Presets','gen.generate':'Generate Image','gen.generating':'Generating...','gen.reset':'Reset',
+    'gen.size':'Size','gen.generate':'Generate Image','gen.generating':'Generating...','gen.reset':'Reset',
     'gen.random':'Random Prompt','gen.captcha':'Verification Code','gen.captcha_placeholder':'Enter code',
     'gen.placeholder':'A beautiful sunset over the ocean with vibrant orange and pink colors...',
     'theme.landscape':'🏔️ Landscape','theme.portrait':'👤 Portrait','theme.flora':'🌸 Flora',
@@ -36,7 +36,7 @@
     'badge.hd':'高清输出','badge.models':'多种 AI 模型',
     'gen.title':'创建你的图片','gen.prompt':'提示词','gen.model':'模型',
     'gen.width':'宽度','gen.height':'高度',
-    'gen.size':'尺寸预设','gen.generate':'生成图片','gen.generating':'生成中...','gen.reset':'重置',
+    'gen.size':'尺寸','gen.generate':'生成图片','gen.generating':'生成中...','gen.reset':'重置',
     'gen.random':'随机提示词','gen.captcha':'验证码','gen.captcha_placeholder':'输入验证码',
     'gen.placeholder':'一只可爱的猫咪坐在阳光下的草地上...',
     'theme.landscape':'🏔️ 风景','theme.portrait':'👤 人物','theme.flora':'🌸 花草',
@@ -62,7 +62,7 @@
     'badge.hd':'HD качество','badge.models':'Несколько AI моделей',
     'gen.title':'Создать изображение','gen.prompt':'Запрос','gen.model':'Модель',
     'gen.width':'Ширина','gen.height':'Высота',
-    'gen.size':'Размеры','gen.generate':'Создать','gen.generating':'Создание...','gen.reset':'Сброс',
+    'gen.size':'Размер','gen.generate':'Создать','gen.generating':'Создание...','gen.reset':'Сброс',
     'gen.random':'Случайный запрос','gen.captcha':'Код подтверждения','gen.captcha_placeholder':'Введите код',
     'gen.placeholder':'Красивый закат над океаном...',
     'theme.landscape':'🏔️ Пейзаж','theme.portrait':'👤 Портрет','theme.flora':'🌸 Флора',
@@ -88,7 +88,7 @@
     'badge.hd':'HD出力','badge.models':'複数のAIモデル',
     'gen.title':'画像を作成','gen.prompt':'プロンプト','gen.model':'モデル',
     'gen.width':'幅','gen.height':'高さ',
-    'gen.size':'サイズプリセット','gen.generate':'画像を生成','gen.generating':'生成中...','gen.reset':'リセット',
+    'gen.size':'サイズ','gen.generate':'画像を生成','gen.generating':'生成中...','gen.reset':'リセット',
     'gen.random':'ランダムプロンプト','gen.captcha':'確認コード','gen.captcha_placeholder':'コードを入力',
     'gen.placeholder':'美しい夕日が海の上に広がる風景...',
     'theme.landscape':'🏔️ 風景','theme.portrait':'👤 ポートレート','theme.flora':'🌸 植物',
@@ -114,7 +114,7 @@
     'badge.hd':'HD आउटपुट','badge.models':'कई AI मॉडल',
     'gen.title':'अपनी इमेज बनाएं','gen.prompt':'प्रॉम्प्ट','gen.model':'मॉडल',
     'gen.width':'चौड़ाई','gen.height':'ऊंचाई',
-    'gen.size':'साइज प्रीसेट','gen.generate':'इमेज बनाएं','gen.generating':'बन रहा है...','gen.reset':'रीसेट',
+    'gen.size':'साइज','gen.generate':'इमेज बनाएं','gen.generating':'बन रहा है...','gen.reset':'रीसेट',
     'gen.random':'रैंडम प्रॉम्प्ट','gen.captcha':'वेरिफिकेशन कोड','gen.captcha_placeholder':'कोड दर्ज करें',
     'gen.placeholder':'समुद्र के ऊपर एक सुंदर सूर्यास्त...',
     'theme.landscape':'🏔️ परिदृश्य','theme.portrait':'👤 चित्र','theme.flora':'🌸 फूल',
@@ -140,7 +140,7 @@
     'badge.hd':'HD-Ausgabe','badge.models':'Mehrere KI-Modelle',
     'gen.title':'Bild erstellen','gen.prompt':'Eingabe','gen.model':'Modell',
     'gen.width':'Breite','gen.height':'Höhe',
-    'gen.size':'Größenvorlagen','gen.generate':'Bild generieren','gen.generating':'Wird generiert...','gen.reset':'Zurücksetzen',
+    'gen.size':'Größe','gen.generate':'Bild generieren','gen.generating':'Wird generiert...','gen.reset':'Zurücksetzen',
     'gen.random':'Zufälliger Prompt','gen.captcha':'Bestätigungscode','gen.captcha_placeholder':'Code eingeben',
     'gen.placeholder':'Ein wunderschöner Sonnenuntergang über dem Ozean...',
     'theme.landscape':'🏔️ Landschaft','theme.portrait':'👤 Porträt','theme.flora':'🌸 Flora',
@@ -166,7 +166,7 @@
     'badge.hd':'Sortie HD','badge.models':'Plusieurs modèles IA',
     'gen.title':'Créer votre image','gen.prompt':'Invite','gen.model':'Modèle',
     'gen.width':'Largeur','gen.height':'Hauteur',
-    'gen.size':'Tailles prédéfinies','gen.generate':'Générer','gen.generating':'Génération...','gen.reset':'Réinitialiser',
+    'gen.size':'Taille','gen.generate':'Générer','gen.generating':'Génération...','gen.reset':'Réinitialiser',
     'gen.random':'Prompt aléatoire','gen.captcha':'Code de vérification','gen.captcha_placeholder':'Entrer le code',
     'gen.placeholder':"Un magnifique coucher de soleil sur l'océan...",
     'theme.landscape':'🏔️ Paysage','theme.portrait':'👤 Portrait','theme.flora':'🌸 Flore',
@@ -274,16 +274,7 @@ const LANG_META = {
   ar:{name:'العربية',flag:'🇸🇦',dir:'rtl'}
 };
 
-let currentLang = localStorage.getItem('lang') ||
-  (navigator.language.startsWith('zh')?'zh':
-   navigator.language.startsWith('ru')?'ru':
-   navigator.language.startsWith('ja')?'ja':
-   navigator.language.startsWith('hi')?'hi':
-   navigator.language.startsWith('de')?'de':
-   navigator.language.startsWith('fr')?'fr':
-   navigator.language.startsWith('it')?'it':
-   navigator.language.startsWith('es')?'es':
-   navigator.language.startsWith('ar')?'ar':'en');
+let currentLang = localStorage.getItem('lang') || 'en';
 
 function t(key){return I18N[currentLang]?.[key]||I18N['en']?.[key]||key;}
 
