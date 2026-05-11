@@ -27,6 +27,24 @@
         #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: #18181b; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 20px; font-size: 13px; color: #e4e4e7; opacity: 0; transition: all .3s; z-index: 100; white-space: nowrap; pointer-events: none; }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .prompt-theme-tile { background-size: cover; background-position: center; }
+        .gen-anim-wrap { width: 100%; height: 220px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 18px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); }
+        .gen-orb { position: relative; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; z-index: 2; }
+        .gen-orb-ring { position: absolute; border-radius: 50%; border: 1px solid; animation: orbPulse 2s ease-in-out infinite; }
+        .gen-orb-ring1 { width: 64px; height: 64px; border-color: rgba(34,211,238,0.5); animation-delay: 0s; }
+        .gen-orb-ring2 { width: 88px; height: 88px; border-color: rgba(167,139,250,0.35); animation-delay: .4s; }
+        .gen-orb-ring3 { width: 112px; height: 112px; border-color: rgba(244,114,182,0.22); animation-delay: .8s; }
+        .gen-orb-core { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg,rgba(34,211,238,0.32),rgba(167,139,250,0.32)); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 24px rgba(34,211,238,0.35); animation: coreGlow 1.5s ease-in-out infinite alternate; }
+        .gen-orb-icon { width: 18px; height: 18px; border: 2px solid #22d3ee; border-top-color: transparent; border-radius: 50%; animation: iconSpin 1.2s linear infinite; }
+        .gen-particles { position: absolute; inset: 0; pointer-events: none; }
+        .gen-particle { position: absolute; bottom: -16px; border-radius: 50%; opacity: 0; animation: particleFloat linear infinite; }
+        .gen-tip-wrap { position: absolute; left: 16px; right: 16px; bottom: 18px; text-align: center; z-index: 2; }
+        .gen-tip { color: #a1a1aa; font-size: 12px; line-height: 1.5; animation: tipFade 3s ease-in-out infinite; }
+        .gen-status { color: #d4d4d8; font-size: 13px; font-weight: 600; }
+        @keyframes orbPulse { 0%,100% { transform: scale(1); opacity: .8; } 50% { transform: scale(1.12); opacity: .4; } }
+        @keyframes coreGlow { 0% { box-shadow: 0 0 18px rgba(34,211,238,.35); } 100% { box-shadow: 0 0 42px rgba(167,139,250,.6); } }
+        @keyframes iconSpin { to { transform: rotate(360deg); } }
+        @keyframes particleFloat { 0% { transform: translateY(0) scale(1); opacity: 0; } 15% { opacity: .9; } 85% { opacity: .6; } 100% { transform: translateY(-210px) scale(.3); opacity: 0; } }
+        @keyframes tipFade { 0%,100% { opacity: .45; } 50% { opacity: 1; } }
     </style>
     <script src="common.js"></script>
 </head>
@@ -132,8 +150,17 @@
         <div id="resultArea" class="hidden">
             <!-- Loading -->
             <div id="loadingState" class="hidden card p-8 flex flex-col items-center gap-4">
-                <div class="spinner"></div>
-                <p class="text-zinc-400 text-sm">Generating your image...</p>
+                <div class="gen-anim-wrap">
+                    <div class="gen-orb">
+                        <div class="gen-orb-ring gen-orb-ring1"></div>
+                        <div class="gen-orb-ring gen-orb-ring2"></div>
+                        <div class="gen-orb-ring gen-orb-ring3"></div>
+                        <div class="gen-orb-core"><span class="gen-orb-icon"></span></div>
+                    </div>
+                    <div id="genParticles" class="gen-particles"></div>
+                    <div class="gen-tip-wrap"><span id="genTip" class="gen-tip">Preparing the canvas...</span></div>
+                </div>
+                <p id="genStatusText" class="gen-status">Generating your image...</p>
                 <div class="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
                     <div id="progressBar" class="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full transition-all duration-500" style="width:0%"></div>
                 </div>
@@ -247,8 +274,17 @@
         <!-- Result area -->
         <div id="editResultArea" class="hidden">
             <div id="editLoadingState" class="hidden card p-8 flex flex-col items-center gap-4">
-                <div class="spinner"></div>
-                <p class="text-zinc-400 text-sm">Editing your image...</p>
+                <div class="gen-anim-wrap">
+                    <div class="gen-orb">
+                        <div class="gen-orb-ring gen-orb-ring1"></div>
+                        <div class="gen-orb-ring gen-orb-ring2"></div>
+                        <div class="gen-orb-ring gen-orb-ring3"></div>
+                        <div class="gen-orb-core"><span class="gen-orb-icon"></span></div>
+                    </div>
+                    <div id="editParticles" class="gen-particles"></div>
+                    <div class="gen-tip-wrap"><span id="editTip" class="gen-tip">Preparing your edit...</span></div>
+                </div>
+                <p id="editStatusText" class="gen-status">Editing your image...</p>
                 <div class="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
                     <div id="editProgressBar" class="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full transition-all duration-500" style="width:0%"></div>
                 </div>
@@ -682,6 +718,62 @@
         let captchaCode = '';
         let pollInterval = null;
         let progressVal = 0;
+        const GENERATION_TIPS = [
+            'Mixing colors on the digital canvas...',
+            'Consulting the AI muse...',
+            'Painting pixels with neural magic...',
+            'Dreaming up your masterpiece...',
+            'Weaving light and shadow...',
+            'The AI is thinking hard...',
+            'Almost there, adding final touches...',
+            'Rendering your imagination...',
+            'Crafting something beautiful...',
+            'Summoning creative energy...'
+        ];
+        const loadingAnimations = {};
+
+        function startLoadingAnimation(prefix, initialStatus) {
+            stopLoadingAnimation(prefix);
+            const colors = ['#22d3ee', '#a78bfa', '#f472b6', '#34d399', '#fbbf24'];
+            const particles = document.getElementById(prefix + 'Particles');
+            const tip = document.getElementById(prefix + 'Tip');
+            const status = document.getElementById(prefix + 'StatusText');
+            if (status) status.textContent = initialStatus;
+            if (particles) {
+                particles.innerHTML = '';
+                for (let i = 0; i < 12; i++) {
+                    const p = document.createElement('span');
+                    const size = Math.floor(4 + Math.random() * 9);
+                    p.className = 'gen-particle';
+                    p.style.left = (Math.random() * 80 + 10) + '%';
+                    p.style.width = size + 'px';
+                    p.style.height = size + 'px';
+                    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    p.style.animationDelay = (Math.random() * 2).toFixed(2) + 's';
+                    p.style.animationDuration = (2 + Math.random() * 2).toFixed(2) + 's';
+                    particles.appendChild(p);
+                }
+            }
+            function pickTip() {
+                if (tip) tip.textContent = GENERATION_TIPS[Math.floor(Math.random() * GENERATION_TIPS.length)];
+            }
+            pickTip();
+            loadingAnimations[prefix] = setInterval(pickTip, 3000);
+        }
+
+        function setLoadingStatus(prefix, text) {
+            const status = document.getElementById(prefix + 'StatusText');
+            if (status) status.textContent = text;
+        }
+
+        function stopLoadingAnimation(prefix) {
+            if (loadingAnimations[prefix]) {
+                clearInterval(loadingAnimations[prefix]);
+                loadingAnimations[prefix] = null;
+            }
+            const particles = document.getElementById(prefix + 'Particles');
+            if (particles) particles.innerHTML = '';
+        }
 
         function getOrCreateSessionId() {
             let sid = sessionStorage.getItem('ffai_session_id');
@@ -841,9 +933,11 @@
             progressVal = 0;
             const prog = document.getElementById('progressBar');
             prog.style.width = '0%';
+            startLoadingAnimation('gen', 'Submitting...');
             const progTimer = setInterval(() => {
                 progressVal = Math.min(progressVal + Math.random() * 8, 88);
                 prog.style.width = progressVal + '%';
+                setLoadingStatus('gen', `Processing... ${Math.round(progressVal)}%`);
             }, 600);
 
             try {
@@ -883,10 +977,12 @@
                 if (data.today_usage !== undefined) updateUsage(data.today_usage, data.daily_limit);
 
                 clearInterval(progTimer);
+                setLoadingStatus('gen', 'Processing...');
                 await pollImage(data.image_id);
                 loadCaptcha();
             } catch(e) {
                 clearInterval(progTimer);
+                stopLoadingAnimation('gen');
                 showError(e.message);
             } finally {
                 btn.disabled = false;
@@ -897,6 +993,9 @@
             const max = 60;
             for (let i = 0; i < max; i++) {
                 await new Promise(r => setTimeout(r, 2000));
+                const pct = Math.min(99, 88 + Math.round((i + 1) * 11 / max));
+                document.getElementById('progressBar').style.width = pct + '%';
+                setLoadingStatus('gen', `Processing... ${Math.round((i + 1) * 100 / max)}%`);
                 try {
                     const r = window.API 
                         ? await window.API.get(`/images/${id}`)
@@ -921,7 +1020,9 @@
 
         function showImage(url) {
             document.getElementById('progressBar').style.width = '100%';
+            setLoadingStatus('gen', 'Complete!');
             setTimeout(() => {
+                stopLoadingAnimation('gen');
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('imageResult').classList.remove('hidden');
                 document.getElementById('resultImg').src = url;
@@ -931,12 +1032,14 @@
         }
 
         function showError(msg) {
+            stopLoadingAnimation('gen');
             document.getElementById('loadingState').classList.add('hidden');
             document.getElementById('errorState').classList.remove('hidden');
             document.getElementById('errorMsg').textContent = msg;
         }
 
         function resetResult() {
+            stopLoadingAnimation('gen');
             document.getElementById('resultArea').classList.add('hidden');
             document.getElementById('loadingState').classList.add('hidden');
             document.getElementById('imageResult').classList.add('hidden');
@@ -1087,10 +1190,12 @@
             // Animate progress
             let p = 0;
             if (editProgressInterval) clearInterval(editProgressInterval);
+            startLoadingAnimation('edit', 'Submitting...');
             editProgressInterval = setInterval(() => {
                 p = p < 85 ? p + Math.random() * 3 : p + 0.1;
                 if (p > 95) p = 95;
                 document.getElementById('editProgressBar').style.width = p + '%';
+                setLoadingStatus('edit', `Processing... ${Math.round(p)}%`);
             }, 800);
 
             try {
@@ -1128,6 +1233,7 @@
                     }
                 } else if (d.image_url) {
                     clearInterval(editProgressInterval);
+                    setLoadingStatus('edit', 'Complete!');
                     const url = activeImageBase + d.image_url;
                     document.getElementById('editProgressBar').style.width = '100%';
                     document.getElementById('editResultImg').src = url;
@@ -1135,11 +1241,13 @@
                     document.getElementById('editLoadingState').classList.add('hidden');
                     document.getElementById('editImageResult').classList.remove('hidden');
                     document.getElementById('editBtn').disabled = false;
+                    stopLoadingAnimation('edit');
                 } else {
                     throw new Error(d.message || d.error || 'Failed to start editing.');
                 }
             } catch(e) {
                 clearInterval(editProgressInterval);
+                stopLoadingAnimation('edit');
                 document.getElementById('editLoadingState').classList.add('hidden');
                 document.getElementById('editErrorState').classList.remove('hidden');
                 document.getElementById('editErrorMsg').textContent = e.message || 'Connection error.';
@@ -1165,8 +1273,10 @@
             let attempts = 0;
             editPollingTimer = setInterval(async () => {
                 attempts++;
+                setLoadingStatus('edit', `Processing... ${Math.round(attempts * 100 / 120)}%`);
                 if (attempts > 120) {
                     clearInterval(editPollingTimer); clearInterval(editProgressInterval);
+                    stopLoadingAnimation('edit');
                     document.getElementById('editLoadingState').classList.add('hidden');
                     document.getElementById('editErrorState').classList.remove('hidden');
                     document.getElementById('editErrorMsg').textContent = 'Timeout. Please try again.';
@@ -1179,14 +1289,17 @@
                     if (d.status === 'completed' && d.image_url) {
                         clearInterval(editPollingTimer); clearInterval(editProgressInterval);
                         document.getElementById('editProgressBar').style.width = '100%';
+                        setLoadingStatus('edit', 'Complete!');
                         const url = pollImageBase + d.image_url;
                         document.getElementById('editResultImg').src = url;
                         document.getElementById('editDownloadBtn').href = url;
                         document.getElementById('editLoadingState').classList.add('hidden');
                         document.getElementById('editImageResult').classList.remove('hidden');
                         document.getElementById('editBtn').disabled = false;
+                        stopLoadingAnimation('edit');
                     } else if (d.status === 'failed') {
                         clearInterval(editPollingTimer); clearInterval(editProgressInterval);
+                        stopLoadingAnimation('edit');
                         document.getElementById('editLoadingState').classList.add('hidden');
                         document.getElementById('editErrorState').classList.remove('hidden');
                         document.getElementById('editErrorMsg').textContent = d.error_message || 'This model is in high demand right now. Please try a different model or come back later.';
@@ -1200,6 +1313,7 @@
         function resetEditResult() {
             if (editPollingTimer) clearInterval(editPollingTimer);
             if (editProgressInterval) clearInterval(editProgressInterval);
+            stopLoadingAnimation('edit');
             document.getElementById('editBtn').disabled = false;
             document.getElementById('editResultArea').classList.add('hidden');
             document.getElementById('editProgressBar').style.width = '0%';
