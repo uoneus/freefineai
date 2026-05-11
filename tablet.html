@@ -953,6 +953,7 @@
 
         // ---- Image-to-Image (Edit) ----
         let editCaptchaToken = '';
+        let editCaptchaCode = '';
         let editImageBase64 = '';
         let editPollingTimer = null;
         let editProgressInterval = null;
@@ -964,6 +965,7 @@
                     : await fetch(`${API_BASE}/v1/captcha`);
                 const d = await r.json();
                 editCaptchaToken = d.token;
+                editCaptchaCode = d.code || '';
                 document.getElementById('editCaptchaDisplay').innerHTML =
                     `<span class="text-cyan-400 font-bold text-base tracking-widest font-mono">${d.code.split('').join(' ')}</span>`;
                 document.getElementById('editCaptcha').value = '';
@@ -1068,6 +1070,11 @@
             if (!prompt) { alert('Please enter an edit instruction.'); return; }
             const code = document.getElementById('editCaptcha').value.trim();
             if (!code) { alert('Please enter the verification code.'); return; }
+            if (editCaptchaCode && code.toUpperCase() !== editCaptchaCode.toUpperCase()) {
+                alert('Wrong verification code.');
+                loadEditCaptcha();
+                return;
+            }
             const w = 1024, h = 1024;
             const model = document.getElementById('editModel').value;
 
@@ -1095,7 +1102,7 @@
                         width: w, height: h,
                         captcha_token: editCaptchaToken,
                         captcha_code: code.toUpperCase()
-                    }, headers)
+                    }, { headers })
                     : await fetch(`${API_BASE}/v1/img2img`, {
                         method: 'POST', headers,
                         body: JSON.stringify({
@@ -1106,37 +1113,55 @@
                         })
                     });
                 const d = await r.json();
+                if (r.status === 429) {
+                    if (d.today_usage !== undefined) updateEditUsage(d.today_usage, d.daily_limit, d.role);
+                    throw new Error(d.message || 'Daily limit reached');
+                }
+                if (!r.ok) {
+                    throw new Error(d.message || d.error || 'Failed to start editing.');
+                }
+                const activeImageBase = window.API && r._apiEndpoint ? window.API.getImageBaseURL(r._apiEndpoint) : IMG_BASE;
                 if (d.image_id) {
-                    editPollResult(d.image_id);
+                    editPollResult(d.image_id, activeImageBase);
                     if (d.today_usage !== undefined) {
-                        const wrap = document.getElementById('editUsageWrap');
-                        const text = document.getElementById('editUsageText');
-                        const fill = document.getElementById('editUsageFill');
-                        wrap.classList.remove('hidden');
-                        const roleLabel = d.role === 'vip' ? ' · VIP' : d.role === 'member' ? ' · Member' : ' · Guest';
-                        text.textContent = `${d.today_usage} / ${d.daily_limit}${roleLabel}`;
-                        const pct = d.daily_limit > 0 ? Math.min(100, d.today_usage / d.daily_limit * 100) : 0;
-                        fill.style.width = pct + '%';
-                        fill.className = 'usage-fill ' + (pct >= 100 ? 'bg-red-500' : pct >= 70 ? 'bg-yellow-500' : 'bg-cyan-500');
+                        updateEditUsage(d.today_usage, d.daily_limit, d.role);
                     }
-                } else {
+                } else if (d.image_url) {
                     clearInterval(editProgressInterval);
+                    const url = activeImageBase + d.image_url;
+                    document.getElementById('editProgressBar').style.width = '100%';
+                    document.getElementById('editResultImg').src = url;
+                    document.getElementById('editDownloadBtn').href = url;
                     document.getElementById('editLoadingState').classList.add('hidden');
-                    document.getElementById('editErrorState').classList.remove('hidden');
-                    document.getElementById('editErrorMsg').textContent = d.message || 'Failed to start editing.';
+                    document.getElementById('editImageResult').classList.remove('hidden');
                     document.getElementById('editBtn').disabled = false;
-                    loadEditCaptcha();
+                } else {
+                    throw new Error(d.message || d.error || 'Failed to start editing.');
                 }
             } catch(e) {
                 clearInterval(editProgressInterval);
                 document.getElementById('editLoadingState').classList.add('hidden');
                 document.getElementById('editErrorState').classList.remove('hidden');
-                document.getElementById('editErrorMsg').textContent = 'Connection error.';
+                document.getElementById('editErrorMsg').textContent = e.message || 'Connection error.';
                 document.getElementById('editBtn').disabled = false;
+                loadEditCaptcha();
             }
         }
 
-        function editPollResult(imageId) {
+        function updateEditUsage(used, limit, role) {
+            const wrap = document.getElementById('editUsageWrap');
+            const text = document.getElementById('editUsageText');
+            const fill = document.getElementById('editUsageFill');
+            wrap.classList.remove('hidden');
+            const roleLabel = role === 'vip' ? ' · VIP' : role === 'member' ? ' · Member' : ' · Guest';
+            text.textContent = `${used} / ${limit}${roleLabel}`;
+            const pct = limit > 0 ? Math.min(100, used / limit * 100) : 0;
+            fill.style.width = pct + '%';
+            fill.className = 'usage-fill ' + (pct >= 100 ? 'bg-red-500' : pct >= 70 ? 'bg-yellow-500' : 'bg-cyan-500');
+        }
+
+        function editPollResult(imageId, imageBase) {
+            const pollImageBase = imageBase || IMG_BASE;
             let attempts = 0;
             editPollingTimer = setInterval(async () => {
                 attempts++;
@@ -1149,12 +1174,12 @@
                     return;
                 }
                 try {
-                    const r = await fetch(`${IMG_BASE}/api/v1/images/${imageId}`);
+                    const r = await fetch(`${pollImageBase}/api/v1/images/${imageId}`);
                     const d = await r.json();
                     if (d.status === 'completed' && d.image_url) {
                         clearInterval(editPollingTimer); clearInterval(editProgressInterval);
                         document.getElementById('editProgressBar').style.width = '100%';
-                        const url = IMG_BASE + d.image_url;
+                        const url = pollImageBase + d.image_url;
                         document.getElementById('editResultImg').src = url;
                         document.getElementById('editDownloadBtn').href = url;
                         document.getElementById('editLoadingState').classList.add('hidden');
