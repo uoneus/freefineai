@@ -26,6 +26,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: #18181b; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 20px; font-size: 13px; color: #e4e4e7; opacity: 0; transition: all .3s; z-index: 100; white-space: nowrap; pointer-events: none; }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .prompt-theme-tile { background-size: cover; background-position: center; }
     </style>
     <script src="common.js"></script>
 </head>
@@ -442,7 +443,14 @@
             fantasy: 'fantasy',
         };
         let fallbackPromptConfig = null;
-        const DEFAULT_THEME_ICON = 'images/theme-default.png';
+        const DEFAULT_THEME_ICONS = {
+            landscape: 'images/theme-default-landscape.png',
+            portrait: 'images/theme-default-portrait.png',
+            flora: 'images/theme-default-flora.png',
+            animal: 'images/theme-default-animal.png',
+            architecture: 'images/theme-default-architecture.png',
+            fantasy: 'images/theme-default-fantasy.png',
+        };
         function fetchWithTimeout(url, options = {}, timeoutMs = 3000) {
             const controller = new AbortController();
             const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -480,8 +488,6 @@
             const tile = document.querySelector(`.prompt-theme-tile[data-theme="${theme}"]`);
             if (!tile) return;
             tile.style.backgroundImage = `url("${IMG_BASE}${imagePath}")`;
-            tile.style.backgroundSize = 'cover';
-            tile.style.backgroundPosition = 'center';
             tile.textContent = '';
         }
         async function getPromptFromBackend(theme) {
@@ -522,9 +528,7 @@
         }
         window.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.prompt-theme-tile').forEach(tile => {
-                tile.style.backgroundImage = `url("${DEFAULT_THEME_ICON}")`;
-                tile.style.backgroundSize = 'cover';
-                tile.style.backgroundPosition = 'center';
+                tile.style.backgroundImage = `url("${DEFAULT_THEME_ICONS[tile.dataset.theme] || DEFAULT_THEME_ICONS.landscape}")`;
             });
             loadThemePreviewIcons();
         });
