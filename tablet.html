@@ -454,8 +454,16 @@
         function fetchWithTimeout(url, options = {}, timeoutMs = 3000) {
             const controller = new AbortController();
             const timer = setTimeout(() => controller.abort(), timeoutMs);
-            return fetch(url, { ...options, signal: controller.signal })
-                .finally(() => clearTimeout(timer));
+            return fetch(url, { ...options, signal: controller.signal }).then(
+                res => {
+                    clearTimeout(timer);
+                    return res;
+                },
+                err => {
+                    clearTimeout(timer);
+                    throw err;
+                }
+            );
         }
         async function loadFallbackPromptConfig() {
             if (fallbackPromptConfig) return fallbackPromptConfig;
@@ -469,7 +477,8 @@
         }
         async function fallbackRandomPrompt(theme) {
             const config = await loadFallbackPromptConfig();
-            const list = config.prompts?.[theme] || config.prompts?.landscape || [];
+            const prompts = config && config.prompts ? config.prompts : {};
+            const list = prompts[theme] || prompts.landscape || [];
             return list.length ? list[Math.floor(Math.random() * list.length)] : '';
         }
         function setActivePromptTheme(theme) {
@@ -516,14 +525,14 @@
         async function randomPrompt() {
             const theme = document.getElementById('promptThemeSelect').value;
             const data = await getPromptFromBackend(theme);
-            const pick = data?.prompt || await fallbackRandomPrompt(theme);
-            if (data?.image_path) setThemeTileImage(theme, data.image_path);
+            const pick = data && data.prompt ? data.prompt : await fallbackRandomPrompt(theme);
+            if (data && data.image_path) setThemeTileImage(theme, data.image_path);
             if (pick) document.getElementById('prompt').value = pick;
         }
         async function loadThemePreviewIcons() {
             await Promise.all(Object.keys(PROMPT_CATEGORY_MAP).map(async (theme) => {
                 const data = await getPromptFromBackend(theme);
-                if (data?.image_path) setThemeTileImage(theme, data.image_path);
+                if (data && data.image_path) setThemeTileImage(theme, data.image_path);
             }));
         }
         window.addEventListener('DOMContentLoaded', () => {
@@ -769,7 +778,7 @@
                     ? await window.API.get('/v1/t2i/models', { headers })
                     : await fetch(`${API_BASE}/v1/t2i/models`, { headers });
                 const d = await r.json();
-                if (d.success && d.models?.length) {
+                if (d.success && d.models && d.models.length) {
                     const sel = document.getElementById('model');
                     sel.innerHTML = d.models.map(m =>
                         `<option value="${m.model_id}" ${!m.available ? 'disabled' : ''}>${m.display_name}${!m.available ? ' (waiting...)' : ''}</option>`
@@ -813,6 +822,12 @@
             if (!prompt) { showToast('Please enter a prompt'); return; }
 
             const userCode = document.getElementById('captcha').value.trim().toUpperCase();
+            if (!userCode) { showToast('Please enter the verification code'); return; }
+            if (captchaCode && userCode !== captchaCode.toUpperCase()) {
+                showToast('Wrong verification code');
+                loadCaptcha();
+                return;
+            }
             const w = 1024, h = 1024;
 
             const btn = document.getElementById('generateBtn');
