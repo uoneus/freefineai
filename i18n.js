@@ -274,6 +274,19 @@ const LANG_META = {
   ar:{name:'العربية',flag:'🇸🇦',dir:'rtl'}
 };
 
+const LANG_FLAG_IMG = {
+  en:'https://flagcdn.com/w40/us.png',
+  zh:'https://flagcdn.com/w40/cn.png',
+  ru:'https://flagcdn.com/w40/ru.png',
+  ja:'https://flagcdn.com/w40/jp.png',
+  hi:'https://flagcdn.com/w40/in.png',
+  de:'https://flagcdn.com/w40/de.png',
+  fr:'https://flagcdn.com/w40/fr.png',
+  it:'https://flagcdn.com/w40/it.png',
+  es:'https://flagcdn.com/w40/es.png',
+  ar:'https://flagcdn.com/w40/sa.png'
+};
+
 let currentLang = localStorage.getItem('lang') || 'en';
 
 function t(key){return I18N[currentLang]?.[key]||I18N['en']?.[key]||key;}
@@ -298,8 +311,24 @@ function applyI18n(){
 function renderLangSwitcher(containerId){
   const c=document.getElementById(containerId);
   if(!c)return;
+  const currentMeta=LANG_META[currentLang]||LANG_META.en;
+  const wrap=document.createElement('div');
+  wrap.style.cssText='position:relative;display:inline-flex;align-items:center;min-width:128px;height:34px;background:#1a1a2e;color:#e4e4e7;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:0 28px 0 10px;font-size:0.8rem;line-height:1;cursor:pointer;box-sizing:border-box;white-space:nowrap;';
+  const flag=document.createElement('img');
+  flag.src=LANG_FLAG_IMG[currentLang]||LANG_FLAG_IMG.en;
+  flag.alt='';
+  flag.width=20;
+  flag.height=14;
+  flag.style.cssText='width:20px;height:14px;object-fit:cover;border-radius:2px;margin-right:7px;box-shadow:0 0 0 1px rgba(255,255,255,0.12);pointer-events:none;flex-shrink:0;';
+  const label=document.createElement('span');
+  label.textContent=currentMeta.name;
+  label.style.cssText='display:block;overflow:hidden;text-overflow:ellipsis;pointer-events:none;';
+  const arrow=document.createElement('span');
+  arrow.textContent='▾';
+  arrow.style.cssText='position:absolute;right:9px;top:50%;transform:translateY(-50%);color:#a1a1aa;font-size:0.7rem;pointer-events:none;';
   const sel=document.createElement('select');
-  sel.style.cssText='background:#1a1a2e;color:#e4e4e7;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:4px 8px;font-size:0.8rem;cursor:pointer;outline:none;';
+  sel.setAttribute('aria-label','Language');
+  sel.style.cssText='position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;';
   sel.onchange=function(){setLang(this.value);};
   Object.entries(LANG_META).forEach(([code,meta])=>{
     const opt=document.createElement('option');
@@ -309,7 +338,11 @@ function renderLangSwitcher(containerId){
     sel.appendChild(opt);
   });
   c.innerHTML='';
-  c.appendChild(sel);
+  wrap.appendChild(flag);
+  wrap.appendChild(label);
+  wrap.appendChild(arrow);
+  wrap.appendChild(sel);
+  c.appendChild(wrap);
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
