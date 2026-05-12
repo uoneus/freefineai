@@ -313,22 +313,22 @@ function renderLangSwitcher(containerId){
   if(!c)return;
   const currentMeta=LANG_META[currentLang]||LANG_META.en;
   const wrap=document.createElement('div');
-  wrap.style.cssText='position:relative;display:inline-flex;align-items:center;min-width:136px;height:36px;background:#27272a;color:#ffffff;border:1px solid rgba(34,211,238,0.45);border-radius:9px;padding:0 30px 0 10px;font-size:0.82rem;font-weight:600;line-height:1;cursor:pointer;box-sizing:border-box;white-space:nowrap;box-shadow:0 0 0 1px rgba(255,255,255,0.04),0 6px 18px rgba(0,0,0,0.2);';
+  wrap.style.cssText='position:relative;display:inline-flex;align-items:center;min-width:120px;height:32px;background:#27272a;color:#ffffff;border:1px solid rgba(34,211,238,0.45);border-radius:6px;padding:0 18px 0 8px;font-size:0.875rem;font-weight:600;line-height:1;cursor:pointer;box-sizing:border-box;white-space:nowrap;';
   const flag=document.createElement('img');
   flag.src=LANG_FLAG_IMG[currentLang]||LANG_FLAG_IMG.en;
   flag.alt='';
   flag.width=20;
   flag.height=14;
-  flag.style.cssText='width:22px;height:15px;object-fit:cover;border-radius:2px;margin-right:8px;box-shadow:0 0 0 1px rgba(255,255,255,0.22);pointer-events:none;flex-shrink:0;';
+  flag.style.cssText='width:18px;height:12px;object-fit:cover;border-radius:2px;margin-right:6px;box-shadow:0 0 0 1px rgba(255,255,255,0.22);pointer-events:none;flex-shrink:0;';
   const label=document.createElement('span');
   label.textContent=currentMeta.name;
-  label.style.cssText='display:block;overflow:hidden;text-overflow:ellipsis;pointer-events:none;';
+  label.style.cssText='display:block;overflow:hidden;text-overflow:ellipsis;pointer-events:none;font-size:inherit;line-height:1;';
   const arrow=document.createElement('span');
   arrow.textContent='▾';
-  arrow.style.cssText='position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#67e8f9;font-size:0.8rem;pointer-events:none;';
+  arrow.style.cssText='position:absolute;right:8px;top:50%;transform:translateY(-50%);color:#67e8f9;font-size:0.75rem;pointer-events:none;';
   const sel=document.createElement('select');
   sel.setAttribute('aria-label','Language');
-  sel.style.cssText='position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0.8rem;color:#111827;background:#ffffff;';
+  sel.style.cssText='position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:inherit;color:#111827;background:#ffffff;';
   sel.onchange=function(){setLang(this.value);};
   Object.entries(LANG_META).forEach(([code,meta])=>{
     const opt=document.createElement('option');
