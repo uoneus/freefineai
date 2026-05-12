@@ -11,50 +11,12 @@
             FREEFINE<span class="text-cyan-400">AI</span>
         </a>
         <div class="hidden md:flex items-center gap-1 text-base font-medium">
-            <a href="/edit.html" class="nav-link-editor text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5" data-i18n="nav.editor">AI Photo Editor</a>
-            <a href="/gallery.html" class="nav-link-gallery text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5" data-i18n="nav.gallery">Gallery</a>
-            <a href="/pricing.html" class="nav-link-pricing text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5" data-i18n="nav.pricing">Pricing</a>
-            <a href="#" class="relative text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5">
-                <span data-i18n="nav.video">Video Generator</span>
+            <a href="/edit.html" class="nav-link-editor relative text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5">
+                <span data-i18n="nav.editor">AI Photo Editor</span>
                 <span class="absolute -top-1.5 -right-1 bg-orange-500 text-white font-normal px-1.5 py-0.5 rounded-full leading-none" style="font-size:0.6rem;">NEW</span>
             </a>
-            <div class="relative" id="aiToolsMenu">
-                <button onclick="toggleAiTools(event)" class="relative text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5 flex items-center gap-1">
-                    <span data-i18n="nav.aitools">AI Tools</span>
-                    <svg class="w-3.5 h-3.5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                    <span class="absolute -top-1.5 -right-1 bg-cyan-500 text-white font-normal px-1.5 py-0.5 rounded-full leading-none" style="font-size:0.6rem;">SOON</span>
-                </button>
-                <div id="aiToolsDropdown" style="display:none" class="absolute top-full left-0 mt-2 w-[520px] bg-zinc-900 border border-zinc-700/60 rounded-2xl p-4 shadow-2xl z-50 grid grid-cols-2 gap-2">
-                    <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition group">
-                        <div class="w-9 h-9 bg-zinc-800 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-zinc-700 transition"><svg class="w-4 h-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg></div>
-                        <div><div class="text-white text-sm font-semibold">Expand Image</div><div class="text-zinc-500 text-xs mt-0.5">Extend your images beyond their original borders</div></div>
-                    </a>
-                    <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition group">
-                        <div class="w-9 h-9 bg-zinc-800 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-zinc-700 transition"><svg class="w-4 h-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"/></svg></div>
-                        <div><div class="text-white text-sm font-semibold">Remove Background</div><div class="text-zinc-500 text-xs mt-0.5">Remove background from any image instantly</div></div>
-                    </a>
-                    <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition group">
-                        <div class="w-9 h-9 bg-zinc-800 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-zinc-700 transition"><svg class="w-4 h-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></div>
-                        <div><div class="text-white text-sm font-semibold">AI 3D Model Generator</div><div class="text-zinc-500 text-xs mt-0.5">Turn text or images into 3D models in seconds</div></div>
-                    </a>
-                    <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition group">
-                        <div class="w-9 h-9 bg-zinc-800 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-zinc-700 transition"><svg class="w-4 h-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg></div>
-                        <div><div class="text-white text-sm font-semibold">AI Voice Cloning</div><div class="text-zinc-500 text-xs mt-0.5">Clone any voice from just 3 seconds of audio</div></div>
-                    </a>
-                    <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition group">
-                        <div class="w-9 h-9 bg-zinc-800 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-zinc-700 transition"><svg class="w-4 h-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-                        <div><div class="text-white text-sm font-semibold">Face Swap Online</div><div class="text-zinc-500 text-xs mt-0.5">Swap faces in photos &amp; videos instantly</div></div>
-                    </a>
-                    <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition group">
-                        <div class="w-9 h-9 bg-zinc-800 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-zinc-700 transition"><svg class="w-4 h-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></div>
-                        <div><div class="text-white text-sm font-semibold">AI Video Generator</div><div class="text-zinc-500 text-xs mt-0.5">Turn images or text into professional videos</div></div>
-                    </a>
-                    <a href="#" class="col-span-2 flex items-start gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition group">
-                        <div class="w-9 h-9 bg-zinc-800 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-zinc-700 transition"><svg class="w-4 h-4 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
-                        <div><div class="text-white text-sm font-semibold flex items-center gap-2">Promptless AI Art <span class="bg-red-500 text-white text-xs font-normal px-2 py-0.5 rounded-full">NEW</span></div><div class="text-zinc-500 text-xs mt-0.5">Generate dozens of images from a rough idea - just pick</div></div>
-                    </a>
-                </div>
-            </div>
+            <a href="/gallery.html" class="nav-link-gallery text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5" data-i18n="nav.gallery">Gallery</a>
+            <a href="/pricing.html" class="nav-link-pricing text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5" data-i18n="nav.pricing">Pricing</a>
             <button onclick="showTerms()" class="text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5" data-i18n="nav.terms">Terms of Service</button>
         </div>
         <div class="flex items-center gap-2">
@@ -164,18 +126,6 @@
 function showTerms() { document.getElementById('termsModal').style.display = 'flex'; }
 function closeTerms() { document.getElementById('termsModal').style.display = 'none'; }
 document.getElementById('termsModal').addEventListener('click', function(e) { if(e.target===this) closeTerms(); });
-
-function toggleAiTools(e) {
-    e.stopPropagation();
-    const d = document.getElementById('aiToolsDropdown');
-    d.style.display = d.style.display === 'none' ? 'grid' : 'none';
-}
-document.addEventListener('click', function(e) {
-    const menu = document.getElementById('aiToolsMenu');
-    if (menu && !menu.contains(e.target)) {
-        document.getElementById('aiToolsDropdown').style.display = 'none';
-    }
-});
 
 // Highlight active nav link
 (function() {

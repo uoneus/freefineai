@@ -84,7 +84,10 @@
 
         <!-- Prompt -->
         <div class="mb-3">
-            <label class="block text-white text-xs font-semibold mb-1.5">Prompt</label>
+            <label class="block text-white text-xs font-semibold mb-1.5" data-i18n="gen.prompt">Prompt</label>
+            <p data-show-non-en data-i18n="gen.prompt_hint" class="mb-2 hidden rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs font-medium text-amber-200">
+                Important: Enter English prompts for great results!
+            </p>
             <textarea id="prompt" rows="4" placeholder="Describe the image you want to create..."
                 class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3.5 py-3 text-white text-sm placeholder-zinc-600 focus:outline-none focus:border-cyan-500 resize-none"></textarea>
             <!-- Random Prompt -->

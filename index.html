@@ -41,6 +41,24 @@
         .ad-popup-close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 50%; color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
         .ad-popup-close:hover { background: rgba(255,255,255,0.2); }
         .prompt-theme-tile { background-size: cover; background-position: center; }
+        .gen-anim-wrap { width: 100%; min-height: 360px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 18px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); }
+        .gen-orb { position: relative; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; z-index: 2; }
+        .gen-orb-ring { position: absolute; border-radius: 50%; border: 1px solid; animation: genOrbPulse 2s ease-in-out infinite; }
+        .gen-orb-ring1 { width: 64px; height: 64px; border-color: rgba(34,211,238,0.5); animation-delay: 0s; }
+        .gen-orb-ring2 { width: 88px; height: 88px; border-color: rgba(167,139,250,0.35); animation-delay: .4s; }
+        .gen-orb-ring3 { width: 112px; height: 112px; border-color: rgba(244,114,182,0.22); animation-delay: .8s; }
+        .gen-orb-core { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg,rgba(34,211,238,0.32),rgba(167,139,250,0.32)); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 24px rgba(34,211,238,0.35); animation: genCoreGlow 1.5s ease-in-out infinite alternate; }
+        .gen-orb-icon { width: 18px; height: 18px; border: 2px solid #22d3ee; border-top-color: transparent; border-radius: 50%; animation: genIconSpin 1.2s linear infinite; }
+        .gen-particles { position: absolute; inset: 0; pointer-events: none; }
+        .gen-particle { position: absolute; bottom: -16px; border-radius: 50%; opacity: 0; animation: genParticleFloat linear infinite; }
+        .gen-tip-wrap { position: absolute; left: 18px; right: 18px; bottom: 20px; text-align: center; z-index: 2; }
+        .gen-tip { color: #a1a1aa; font-size: 12px; line-height: 1.5; animation: genTipFade 3s ease-in-out infinite; }
+        .gen-status { color: #d4d4d8; font-size: 13px; font-weight: 600; }
+        @keyframes genOrbPulse { 0%,100% { transform: scale(1); opacity: .8; } 50% { transform: scale(1.12); opacity: .4; } }
+        @keyframes genCoreGlow { 0% { box-shadow: 0 0 18px rgba(34,211,238,.35); } 100% { box-shadow: 0 0 42px rgba(167,139,250,.6); } }
+        @keyframes genIconSpin { to { transform: rotate(360deg); } }
+        @keyframes genParticleFloat { 0% { transform: translateY(0) scale(1); opacity: 0; } 15% { opacity: .9; } 85% { opacity: .6; } 100% { transform: translateY(-340px) scale(.3); opacity: 0; } }
+        @keyframes genTipFade { 0%,100% { opacity: .45; } 50% { opacity: 1; } }
     </style>
     <script src="common.js"></script>
 </head>
@@ -100,13 +118,16 @@
         <div class="max-w-6xl mx-auto">
             <h2 class="text-2xl md:text-3xl font-bold text-white mb-6 text-center" data-i18n="gen.title">Create Your Image</h2>
             <div class="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 md:p-8">
-                <div class="grid md:grid-cols-2 gap-8">
+                <div class="grid md:grid-cols-5 gap-8 items-stretch">
                     <!-- Left Column: Prompt & Controls -->
-                    <div class="space-y-4">
+                    <div class="space-y-4 md:col-span-2 md:h-full">
                         <div>
                             <label for="prompt" class="block text-white font-medium text-sm mb-2" data-i18n="gen.prompt">Prompt</label>
-                            <textarea
-                                id="prompt"
+                            <p data-show-non-en data-i18n="gen.prompt_hint" class="mb-2 hidden rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs font-medium text-amber-200">
+                                Important: Enter English prompts for great results!
+                            </p>
+                            <textarea 
+                                id="prompt" 
                                 name="prompt"
                                 rows="4"
                                 class="w-full bg-zinc-800/50 border border-zinc-700 rounded-xl px-4 py-3 text-white text-sm placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition resize-none"
@@ -205,9 +226,9 @@
                     </div>
                     
                     <!-- Right Column: Preview -->
-                    <div>
+                    <div class="md:col-span-3 md:flex">
                         <!-- Preview Area -->
-                        <div id="previewArea" class="bg-zinc-800/30 rounded-2xl border border-zinc-700/50 aspect-square flex flex-col items-center justify-center p-6">
+                        <div id="previewArea" class="w-full min-h-[560px] md:h-full bg-zinc-800/30 rounded-2xl border border-zinc-700/50 flex flex-col items-center justify-center p-6">
                             <!-- Default State -->
                             <div id="defaultPreview" class="text-center">
                                 <svg class="w-16 h-16 mx-auto text-zinc-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -218,8 +239,17 @@
                             
                             <!-- Loading State -->
                             <div id="loadingState" class="hidden text-center w-full">
-                                <div class="w-12 h-12 mx-auto border-2 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                                <span class="text-zinc-400 text-sm">Generating your image...</span>
+                                <div class="gen-anim-wrap mb-4">
+                                    <div class="gen-orb">
+                                        <div class="gen-orb-ring gen-orb-ring1"></div>
+                                        <div class="gen-orb-ring gen-orb-ring2"></div>
+                                        <div class="gen-orb-ring gen-orb-ring3"></div>
+                                        <div class="gen-orb-core"><span class="gen-orb-icon"></span></div>
+                                    </div>
+                                    <div id="genParticles" class="gen-particles"></div>
+                                    <div class="gen-tip-wrap"><span id="genTip" class="gen-tip">Preparing the canvas...</span></div>
+                                </div>
+                                <p id="genStatusText" class="gen-status">Generating your image...</p>
                                 <div class="mt-4 bg-zinc-700/30 rounded-xl h-2 overflow-hidden">
                                     <div id="progressBar" class="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl transition-all duration-500" style="width: 0%"></div>
                                 </div>
@@ -1316,8 +1346,21 @@
         const defaultPreview = document.getElementById('defaultPreview');
 
         let progressInterval;
+        let loadingTipInterval;
         let currentCaptchaToken = '';
         let currentCaptchaCode = '';
+        const GENERATION_TIPS = [
+            'Mixing colors on the digital canvas...',
+            'Consulting the AI muse...',
+            'Painting pixels with neural magic...',
+            'Dreaming up your masterpiece...',
+            'Weaving light and shadow...',
+            'The AI is thinking hard...',
+            'Almost there, adding final touches...',
+            'Rendering your imagination...',
+            'Crafting something beautiful...',
+            'Summoning creative energy...'
+        ];
 
         // Fetch captcha from server
         async function refreshCaptcha() {
@@ -1448,6 +1491,7 @@
         });
 
         function startGeneration() {
+            stopLoadingAnimation();
             defaultPreview.classList.add('hidden');
             loadingState.classList.remove('hidden');
             resultState.classList.add('hidden');
@@ -1455,6 +1499,7 @@
             generateBtn.disabled = true;
             statusText.classList.remove('hidden');
             statusText.textContent = 'Starting...';
+            startLoadingAnimation('Submitting...');
 
             let progress = 0;
             progressBar.style.width = '0%';
@@ -1463,7 +1508,49 @@
                 if (progress > 90) progress = 90;
                 progressBar.style.width = progress + '%';
                 statusText.textContent = `Processing... ${Math.round(progress)}%`;
+                setLoadingStatus(`Processing... ${Math.round(progress)}%`);
             }, 500);
+        }
+
+        function startLoadingAnimation(initialStatus) {
+            const colors = ['#22d3ee', '#a78bfa', '#f472b6', '#34d399', '#fbbf24'];
+            const particles = document.getElementById('genParticles');
+            const tip = document.getElementById('genTip');
+            setLoadingStatus(initialStatus);
+            if (particles) {
+                particles.innerHTML = '';
+                for (let i = 0; i < 12; i++) {
+                    const p = document.createElement('span');
+                    const size = Math.floor(4 + Math.random() * 9);
+                    p.className = 'gen-particle';
+                    p.style.left = (Math.random() * 80 + 10) + '%';
+                    p.style.width = size + 'px';
+                    p.style.height = size + 'px';
+                    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    p.style.animationDelay = (Math.random() * 2).toFixed(2) + 's';
+                    p.style.animationDuration = (2 + Math.random() * 2).toFixed(2) + 's';
+                    particles.appendChild(p);
+                }
+            }
+            function pickTip() {
+                if (tip) tip.textContent = GENERATION_TIPS[Math.floor(Math.random() * GENERATION_TIPS.length)];
+            }
+            pickTip();
+            loadingTipInterval = setInterval(pickTip, 3000);
+        }
+
+        function setLoadingStatus(text) {
+            const status = document.getElementById('genStatusText');
+            if (status) status.textContent = text;
+        }
+
+        function stopLoadingAnimation() {
+            if (loadingTipInterval) {
+                clearInterval(loadingTipInterval);
+                loadingTipInterval = null;
+            }
+            const particles = document.getElementById('genParticles');
+            if (particles) particles.innerHTML = '';
         }
 
         async function pollForImage(imageId) {
@@ -1492,6 +1579,7 @@
                 
                 attempts++;
                 statusText.textContent = `Processing... ${Math.round(attempts * 100 / maxAttempts)}%`;
+                setLoadingStatus(`Processing... ${Math.round(attempts * 100 / maxAttempts)}%`);
                 await new Promise(resolve => setTimeout(resolve, 2000));
             }
             
@@ -1502,8 +1590,10 @@
             clearInterval(progressInterval);
             progressBar.style.width = '100%';
             statusText.textContent = 'Complete!';
+            setLoadingStatus('Complete!');
             
             setTimeout(() => {
+                stopLoadingAnimation();
                 loadingState.classList.add('hidden');
                 resultState.classList.remove('hidden');
                 resultImage.src = imageUrl;
@@ -1515,6 +1605,7 @@
 
         function showError(message) {
             clearInterval(progressInterval);
+            stopLoadingAnimation();
             loadingState.classList.add('hidden');
             errorState.classList.remove('hidden');
             errorMessage.textContent = message;
@@ -1531,6 +1622,7 @@
             refreshCaptcha();
             generateBtn.disabled = false;
             statusText.classList.add('hidden');
+            stopLoadingAnimation();
             loadingState.classList.add('hidden');
             resultState.classList.add('hidden');
             errorState.classList.add('hidden');
