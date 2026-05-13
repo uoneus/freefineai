@@ -1024,8 +1024,8 @@
                 setLoadingStatus('gen', `Processing... ${Math.round((i + 1) * 100 / max)}%`);
                 try {
                     const r = window.API 
-                        ? await window.API.get(`/images/webp/${id}`)
-                        : await fetch(`${API_BASE}/images/webp/${id}`);
+                        ? await window.API.get(`/images/${id}`)
+                        : await fetch(`${API_BASE}/images/${id}`);
                     if (r.ok) {
                         const img = await r.json();
                         if (img.status === 'completed' && img.image_url) {

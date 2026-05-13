@@ -1506,8 +1506,8 @@
             while (attempts < maxAttempts) {
                 try {
                     const response = window.API 
-                        ? await window.API.get(`/images/webp/${imageId}`)
-                        : await fetch(`${API_BASE_URL}/images/webp/${imageId}`);
+                        ? await window.API.get(`/images/${imageId}`)
+                        : await fetch(`${API_BASE_URL}/images/${imageId}`);
                     if (response.ok) {
                         const img = await response.json();
                         if (img.status === 'completed' && img.image_url) {
