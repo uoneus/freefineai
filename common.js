@@ -4,12 +4,12 @@
 // IMPORTANT: Update these endpoints to match your actual backend servers
 const API_ENDPOINTS = [
     'https://api.freefineai.com/api',
-    'https://cloud.sourcespring.cn/api'
+    //'https://cloud.sourcespring.cn/api'
 ];
 
 const IMAGE_BASE_URLS = [
     'https://api.freefineai.com',
-    'https://cloud.sourcespring.cn'
+    //'https://cloud.sourcespring.cn'
 ];
 
 // API endpoint selection strategy

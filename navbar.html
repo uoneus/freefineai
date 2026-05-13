@@ -15,7 +15,7 @@
                 <span data-i18n="nav.editor">AI Photo Editor</span>
                 <span class="absolute -top-1.5 -right-1 bg-orange-500 text-white font-normal px-1.5 py-0.5 rounded-full leading-none" style="font-size:0.6rem;">NEW</span>
             </a>
-            <a href="/gallery.html" class="nav-link-gallery text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5" data-i18n="nav.gallery">Gallery</a>
+            <a href="/download.html" class="nav-link-download text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5" data-i18n="nav.download">Download</a>
             <a href="/pricing.html" class="nav-link-pricing text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5" data-i18n="nav.pricing">Pricing</a>
             <button onclick="showTerms()" class="text-zinc-400 hover:text-white transition px-4 py-2 rounded-lg hover:bg-white/5" data-i18n="nav.terms">Terms of Service</button>
         </div>
@@ -133,8 +133,8 @@ document.getElementById('termsModal').addEventListener('click', function(e) { if
     if (path.includes('edit.html')) {
         const el = document.querySelector('.nav-link-editor');
         if (el) { el.classList.remove('text-zinc-400'); el.classList.add('text-white', 'bg-white/5'); }
-    } else if (path.includes('gallery.html')) {
-        const el = document.querySelector('.nav-link-gallery');
+    } else if (path.includes('download.html')) {
+        const el = document.querySelector('.nav-link-download');
         if (el) { el.classList.remove('text-zinc-400'); el.classList.add('text-white', 'bg-white/5'); }
     }
     // Apply i18n after navbar is injected

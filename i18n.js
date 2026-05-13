@@ -1,6 +1,6 @@
 ﻿const I18N = {
   en: {
-    'nav.home':'Home','nav.editor':'AI Photo Editor','nav.gallery':'Gallery','nav.about':'About US',
+    'nav.home':'Home','nav.editor':'AI Photo Editor','nav.download':'Download','nav.about':'About US',
     'nav.terms':'Terms of Service','nav.signin':'Sign In','nav.logout':'Sign Out',
     'nav.pricing':'Pricing','nav.video':'Video Generator','nav.aitools':'AI Tools',
     'hero.title1':'Premium Flux.2','hero.title2':'High-definition Creative images',
@@ -26,7 +26,7 @@
     'model.waiting':'(waiting...)','limit.guest':'Guest','limit.member':'Member','limit.vip':'VIP',
   },
   zh: {
-    'nav.home':'首页','nav.editor':'AI 图片编辑','nav.gallery':'画廊','nav.about':'关于我们',
+    'nav.home':'首页','nav.editor':'AI 图片编辑','nav.download':'下载','nav.about':'关于我们',
     'nav.terms':'服务条款','nav.signin':'登录','nav.logout':'退出',
     'nav.pricing':'定价','nav.video':'视频生成','nav.aitools':'AI 工具',
     'hero.title1':'高品质 Flux.2','hero.title2':'高清创意图片',
@@ -52,7 +52,7 @@
     'model.waiting':'(等待中...)','limit.guest':'游客','limit.member':'会员','limit.vip':'VIP',
   },
   ru: {
-    'nav.home':'Главная','nav.editor':'Фоторедактор','nav.gallery':'Галерея','nav.about':'О нас',
+    'nav.home':'Главная','nav.editor':'Фоторедактор','nav.download':'Скачать','nav.about':'О нас',
     'nav.terms':'Условия','nav.signin':'Войти','nav.logout':'Выйти',
     'nav.pricing':'Цены','nav.video':'Генератор видео','nav.aitools':'AI Инструменты',
     'hero.title1':'Премиум Flux.2','hero.title2':'Креативные изображения высокого разрешения',
@@ -78,7 +78,7 @@
     'model.waiting':'(ожидание...)','limit.guest':'Гость','limit.member':'Участник','limit.vip':'VIP',
   },
   ja: {
-    'nav.home':'ホーム','nav.editor':'AI 画像編集','nav.gallery':'ギャラリー','nav.about':'私たちについて',
+    'nav.home':'ホーム','nav.editor':'AI 画像編集','nav.download':'ダウンロード','nav.about':'私たちについて',
     'nav.terms':'利用規約','nav.signin':'ログイン','nav.logout':'ログアウト',
     'nav.pricing':'料金','nav.video':'動画生成','nav.aitools':'AI ツール',
     'hero.title1':'プレミアム Flux.2','hero.title2':'高精細クリエイティブ画像',
@@ -104,7 +104,7 @@
     'model.waiting':'(待機中...)','limit.guest':'ゲスト','limit.member':'メンバー','limit.vip':'VIP',
   },
   hi: {
-    'nav.home':'होम','nav.editor':'AI इमेज एडिटर','nav.gallery':'गैलरी','nav.about':'हमारे बारे में',
+    'nav.home':'होम','nav.editor':'AI इमेज एडिटर','nav.download':'डाउनलोड','nav.about':'हमारे बारे में',
     'nav.terms':'सेवा शर्तें','nav.signin':'साइन इन','nav.logout':'लॉगआउट',
     'nav.pricing':'मूल्य निर्धारण','nav.video':'वीडियो जनरेटर','nav.aitools':'AI टूल्स',
     'hero.title1':'प्रीमियम Flux.2','hero.title2':'हाई-डेफिनिशन क्रिएटिव इमेजेस',
@@ -130,7 +130,7 @@
     'model.waiting':'(प्रतीक्षा...)','limit.guest':'अतिथि','limit.member':'सदस्य','limit.vip':'VIP',
   },
   de: {
-    'nav.home':'Startseite','nav.editor':'AI Bildeditor','nav.gallery':'Galerie','nav.about':'Über uns',
+    'nav.home':'Startseite','nav.editor':'AI Bildeditor','nav.download':'Download','nav.about':'Über uns',
     'nav.terms':'Nutzungsbedingungen','nav.signin':'Anmelden','nav.logout':'Abmelden',
     'nav.pricing':'Preise','nav.video':'Video-Generator','nav.aitools':'AI-Tools',
     'hero.title1':'Premium Flux.2','hero.title2':'Hochauflösende kreative Bilder',
@@ -156,7 +156,7 @@
     'model.waiting':'(wartend...)','limit.guest':'Gast','limit.member':'Mitglied','limit.vip':'VIP',
   },
   fr: {
-    'nav.home':'Accueil','nav.editor':'Éditeur photo IA','nav.gallery':'Galerie','nav.about':'À propos',
+    'nav.home':'Accueil','nav.editor':'Éditeur photo IA','nav.download':'Télécharger','nav.about':'À propos',
     'nav.terms':'Conditions','nav.signin':'Connexion','nav.logout':'Déconnexion',
     'nav.pricing':'Tarifs','nav.video':'Générateur vidéo','nav.aitools':'Outils IA',
     'hero.title1':'Premium Flux.2','hero.title2':'Images créatives haute définition',
@@ -182,7 +182,7 @@
     'model.waiting':'(en attente...)','limit.guest':'Invité','limit.member':'Membre','limit.vip':'VIP',
   },
   it: {
-    'nav.home':'Home','nav.editor':'Editor foto AI','nav.gallery':'Galleria','nav.about':'Chi siamo',
+    'nav.home':'Home','nav.editor':'Editor foto AI','nav.download':'Download','nav.about':'Chi siamo',
     'nav.terms':'Termini','nav.signin':'Accedi','nav.logout':'Esci',
     'nav.pricing':'Prezzi','nav.video':'Generatore video','nav.aitools':'Strumenti AI',
     'hero.title1':'Premium Flux.2','hero.title2':'Immagini creative ad alta definizione',
@@ -208,7 +208,7 @@
     'model.waiting':'(in attesa...)','limit.guest':'Ospite','limit.member':'Membro','limit.vip':'VIP',
   },
   es: {
-    'nav.home':'Inicio','nav.editor':'Editor de fotos IA','nav.gallery':'Galería','nav.about':'Sobre nosotros',
+    'nav.home':'Inicio','nav.editor':'Editor de fotos IA','nav.download':'Descargar','nav.about':'Sobre nosotros',
     'nav.terms':'Términos','nav.signin':'Iniciar sesión','nav.logout':'Cerrar sesión',
     'nav.pricing':'Precios','nav.video':'Generador de video','nav.aitools':'Herramientas IA',
     'hero.title1':'Premium Flux.2','hero.title2':'Imágenes creativas de alta definición',
@@ -234,7 +234,7 @@
     'model.waiting':'(esperando...)','limit.guest':'Invitado','limit.member':'Miembro','limit.vip':'VIP',
   },
   ar: {
-    'nav.home':'الرئيسية','nav.editor':'محرر الصور AI','nav.gallery':'المعرض','nav.about':'من نحن',
+    'nav.home':'الرئيسية','nav.editor':'محرر الصور AI','nav.download':'تحميل','nav.about':'من نحن',
     'nav.terms':'الشروط','nav.signin':'تسجيل الدخول','nav.logout':'تسجيل الخروج',
     'nav.pricing':'الأسعار','nav.video':'مولد الفيديو','nav.aitools':'أدوات AI',
     'hero.title1':'بريميوم Flux.2','hero.title2':'صور إبداعية عالية الدقة',

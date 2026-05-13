@@ -292,28 +292,50 @@
     <section class="py-10 px-6">
         <div class="max-w-6xl mx-auto">
             <h2 class="text-2xl md:text-3xl font-bold text-white mb-10 text-center">Featured Assets</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                <div class="image-card rounded-2xl overflow-hidden cursor-pointer">
-                    <img src="images/flux_113200_1768879346.png" alt="Flux Asset 1" class="w-full h-56 md:h-80 object-cover">
-                </div>
-                <div class="image-card rounded-2xl overflow-hidden cursor-pointer">
-                    <img src="images/flux_135018_1768887652.png" alt="Flux Asset 2" class="w-full h-56 md:h-80 object-cover">
-                </div>
-                <div class="image-card rounded-2xl overflow-hidden cursor-pointer">
-                    <img src="images/FLUX_1_DEV_101934_1769047742.png" alt="Flux Asset 3" class="w-full h-56 md:h-80 object-cover">
-                </div>
-                <div class="image-card rounded-2xl overflow-hidden cursor-pointer">
-                    <img src="images/FLUX_1_DEV_111300_1770087802.png" alt="Flux Asset 4" class="w-full h-56 md:h-80 object-cover">
-                </div>
-                <div class="image-card rounded-2xl overflow-hidden cursor-pointer">
-                    <img src="images/flux_p40_img_10.png" alt="Flux Asset 5" class="w-full h-56 md:h-80 object-cover">
-                </div>
-                <div class="image-card rounded-2xl overflow-hidden cursor-pointer">
-                    <img src="images/FLUX_1_DEV_141622_1768889192.png" alt="Flux Asset 6" class="w-full h-56 md:h-80 object-cover">
-                </div>
+            <div id="featuredAssetsGrid" class="grid grid-cols-3 gap-4 md:gap-6">
+                <!-- 动态生成 -->
             </div>
         </div>
     </section>
+
+    <script>
+    (function() {
+        // 基于日期的伪随机种子
+        const today = new Date();
+        const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+        
+        // 伪随机函数
+        function seededRandom(s) {
+            const x = Math.sin(s) * 10000;
+            return x - Math.floor(x);
+        }
+        
+        // 从 config.json 加载图片列表
+        fetch('config.json')
+            .then(res => res.json())
+            .then(config => {
+                const allImages = config.featuredImages;
+                
+                // Fisher-Yates 洗牌（带种子）
+                const shuffled = [...allImages];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(seededRandom(seed + i) * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                
+                const selected = shuffled.slice(0, 9);
+                
+                const grid = document.getElementById('featuredAssetsGrid');
+                selected.forEach((img, i) => {
+                    const div = document.createElement('div');
+                    div.className = 'image-card rounded-2xl overflow-hidden cursor-pointer';
+                    div.innerHTML = `<img src="images/webp/${img}" alt="Flux Asset ${i+1}" class="w-full h-56 md:h-80 object-cover" loading="lazy">`;
+                    grid.appendChild(div);
+                });
+            })
+            .catch(err => console.error('Failed to load config.json:', err));
+    })();
+    </script>
 
     <!-- Model Information Section -->
     <section class="py-16 px-6">
@@ -592,107 +614,14 @@
         </div>
     </section>
 
-    <!-- What Users Say Section -->
-    <section class="py-20 px-6 bg-gradient-to-b from-transparent via-zinc-900/20 to-transparent overflow-hidden">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-2xl md:text-3xl font-bold text-white mb-3 text-center">What Users Say About FreeFineAI</h2>
-            <p class="text-zinc-400 text-sm text-center mb-2">See how creators use FreeFineAI to boost their productivity</p>
-            <p class="text-zinc-500 text-xs text-center mb-10">猸愨瓙猸愨瓙猸?Rated 4.9/5 by 25,000+ users</p>
-
-            <!-- Scrolling columns wrapper - fade top/bottom -->
-            <div class="relative" style="height:520px;">
-                <div class="absolute inset-x-0 top-0 h-20 z-10 pointer-events-none" style="background:linear-gradient(to bottom,#09090b,transparent)"></div>
-                <div class="absolute inset-x-0 bottom-0 h-20 z-10 pointer-events-none" style="background:linear-gradient(to top,#09090b,transparent)"></div>
-                <div class="grid grid-cols-3 gap-4 h-full">
-                    <div class="review-col overflow-hidden"><div class="review-track" id="col0"></div></div>
-                    <div class="review-col overflow-hidden"><div class="review-track" id="col1"></div></div>
-                    <div class="review-col overflow-hidden"><div class="review-track" id="col2"></div></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <style>
-        .review-track { display:flex; flex-direction:column; gap:14px; }
-        .review-card { background:rgba(28,28,30,0.85); border:1px solid rgba(63,63,70,0.5); border-radius:16px; padding:20px; flex-shrink:0; }
-        .review-card p { color:#d4d4d8; font-size:0.95rem; line-height:1.7; margin:0 0 16px; font-weight:400; }
-        .review-card .reviewer { display:flex; align-items:center; gap:10px; }
-        .review-card .avatar { width:42px; height:42px; border-radius:50%; object-fit:cover; flex-shrink:0; border:2px solid rgba(255,255,255,0.1); }
-        .review-card .name { color:#f4f4f5; font-size:0.875rem; font-weight:700; }
-        .review-card .role { color:#71717a; font-size:0.75rem; margin-top:1px; }
-        @keyframes scrollUp { from { transform:translateY(0) } to { transform:translateY(-50%) } }
-    </style>
-
-    <script>
-    (function(){
-        const reviews = [
-            { name:'u/sarah_creates', role:'Digital Artist - r/AIArt', avatar:'https://i.pravatar.cc/80?img=1', text:'FreeFineAI boosted my creative efficiency by 10x! The image quality is beyond imagination and perfectly meets commercial requirements.' },
-            { name:'u/emma_zhang_cx', role:'Content Creator - r/StableDiffusion', avatar:'https://i.pravatar.cc/80?img=5', text:'The speed is amazing! Professional-quality images in seconds, dramatically shortening my project cycles. Nothing else comes close for free.' },
-            { name:'u/jess_digital', role:'Marketing Expert - r/artificial', avatar:'https://i.pravatar.cc/80?img=9', text:"I've tried many tools, but FreeFineAI is a true game-changer. The Flux models produce stunning results every single time." },
-            { name:'u/sophie_designs', role:'Freelance Designer - r/graphic_design', avatar:'https://i.pravatar.cc/80?img=16', text:'With FreeFineAI I can precisely control every detail. It is the most powerful AI image generator available - and it is completely free.' },
-            { name:'u/kevin_concept', role:'Game Concept Artist - r/gamedev', avatar:'https://i.pravatar.cc/80?img=12', text:"The detail expression is unparalleled. As a game developer, FreeFineAI has become our go-to tool for concept design. Flux.1-Krea is insane." },
-            { name:'u/tom_adcreative', role:'Ad Creative Director - r/marketing', avatar:'https://i.pravatar.cc/80?img=15', text:'FreeFineAI makes realizing ad creatives so simple. It generates images that reach commercial photography standards without any cost.' },
-            { name:'u/lily_ux', role:'UI/UX Designer - r/userexperience', avatar:'https://i.pravatar.cc/80?img=20', text:'No login, no payment, unlimited creativity. I use FreeFineAI every single day for mockups and design inspiration. Absolute must-have.' },
-            { name:'u/marcus_k_dev', role:'Game Developer - r/indiegaming', avatar:'https://i.pravatar.cc/80?img=11', text:"I've been using these assets in my projects for months. The quality rivals paid alternatives. Highly recommend to every indie dev!" },
-            { name:'u/alex_content', role:'Content Creator - r/ContentCreation', avatar:'https://i.pravatar.cc/80?img=25', text:"Finally, a free resource that doesn't compromise on quality. The curation is excellent and the Flux models keep getting better." },
-            { name:'u/david_photo', role:'Photographer - r/photography', avatar:'https://i.pravatar.cc/80?img=13', text:'The Flux.1-Kontext model is incredible for image editing. I can transform any photo with just a text description. Mind-blowing.' },
-            { name:'u/mia_social', role:'Social Media Manager - r/socialmedia', avatar:'https://i.pravatar.cc/80?img=23', text:'My engagement rates doubled after I started using FreeFineAI for content creation. The quality is unreal for a completely free tool.' },
-            { name:'u/ryan_indie', role:'Indie Developer - r/gamedev', avatar:'https://i.pravatar.cc/80?img=8', text:'As an indie developer with a tight budget, FreeFineAI is a lifesaver. Professional assets without the professional price tag. Love it.' },
-            { name:'u/zoe_artdir', role:'Art Director - r/Design', avatar:'https://i.pravatar.cc/80?img=27', text:'The variety of models available is impressive. I switch between them depending on the style I need. Kontext for editing, Krea for style.' },
-            { name:'u/james_startup', role:'Startup Founder - r/startups', avatar:'https://i.pravatar.cc/80?img=14', text:'We use FreeFineAI for all our marketing visuals. It saves us thousands of dollars in design costs every month. Incredible value.' },
-            { name:'u/nina_blogs', role:'Blogger - r/Blogging', avatar:'https://i.pravatar.cc/80?img=29', text:'The random prompt feature is genius! I discover new creative directions I never would have thought of on my own. So much fun.' },
-            { name:'u/chris_video', role:'Video Producer - r/videography', avatar:'https://i.pravatar.cc/80?img=7', text:'Thumbnail creation used to take hours. Now with FreeFineAI it takes minutes and the results are consistently stunning. Game changer.' },
-            { name:'u/yuki_illust', role:'Illustrator - r/DigitalArt', avatar:'https://i.pravatar.cc/80?img=32', text:'The anime and artistic styles are spot on. FreeFineAI understands complex style prompts better than any other tool I have used.' },
-            { name:'u/lucas_brand', role:'Brand Designer - r/branding', avatar:'https://i.pravatar.cc/80?img=18', text:'Client presentations have never been easier. I can generate concept visuals on the fly during meetings. Absolutely incredible tool.' },
-            { name:'u/priya_motion', role:'Motion Designer - r/AfterEffects', avatar:'https://i.pravatar.cc/80?img=33', text:'I use FreeFineAI to generate storyboard frames and style references. It saves me hours of sketching every single week.' },
-            { name:'u/oliver_arch', role:'Architect - r/architecture', avatar:'https://i.pravatar.cc/80?img=3', text:'Generating architectural concept renders used to require expensive software. FreeFineAI does it in seconds with stunning realism.' },
-            { name:'u/grace_fashion', role:'Fashion Blogger - r/femalefashionadvice', avatar:'https://i.pravatar.cc/80?img=36', text:'I create all my outfit mood boards with FreeFineAI now. The style understanding is incredible - it nails every aesthetic I describe.' },
-            { name:'u/ben_copywriter', role:'Copywriter - r/copywriting', avatar:'https://i.pravatar.cc/80?img=6', text:'Even as a words person I rely on FreeFineAI daily. Having visuals that match my copy instantly makes my pitches so much stronger.' },
-            { name:'u/hana_educator', role:'Online Educator - r/Teachers', avatar:'https://i.pravatar.cc/80?img=40', text:'I create custom illustrations for my courses with FreeFineAI. My students love the visuals and engagement has gone through the roof.' },
-            { name:'u/mike_3d', role:'3D Artist - r/blender', avatar:'https://i.pravatar.cc/80?img=10', text:'I use FreeFineAI for concept exploration before committing to a full 3D model. It cuts my pre-production time in half easily.' },
-            { name:'u/chloe_ecom', role:'E-commerce Owner - r/ecommerce', avatar:'https://i.pravatar.cc/80?img=44', text:'Product photography used to cost me a fortune. Now I generate lifestyle shots with FreeFineAI and my conversion rate has improved.' },
-            { name:'u/dan_journalist', role:'Journalist - r/journalism', avatar:'https://i.pravatar.cc/80?img=17', text:'For article header images FreeFineAI is unbeatable. Fast, free, and the quality is consistently publication-ready.' },
-            { name:'u/ava_tattoo', role:'Tattoo Artist - r/tattoo', avatar:'https://i.pravatar.cc/80?img=47', text:'I use FreeFineAI to sketch out tattoo design concepts for clients. It helps them visualize ideas before we commit to anything.' },
-            { name:'u/sam_music', role:'Music Producer - r/WeAreTheMusicMakers', avatar:'https://i.pravatar.cc/80?img=19', text:'Album artwork, promo visuals, social posts - FreeFineAI handles all my visual needs. As a solo artist this is an absolute game changer.' },
-            { name:'u/fiona_ngo', role:'NGO Communications - r/nonprofit', avatar:'https://i.pravatar.cc/80?img=48', text:'Our small nonprofit cannot afford a design team. FreeFineAI gives us professional visuals for campaigns that actually move people.' },
-            { name:'u/leo_streamer', role:'Content Streamer - r/Twitch', avatar:'https://i.pravatar.cc/80?img=22', text:'Stream overlays, thumbnails, emotes - I generate everything with FreeFineAI. My channel branding has never looked this good.' },
-        ];
-
-        function shuffle(arr) {
-            const a = [...arr];
-            for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-            return a;
-        }
-
-        function buildCard(r) {
-            return `<div class="review-card">
-                <p>"${r.text}"</p>
-                <div class="reviewer">
-                    <img class="avatar" src="${r.avatar}" alt="${r.name}" loading="lazy">
-                    <div><div class="name">${r.name}</div><div class="role">${r.role}</div></div>
-                </div>
-            </div>`;
-        }
-
-        [0,1,2].forEach(function(i){
-            const col = document.getElementById('col'+i);
-            const shuffled = shuffle(reviews);
-            const html = shuffled.map(buildCard).join('') + shuffled.map(buildCard).join('');
-            col.innerHTML = html;
-            const speed = 55 + i * 8; // slow: 55s / 63s / 71s
-            col.style.animation = `scrollUp ${speed}s linear infinite`;
-        });
-    })();
-    </script>
-
 
     <!-- Footer -->
-    <footer class="py-12 px-6 border-t border-zinc-800/50">
+    <footer class="py-12 px-6 border-t border-zinc-800/50 bg-white/[0.03]">
         <div class="max-w-6xl mx-auto text-center">
             <a href="https://www.freefineai.com" class="inline-block text-white font-black text-lg tracking-tight mb-4">
                 FREEFINE<span class="text-cyan-400">AI</span>
             </a>
-            <p class="text-zinc-500 text-sm">漏 2024-2026 FreeFineAI. Premium Flux.1 assets for the creative community.</p>
+            <p class="text-zinc-500 text-sm">Copyright 2024-2026 FreeFineAI. Premium Flux.2 assets for the creative community.</p>
         </div>
     </footer>
 
@@ -787,12 +716,12 @@
         };
         let fallbackPromptConfig = null;
         const DEFAULT_THEME_ICONS = {
-            landscape: 'images/theme-default-landscape.png',
-            portrait: 'images/theme-default-portrait.png',
-            flora: 'images/theme-default-flora.png',
-            animal: 'images/theme-default-animal.png',
-            architecture: 'images/theme-default-architecture.png',
-            fantasy: 'images/theme-default-fantasy.png',
+            landscape: 'images/webp/theme-default-landscape.webp',
+            portrait: 'images/webp/theme-default-portrait.webp',
+            flora: 'images/webp/theme-default-flora.webp',
+            animal: 'images/webp/theme-default-animal.webp',
+            architecture: 'images/webp/theme-default-architecture.webp',
+            fantasy: 'images/webp/theme-default-fantasy.webp',
         };
 
         function fetchWithTimeout(url, options = {}, timeoutMs = 3000) {
@@ -861,6 +790,8 @@
 
         async function selectPromptTheme(theme) {
             setActivePromptTheme(theme);
+            // 用户点击时显示后台加载的图片
+            showCachedThemeImage(theme);
             await randomPrompt();
         }
 
@@ -874,17 +805,32 @@
             ta.focus();
         }
 
+        // 缓存后台加载的主题图片
+        const themeImageCache = {};
+        
         async function loadThemePreviewIcons() {
             await Promise.all(Object.keys(PROMPT_CATEGORY_MAP).map(async (theme) => {
                 const data = await getPromptFromBackend(theme);
-                if (data?.image_path) setThemeTileImage(theme, data.image_path);
+                if (data?.image_path) {
+                    // 缓存图片，不立即显示
+                    themeImageCache[theme] = data.image_path;
+                }
             }));
         }
 
+        // 用户点击主题时显示后台加载的图片
+        function showCachedThemeImage(theme) {
+            if (themeImageCache[theme]) {
+                setThemeTileImage(theme, themeImageCache[theme]);
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
+            // 立即显示默认图片
             document.querySelectorAll('.prompt-theme-tile').forEach(tile => {
                 tile.style.backgroundImage = `url("${DEFAULT_THEME_ICONS[tile.dataset.theme] || DEFAULT_THEME_ICONS.landscape}")`;
             });
+            // 后台静默加载
             loadThemePreviewIcons();
         });
         // End Random Prompt
@@ -1560,8 +1506,8 @@
             while (attempts < maxAttempts) {
                 try {
                     const response = window.API 
-                        ? await window.API.get(`/images/${imageId}`)
-                        : await fetch(`${API_BASE_URL}/images/${imageId}`);
+                        ? await window.API.get(`/images/webp/${imageId}`)
+                        : await fetch(`${API_BASE_URL}/images/webp/${imageId}`);
                     if (response.ok) {
                         const img = await response.json();
                         if (img.status === 'completed' && img.image_url) {

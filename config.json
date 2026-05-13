@@ -1,0 +1,58 @@
+{
+  "featuredImages": [
+    "flux_008.webp",
+    "FLUX_1_DEV_101934_1769047742.webp",
+    "FLUX_1_DEV_111300_1770087802.webp",
+    "FLUX_1_DEV_141622_1768889192.webp",
+    "flux_113200_1768879346.webp",
+    "flux_135018_1768887652.webp",
+    "flux_p40_img_10.webp",
+    "lib_17783117055028485010.webp",
+    "lib_1778311705502848504.webp",
+    "lib_1778311705502848505.webp",
+    "lib_1778394335107684606.webp",
+    "lib_1778394982480226138.webp",
+    "lib_1778395296943696581.webp",
+    "lib_1778395501958967604.webp",
+    "lib_1778395608922593081.webp",
+    "lib_1778397197591874855.webp",
+    "theme-default-animal.webp",
+    "theme-default-architecture.webp",
+    "theme-default-fantasy.webp",
+    "theme-default-flora.webp",
+    "theme-default-landscape.webp",
+    "theme-default-portrait.webp"
+  ],
+  "prompts": {
+    "landscape": [
+      "A breathtaking mountain range at golden hour, dramatic clouds, photorealistic 8k",
+      "Misty forest at dawn, rays of light through ancient trees, cinematic",
+      "Tropical beach at sunset, turquoise water, palm silhouettes, vibrant sky"
+    ],
+    "portrait": [
+      "Portrait of a young woman, soft natural light, shallow depth of field, photorealistic",
+      "Cyberpunk girl with neon-lit face, futuristic city background, cinematic",
+      "Fantasy warrior in ornate armor, fierce expression, epic lighting"
+    ],
+    "flora": [
+      "Macro photo of a dew-covered rose, vibrant red petals, soft bokeh",
+      "Field of lavender in Provence, golden afternoon light",
+      "Cherry blossoms in full bloom against blue sky, spring atmosphere"
+    ],
+    "animal": [
+      "Majestic lion at sunset, African savanna, golden hour, wildlife photo",
+      "Playful fox kit in snowy forest, curious expression, soft winter light",
+      "Colorful parrot on tropical branch, vibrant plumage, jungle background"
+    ],
+    "fantasy": [
+      "Floating islands in the sky with waterfalls, magical atmosphere, concept art",
+      "Dragon soaring over medieval castle, fire breath, epic fantasy art",
+      "Enchanted forest with glowing mushrooms and fairies, dreamlike"
+    ],
+    "architecture": [
+      "Futuristic skyscraper with glass facade, blue sky, ultra-wide angle, photorealistic",
+      "Ancient Roman colosseum at golden hour, dramatic sky, cinematic",
+      "Minimalist Japanese tea house surrounded by bamboo forest, serene atmosphere"
+    ]
+  }
+}

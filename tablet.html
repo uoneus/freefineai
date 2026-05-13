@@ -107,6 +107,26 @@
                 <button type="button" data-theme="architecture" onclick="selectPromptTheme('architecture')" class="prompt-theme-tile relative aspect-square overflow-hidden rounded-xl border border-zinc-700 bg-zinc-900 transition"></button>
                 <button type="button" data-theme="fantasy" onclick="selectPromptTheme('fantasy')" class="prompt-theme-tile relative aspect-square overflow-hidden rounded-xl border border-zinc-700 bg-zinc-900 transition"></button>
             </div>
+            <script>
+            // Set each prompt tile to its theme-default image (no JSON random)
+            (function(){
+                const MAP = {
+                    landscape: 'images/webp/theme-default-landscape.webp',
+                    portrait:  'images/webp/theme-default-portrait.webp',
+                    flora:      'images/webp/theme-default-flora.webp',
+                    animal:     'images/webp/theme-default-animal.webp',
+                    architecture: 'images/webp/theme-default-architecture.webp',
+                    fantasy:    'images/webp/theme-default-fantasy.webp'
+                };
+                document.querySelectorAll('#promptThemeGrid .prompt-theme-tile').forEach(t => {
+                    const theme = t.dataset.theme;
+                    const src = MAP[theme] || MAP.landscape;
+                    t.style.backgroundImage = `url("${src}")`;
+                    t.style.backgroundSize = 'cover';
+                    t.style.backgroundPosition = 'center';
+                });
+            })();
+            </script>
         </div>
 
         <!-- Model -->
@@ -295,7 +315,7 @@
             <div id="editImageResult" class="hidden">
                 <img id="editResultImg" src="" alt="Edited" class="w-full rounded-2xl border border-zinc-800 mb-3">
                 <div class="flex gap-2">
-                    <a id="editDownloadBtn" href="" download="edited.png" class="flex-1 bg-cyan-500 text-black font-bold py-3 rounded-xl text-sm text-center flex items-center justify-center gap-2">
+                    <a id="editDownloadBtn" href="" download="edited.webp" class="flex-1 bg-cyan-500 text-black font-bold py-3 rounded-xl text-sm text-center flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                         Download
                     </a>
@@ -384,10 +404,6 @@
         <a href="#" onclick="showSection('models')" id="nav-models" class="nav-item">
             <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
             Models
-        </a>
-        <a href="gallery.html" class="nav-item">
-            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            Gallery
         </a>
     </nav>
 
@@ -483,13 +499,15 @@
         };
         let fallbackPromptConfig = null;
         const DEFAULT_THEME_ICONS = {
-            landscape: 'images/theme-default-landscape.png',
-            portrait: 'images/theme-default-portrait.png',
-            flora: 'images/theme-default-flora.png',
-            animal: 'images/theme-default-animal.png',
-            architecture: 'images/theme-default-architecture.png',
-            fantasy: 'images/theme-default-fantasy.png',
+            landscape: 'images/webp/theme-default-landscape.webp',
+            portrait: 'images/webp/theme-default-portrait.webp',
+            flora: 'images/webp/theme-default-flora.webp',
+            animal: 'images/webp/theme-default-animal.webp',
+            architecture: 'images/webp/theme-default-architecture.webp',
+            fantasy: 'images/webp/theme-default-fantasy.webp',
         };
+        // Prefetched backend preview cache: theme -> backend response
+        const previewCache = {};
         function fetchWithTimeout(url, options = {}, timeoutMs = 3000) {
             const controller = new AbortController();
             const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -559,6 +577,11 @@
         }
         async function selectPromptTheme(theme) {
             setActivePromptTheme(theme);
+            // If we prefetched a backend image for this theme, show it immediately
+            try {
+                const cached = previewCache[theme];
+                if (cached && cached.image_path) setThemeTileImage(theme, cached.image_path);
+            } catch (e) {}
             await randomPrompt();
         }
         async function randomPrompt() {
@@ -571,7 +594,7 @@
         async function loadThemePreviewIcons() {
             await Promise.all(Object.keys(PROMPT_CATEGORY_MAP).map(async (theme) => {
                 const data = await getPromptFromBackend(theme);
-                if (data && data.image_path) setThemeTileImage(theme, data.image_path);
+                if (data && data.image_path) previewCache[theme] = data;
             }));
         }
         window.addEventListener('DOMContentLoaded', () => {
@@ -1001,8 +1024,8 @@
                 setLoadingStatus('gen', `Processing... ${Math.round((i + 1) * 100 / max)}%`);
                 try {
                     const r = window.API 
-                        ? await window.API.get(`/images/${id}`)
-                        : await fetch(`${API_BASE}/images/${id}`);
+                        ? await window.API.get(`/images/webp/${id}`)
+                        : await fetch(`${API_BASE}/images/webp/${id}`);
                     if (r.ok) {
                         const img = await r.json();
                         if (img.status === 'completed' && img.image_url) {
@@ -1287,7 +1310,7 @@
                     return;
                 }
                 try {
-                    const r = await fetch(`${pollImageBase}/api/v1/images/${imageId}`);
+                    const r = await fetch(`${pollImageBase}/api/v1/images/webp/${imageId}`);
                     const d = await r.json();
                     if (d.status === 'completed' && d.image_url) {
                         clearInterval(editPollingTimer); clearInterval(editProgressInterval);
