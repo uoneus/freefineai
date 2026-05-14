@@ -194,7 +194,7 @@
                 <div class="flex gap-2">
                     <a id="downloadBtn" href="" download class="flex-1 bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3 rounded-xl text-sm text-center flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                        Download
+                        HD Download
                     </a>
                     <button onclick="resetResult()" class="bg-zinc-800 text-white font-medium py-3 px-5 rounded-xl text-sm">New</button>
                 </div>
@@ -525,7 +525,7 @@
         async function loadFallbackPromptConfig() {
             if (fallbackPromptConfig) return fallbackPromptConfig;
             try {
-                const res = await fetchWithTimeout('config.conf', { cache: 'no-cache' }, 1000);
+                const res = await fetchWithTimeout('config.json', { cache: 'force-cache' }, 1000);
                 fallbackPromptConfig = await res.json();
             } catch (e) {
                 fallbackPromptConfig = { prompts: {} };
@@ -556,7 +556,22 @@
             tile.style.backgroundImage = `url("${IMG_BASE}${imagePath}")`;
             tile.textContent = '';
         }
+        // Per-theme cache: { [theme]: [ {prompt, image_path}, ... ] }
+        const themeDataCache = {};
+
+        function preloadImage(url) {
+            if (!url) return;
+            const img = new Image();
+            img.src = url;
+        }
+
         async function getPromptFromBackend(theme) {
+            // Use local cache first (instant)
+            const items = themeDataCache[theme];
+            if (items && items.length) {
+                return items[Math.floor(Math.random() * items.length)];
+            }
+            // Cache miss — fetch from backend
             const category = PROMPT_CATEGORY_MAP[theme];
             const endpoints = [
                 `${API_BASE}/v1/prompts/random?category=${encodeURIComponent(category)}`,
@@ -564,7 +579,7 @@
             ];
             for (const url of endpoints) {
                 try {
-                    const res = await fetchWithTimeout(url, {}, 3000);
+                    const res = await fetchWithTimeout(url, {}, 2000);
                     if (res.ok) {
                         const data = await res.json();
                         if (data.prompt) return data;
@@ -577,11 +592,16 @@
         }
         async function selectPromptTheme(theme) {
             setActivePromptTheme(theme);
-            // If we prefetched a backend image for this theme, show it immediately
-            try {
-                const cached = previewCache[theme];
-                if (cached && cached.image_path) setThemeTileImage(theme, cached.image_path);
-            } catch (e) {}
+            // Show cached image immediately if available
+            const items = themeDataCache[theme];
+            if (items && items.length && items[0].image_path) {
+                setThemeTileImage(theme, items[0].image_path);
+            } else {
+                try {
+                    const cached = previewCache[theme];
+                    if (cached && cached.image_path) setThemeTileImage(theme, cached.image_path);
+                } catch (e) {}
+            }
             await randomPrompt();
         }
         async function randomPrompt() {
@@ -593,8 +613,25 @@
         }
         async function loadThemePreviewIcons() {
             await Promise.all(Object.keys(PROMPT_CATEGORY_MAP).map(async (theme) => {
-                const data = await getPromptFromBackend(theme);
-                if (data && data.image_path) previewCache[theme] = data;
+                const category = PROMPT_CATEGORY_MAP[theme];
+                try {
+                    const res = await fetchWithTimeout(
+                        `${API_BASE}/v1/prompts?category=${encodeURIComponent(category)}&limit=5`,
+                        {}, 4000
+                    );
+                    if (res.ok) {
+                        const data = await res.json();
+                        const items = data.prompts || [];
+                        if (items.length) {
+                            themeDataCache[theme] = items;
+                            // Preload all images into browser cache silently
+                            items.forEach(item => {
+                                if (item.image_path) preloadImage(`${IMG_BASE}${item.image_path}`);
+                            });
+                            // Do NOT update tile images here — only show on user interaction
+                        }
+                    }
+                } catch (e) { /* silent */ }
             }));
         }
         window.addEventListener('DOMContentLoaded', () => {
@@ -960,11 +997,11 @@
             const prog = document.getElementById('progressBar');
             prog.style.width = '0%';
             startLoadingAnimation('gen', 'Submitting...');
+            const genStartTime = Date.now();
             const progTimer = setInterval(() => {
                 progressVal = Math.min(progressVal + Math.random() * 8, 88);
                 prog.style.width = progressVal + '%';
-                setLoadingStatus('gen', `Processing... ${Math.round(progressVal)}%`);
-            }, 600);
+            }, 800);
 
             try {
                 const reqHeaders = { 'Content-Type': 'application/json' };
@@ -1017,11 +1054,18 @@
 
         async function pollImage(id) {
             const max = 60;
+            const startTime = Date.now();
+            const elapsedTimer = setInterval(() => {
+                const sec = Math.floor((Date.now() - startTime) / 1000);
+                const timeStr = sec >= 60 ? `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}` : `0:${String(sec%60).padStart(2,'0')}`;
+                setLoadingStatus('gen', `Processing... ${timeStr}`);
+            }, 1000);
+
             for (let i = 0; i < max; i++) {
-                await new Promise(r => setTimeout(r, 2000));
+                const interval = i < 5 ? 1000 : i < 15 ? 2000 : 3000;
+                await new Promise(r => setTimeout(r, interval));
                 const pct = Math.min(99, 88 + Math.round((i + 1) * 11 / max));
                 document.getElementById('progressBar').style.width = pct + '%';
-                setLoadingStatus('gen', `Processing... ${Math.round((i + 1) * 100 / max)}%`);
                 try {
                     const r = window.API 
                         ? await window.API.get(`/images/${id}`)
@@ -1029,22 +1073,31 @@
                     if (r.ok) {
                         const img = await r.json();
                         if (img.status === 'completed' && img.image_url) {
-                            showImage(`${IMG_BASE}${img.image_url}`);
+                            clearInterval(elapsedTimer);
+                            const downloadUrl = `${IMG_BASE}${img.image_url}`;
+                            if (img.webp_url) {
+                                showImage(`${IMG_BASE}${img.webp_url}`, downloadUrl);
+                            } else {
+                                showImage(`${IMG_BASE}${img.image_url}`, downloadUrl);
+                                upgradeToWebP(id, downloadUrl);
+                            }
                             return;
                         }
                         if (img.status === 'failed') {
+                            clearInterval(elapsedTimer);
                             const msg = img.error_message || 'This model is in high demand right now. Please try a different model or come back later.';
                             throw new Error(msg);
                         }
                     }
                 } catch(e) {
-                    if (e.message.includes('failed')) throw e;
+                    if (e.message.includes('failed')) { clearInterval(elapsedTimer); throw e; }
                 }
             }
+            clearInterval(elapsedTimer);
             throw new Error('Timed out. Please try again.');
         }
 
-        function showImage(url) {
+        function showImage(url, downloadUrl) {
             document.getElementById('progressBar').style.width = '100%';
             setLoadingStatus('gen', 'Complete!');
             setTimeout(() => {
@@ -1052,7 +1105,10 @@
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('imageResult').classList.remove('hidden');
                 document.getElementById('resultImg').src = url;
-                document.getElementById('downloadBtn').href = url;
+                const btn = document.getElementById('downloadBtn');
+                btn.href = downloadUrl || url;
+                const pngName = (downloadUrl || url).split('/').pop().replace('.webp', '.png');
+                btn.setAttribute('download', pngName);
                 loadUserLimit();
             }, 300);
         }
@@ -1062,6 +1118,25 @@
             document.getElementById('loadingState').classList.add('hidden');
             document.getElementById('errorState').classList.remove('hidden');
             document.getElementById('errorMsg').textContent = msg;
+        }
+
+        // After showing PNG, poll until webp_url is ready, then swap the preview silently
+        async function upgradeToWebP(imageId, downloadUrl) {
+            for (let i = 0; i < 10; i++) {
+                await new Promise(r => setTimeout(r, 2000));
+                try {
+                    const response = window.API
+                        ? await window.API.get(`/images/${imageId}`)
+                        : await fetch(`${API_BASE}/images/${imageId}`);
+                    if (response.ok) {
+                        const img = await response.json();
+                        if (img.webp_url) {
+                            document.getElementById('resultImg').src = `${IMG_BASE}${img.webp_url}`;
+                            return;
+                        }
+                    }
+                } catch (e) { /* silent */ }
+            }
         }
 
         function resetResult() {
@@ -1310,15 +1385,18 @@
                     return;
                 }
                 try {
-                    const r = await fetch(`${pollImageBase}/api/v1/images/webp/${imageId}`);
+                    const r = await fetch(`${pollImageBase}/api/v1/images/${imageId}`);
                     const d = await r.json();
                     if (d.status === 'completed' && d.image_url) {
                         clearInterval(editPollingTimer); clearInterval(editProgressInterval);
                         document.getElementById('editProgressBar').style.width = '100%';
                         setLoadingStatus('edit', 'Complete!');
-                        const url = pollImageBase + d.image_url;
-                        document.getElementById('editResultImg').src = url;
-                        document.getElementById('editDownloadBtn').href = url;
+                        const displayUrl = d.webp_url ? pollImageBase + d.webp_url : pollImageBase + d.image_url;
+                        const downloadUrl = pollImageBase + d.image_url;
+                        document.getElementById('editResultImg').src = displayUrl;
+                        document.getElementById('editDownloadBtn').href = downloadUrl;
+                        const pngName = d.image_url.split('/').pop();
+                        document.getElementById('editDownloadBtn').setAttribute('download', pngName);
                         document.getElementById('editLoadingState').classList.add('hidden');
                         document.getElementById('editImageResult').classList.remove('hidden');
                         document.getElementById('editBtn').disabled = false;

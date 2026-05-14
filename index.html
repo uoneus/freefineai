@@ -265,7 +265,7 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                         </svg>
-                                        Download
+                                        HD Download
                                     </a>
                                     <button onclick="resetGenerator()" class="bg-zinc-700 hover:bg-zinc-600 text-white font-medium px-4 py-2 rounded-lg text-xs transition">
                                         New
@@ -734,7 +734,7 @@
         async function loadFallbackPromptConfig() {
             if (fallbackPromptConfig) return fallbackPromptConfig;
             try {
-                const res = await fetchWithTimeout('config.conf', { cache: 'no-cache' }, 1000);
+                const res = await fetchWithTimeout('config.json', { cache: 'force-cache' }, 1000);
                 fallbackPromptConfig = await res.json();
             } catch (e) {
                 fallbackPromptConfig = { prompts: {} };
@@ -768,26 +768,6 @@
             tile.textContent = '';
         }
 
-        async function getPromptFromBackend(theme) {
-            const category = PROMPT_CATEGORY_MAP[theme];
-            const endpoints = [
-                `${API_BASE_URL}/v1/prompts/random?category=${encodeURIComponent(category)}`,
-                `${API_BASE_URL}/v1/library/random?category=${encodeURIComponent(category)}`,
-            ];
-            for (const url of endpoints) {
-                try {
-                    const res = await fetchWithTimeout(url, {}, 3000);
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data.prompt) return data;
-                    }
-                } catch (e) {
-                    continue;
-                }
-            }
-            return null;
-        }
-
         async function selectPromptTheme(theme) {
             setActivePromptTheme(theme);
             // 用户点击时显示后台加载的图片
@@ -805,17 +785,78 @@
             ta.focus();
         }
 
-        // 缓存后台加载的主题图片
+        // Per-theme cache: { [theme]: [ {prompt, image_path}, ... ] }
+        const themeDataCache = {};
+        // Legacy single-image cache for showCachedThemeImage
         const themeImageCache = {};
-        
+
+        // Preload an image into browser cache silently
+        function preloadImage(url) {
+            if (!url) return;
+            const img = new Image();
+            img.src = url;
+        }
+
+        // Fetch 5 prompts+images per category in background, preload all images
         async function loadThemePreviewIcons() {
             await Promise.all(Object.keys(PROMPT_CATEGORY_MAP).map(async (theme) => {
-                const data = await getPromptFromBackend(theme);
-                if (data?.image_path) {
-                    // 缓存图片，不立即显示
-                    themeImageCache[theme] = data.image_path;
-                }
+                const category = PROMPT_CATEGORY_MAP[theme];
+                try {
+                    const res = await fetchWithTimeout(
+                        `${API_BASE_URL}/v1/prompts?category=${encodeURIComponent(category)}&limit=5`,
+                        {}, 4000
+                    );
+                    if (res.ok) {
+                        const data = await res.json();
+                        const items = data.prompts || [];
+                        if (items.length) {
+                            themeDataCache[theme] = items;
+                            // Preload all images into browser cache silently
+                            items.forEach(item => {
+                                if (item.image_path) preloadImage(`${IMAGE_BASE_URL}${item.image_path}`);
+                            });
+                            // Cache first image path for when user clicks the theme
+                            if (items[0].image_path) {
+                                themeImageCache[theme] = items[0].image_path;
+                            }
+                        }
+                    }
+                } catch (e) { /* silent fallback */ }
             }));
+        }
+
+        // Pick a random item from cache for a theme, avoiding repeat of last prompt
+        function getFromCache(theme) {
+            const items = themeDataCache[theme];
+            if (!items || !items.length) return null;
+            // Shuffle to avoid always picking same item
+            const idx = Math.floor(Math.random() * items.length);
+            return items[idx];
+        }
+
+        async function getPromptFromBackend(theme) {
+            // Use local cache first (instant)
+            const cached = getFromCache(theme);
+            if (cached?.prompt) return cached;
+
+            // Cache miss — fetch from backend
+            const category = PROMPT_CATEGORY_MAP[theme];
+            const endpoints = [
+                `${API_BASE_URL}/v1/prompts/random?category=${encodeURIComponent(category)}`,
+                `${API_BASE_URL}/v1/library/random?category=${encodeURIComponent(category)}`,
+            ];
+            for (const url of endpoints) {
+                try {
+                    const res = await fetchWithTimeout(url, {}, 2000);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.prompt) return data;
+                    }
+                } catch (e) {
+                    continue;
+                }
+            }
+            return null;
         }
 
         // 用户点击主题时显示后台加载的图片
@@ -830,7 +871,7 @@
             document.querySelectorAll('.prompt-theme-tile').forEach(tile => {
                 tile.style.backgroundImage = `url("${DEFAULT_THEME_ICONS[tile.dataset.theme] || DEFAULT_THEME_ICONS.landscape}")`;
             });
-            // 后台静默加载
+            // 后台静默批量预加载
             loadThemePreviewIcons();
         });
         // End Random Prompt
@@ -1447,15 +1488,14 @@
             statusText.textContent = 'Starting...';
             startLoadingAnimation('Submitting...');
 
+            // Progress bar animates to 90% slowly — just visual feedback, not real progress
             let progress = 0;
             progressBar.style.width = '0%';
             progressInterval = setInterval(() => {
-                progress += Math.random() * 15;
+                progress += Math.random() * 8;
                 if (progress > 90) progress = 90;
                 progressBar.style.width = progress + '%';
-                statusText.textContent = `Processing... ${Math.round(progress)}%`;
-                setLoadingStatus(`Processing... ${Math.round(progress)}%`);
-            }, 500);
+            }, 800);
         }
 
         function startLoadingAnimation(initialStatus) {
@@ -1500,8 +1540,19 @@
         }
 
         async function pollForImage(imageId) {
-            const maxAttempts = 60; // 60 attempts * 2 seconds = 2 minutes max
+            const maxAttempts = 60;
             let attempts = 0;
+            const startTime = Date.now();
+
+            // Start elapsed time display
+            const elapsedTimer = setInterval(() => {
+                const sec = Math.floor((Date.now() - startTime) / 1000);
+                const mm = String(Math.floor(sec / 60)).padStart(1, '0');
+                const ss = String(sec % 60).padStart(2, '0');
+                const timeStr = sec >= 60 ? `${mm}:${ss}` : `0:${ss}`;
+                statusText.textContent = `Processing... ${timeStr}`;
+                setLoadingStatus(`Processing... ${timeStr}`);
+            }, 1000);
             
             while (attempts < maxAttempts) {
                 try {
@@ -1511,9 +1562,17 @@
                     if (response.ok) {
                         const img = await response.json();
                         if (img.status === 'completed' && img.image_url) {
-                            showResult(`${IMAGE_BASE_URL}${img.image_url}`);
+                            clearInterval(elapsedTimer);
+                            const downloadUrl = `${IMAGE_BASE_URL}${img.image_url}`;
+                            if (img.webp_url) {
+                                showResult(`${IMAGE_BASE_URL}${img.webp_url}`, downloadUrl);
+                            } else {
+                                showResult(`${IMAGE_BASE_URL}${img.image_url}`, downloadUrl);
+                                upgradeToWebP(imageId, downloadUrl);
+                            }
                             return;
                         } else if (img.status === 'failed') {
+                            clearInterval(elapsedTimer);
                             const msg = img.error_message || 'Image generation failed. Please try again.';
                             showError(msg);
                             return;
@@ -1524,15 +1583,16 @@
                 }
                 
                 attempts++;
-                statusText.textContent = `Processing... ${Math.round(attempts * 100 / maxAttempts)}%`;
-                setLoadingStatus(`Processing... ${Math.round(attempts * 100 / maxAttempts)}%`);
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                // Adaptive interval: fast at start, slower later
+                const interval = attempts <= 5 ? 1000 : attempts <= 15 ? 2000 : 3000;
+                await new Promise(resolve => setTimeout(resolve, interval));
             }
-            
+
+            clearInterval(elapsedTimer);
             showError('Image generation is taking too long. Please check back later.');
         }
 
-        function showResult(imageUrl) {
+        function showResult(imageUrl, downloadUrl) {
             clearInterval(progressInterval);
             progressBar.style.width = '100%';
             statusText.textContent = 'Complete!';
@@ -1543,7 +1603,11 @@
                 loadingState.classList.add('hidden');
                 resultState.classList.remove('hidden');
                 resultImage.src = imageUrl;
-                downloadBtn.href = imageUrl;
+                // Download button always points to original PNG for full quality
+                downloadBtn.href = downloadUrl || imageUrl;
+                // Set download filename as PNG
+                const pngName = (downloadUrl || imageUrl).split('/').pop().replace('.webp', '.png');
+                downloadBtn.setAttribute('download', pngName);
                 resetFormState();
                 loadUserLimit(); // refresh usage bar
             }, 500);
@@ -1556,6 +1620,25 @@
             errorState.classList.remove('hidden');
             errorMessage.textContent = message;
             resetFormState();
+        }
+
+        // After showing PNG, poll a few more times until webp_url is ready, then swap the preview
+        async function upgradeToWebP(imageId, downloadUrl) {
+            for (let i = 0; i < 10; i++) {
+                await new Promise(r => setTimeout(r, 2000));
+                try {
+                    const response = window.API
+                        ? await window.API.get(`/images/${imageId}`)
+                        : await fetch(`${API_BASE_URL}/images/${imageId}`);
+                    if (response.ok) {
+                        const img = await response.json();
+                        if (img.webp_url) {
+                            resultImage.src = `${IMAGE_BASE_URL}${img.webp_url}`;
+                            return;
+                        }
+                    }
+                } catch (e) { /* silent */ }
+            }
         }
 
         function resetFormState() {
