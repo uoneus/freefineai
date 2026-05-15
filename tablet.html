@@ -215,20 +215,26 @@
         <div class="mb-3">
             <label class="block text-white text-xs font-semibold mb-1.5">Reference Image</label>
             <div id="editDropZone" onclick="document.getElementById('editFileInput').click()"
-                class="border-2 border-dashed border-zinc-700 rounded-xl p-5 text-center cursor-pointer transition active:border-cyan-500">
+                class="border-2 border-dashed border-zinc-700 rounded-xl cursor-pointer transition active:border-cyan-500 overflow-hidden" style="height:100px;">
                 <input type="file" id="editFileInput" accept="image/*" class="hidden" onchange="handleEditFileSelect(event)">
-                <div id="editUploadPlaceholder">
+                <div id="editUploadPlaceholder" class="flex flex-col items-center justify-center h-full p-4">
                     <svg class="w-8 h-8 mx-auto text-zinc-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     <p class="text-zinc-400 text-sm">Tap to upload image</p>
                     <p class="text-zinc-600 text-xs mt-1">PNG, JPG, WEBP - max 10MB</p>
                 </div>
-                <div id="editUploadPreview" class="hidden">
-                    <img id="editThumb" src="" alt="" class="max-h-32 mx-auto rounded-lg object-contain">
-                    <p id="editFileName" class="text-zinc-400 text-xs mt-2 truncate"></p>
-                    <button onclick="clearEditUpload(event)" class="mt-1 text-red-400 text-xs">Remove</button>
+                <div id="editUploadPreview" class="hidden w-full h-full flex flex-row items-center gap-3 px-3 py-2">
+                    <img id="editThumb" src="" alt="" class="h-full w-auto max-w-[45%] object-contain rounded-lg flex-shrink-0">
+                    <div class="flex flex-col items-center justify-center gap-1.5 flex-1 min-w-0">
+                        <p id="editFileName" class="text-zinc-300 text-xs font-medium truncate w-full text-center"></p>
+                        <p id="editFileSize" class="text-zinc-500 text-xs text-center"></p>
+                        <button onclick="clearEditUpload(event)" class="flex items-center gap-1 text-red-400 text-xs border border-red-400/30 rounded-lg px-2 py-1 transition">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            Remove
+                        </button>
+                    </div>
                 </div>
                 <!-- Progress bar -->
-                <div id="editUploadProgress" class="hidden mt-3">
+                <div id="editUploadProgress" class="hidden mt-3 px-4">
                     <div class="flex justify-between text-xs text-zinc-500 mb-1">
                         <span>Reading...</span><span id="editUploadPct">0%</span>
                     </div>
@@ -315,9 +321,9 @@
             <div id="editImageResult" class="hidden">
                 <img id="editResultImg" src="" alt="Edited" class="w-full rounded-2xl border border-zinc-800 mb-3">
                 <div class="flex gap-2">
-                    <a id="editDownloadBtn" href="" download="edited.webp" class="flex-1 bg-cyan-500 text-black font-bold py-3 rounded-xl text-sm text-center flex items-center justify-center gap-2">
+                    <a id="editDownloadBtn" href="" download="edited.png" class="flex-1 bg-cyan-500 text-black font-bold py-3 rounded-xl text-sm text-center flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                        Download
+                        HD Download
                     </a>
                     <button onclick="resetEditResult()" class="bg-zinc-800 text-white font-medium py-3 px-5 rounded-xl text-sm">New</button>
                 </div>
@@ -1246,14 +1252,30 @@
             };
             reader.onload = function(ev) {
                 bar.style.width = '100%'; pct.textContent = '100%';
-                setTimeout(() => {
-                    prog.classList.add('hidden');
-                    editImageBase64 = ev.target.result;
-                    document.getElementById('editThumb').src = editImageBase64;
-                    document.getElementById('editFileName').textContent = file.name;
-                    document.getElementById('editUploadPlaceholder').classList.add('hidden');
-                    document.getElementById('editUploadPreview').classList.remove('hidden');
-                }, 300);
+                // Resize image to max 1024px before encoding to keep request size small
+                const img = new Image();
+                img.onload = function() {
+                    const MAX = 1024;
+                    let w = img.width, h = img.height;
+                    if (w > MAX || h > MAX) {
+                        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+                        else { w = Math.round(w * MAX / h); h = MAX; }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    editImageBase64 = canvas.toDataURL('image/jpeg', 0.85);
+                    setTimeout(() => {
+                        prog.classList.add('hidden');
+                        document.getElementById('editThumb').src = editImageBase64;
+                        document.getElementById('editFileName').textContent = file.name;
+                        const sizeKB = (file.size / 1024).toFixed(0);
+                        document.getElementById('editFileSize').textContent = `${img.width} × ${img.height}px · ${sizeKB} KB`;
+                        document.getElementById('editUploadPlaceholder').classList.add('hidden');
+                        document.getElementById('editUploadPreview').classList.remove('hidden');
+                    }, 300);
+                };
+                img.src = ev.target.result;
             };
             reader.readAsDataURL(file);
         }
@@ -1262,6 +1284,8 @@
             e.stopPropagation();
             editImageBase64 = '';
             document.getElementById('editFileInput').value = '';
+            document.getElementById('editFileName').textContent = '';
+            document.getElementById('editFileSize').textContent = '';
             document.getElementById('editUploadPlaceholder').classList.remove('hidden');
             document.getElementById('editUploadPreview').classList.add('hidden');
             document.getElementById('editUploadProgress').classList.add('hidden');
@@ -1288,16 +1312,25 @@
             document.getElementById('editImageResult').classList.add('hidden');
             document.getElementById('editErrorState').classList.add('hidden');
 
-            // Animate progress
+            // Animate progress bar (visual only, no percentage text)
             let p = 0;
             if (editProgressInterval) clearInterval(editProgressInterval);
             startLoadingAnimation('edit', 'Submitting...');
+            const editStartTime = Date.now();
             editProgressInterval = setInterval(() => {
                 p = p < 85 ? p + Math.random() * 3 : p + 0.1;
                 if (p > 95) p = 95;
                 document.getElementById('editProgressBar').style.width = p + '%';
-                setLoadingStatus('edit', `Processing... ${Math.round(p)}%`);
             }, 800);
+
+            // Elapsed time display for edit
+            if (window._editElapsedTimer) clearInterval(window._editElapsedTimer);
+            window._editElapsedTimer = setInterval(() => {
+                const sec = Math.floor((Date.now() - editStartTime) / 1000);
+                const mm = Math.floor(sec / 60);
+                const ss = String(sec % 60).padStart(2, '0');
+                setLoadingStatus('edit', `Processing... ${mm}:${ss}`);
+            }, 1000);
 
             try {
                 const headers = { 'Content-Type': 'application/json' };
@@ -1334,11 +1367,15 @@
                     }
                 } else if (d.image_url) {
                     clearInterval(editProgressInterval);
+                    if (window._editElapsedTimer) { clearInterval(window._editElapsedTimer); window._editElapsedTimer = null; }
                     setLoadingStatus('edit', 'Complete!');
-                    const url = activeImageBase + d.image_url;
+                    const displayUrl = d.webp_url ? activeImageBase + d.webp_url : activeImageBase + d.image_url;
+                    const downloadUrl = activeImageBase + d.image_url;
                     document.getElementById('editProgressBar').style.width = '100%';
-                    document.getElementById('editResultImg').src = url;
-                    document.getElementById('editDownloadBtn').href = url;
+                    document.getElementById('editResultImg').src = displayUrl;
+                    document.getElementById('editDownloadBtn').href = downloadUrl;
+                    const pngName = d.image_url.split('/').pop();
+                    document.getElementById('editDownloadBtn').setAttribute('download', pngName);
                     document.getElementById('editLoadingState').classList.add('hidden');
                     document.getElementById('editImageResult').classList.remove('hidden');
                     document.getElementById('editBtn').disabled = false;
@@ -1348,6 +1385,7 @@
                 }
             } catch(e) {
                 clearInterval(editProgressInterval);
+                if (window._editElapsedTimer) { clearInterval(window._editElapsedTimer); window._editElapsedTimer = null; }
                 stopLoadingAnimation('edit');
                 document.getElementById('editLoadingState').classList.add('hidden');
                 document.getElementById('editErrorState').classList.remove('hidden');
@@ -1372,11 +1410,15 @@
         function editPollResult(imageId, imageBase) {
             const pollImageBase = imageBase || IMG_BASE;
             let attempts = 0;
+            const clearEditTimers = () => {
+                clearInterval(editPollingTimer);
+                clearInterval(editProgressInterval);
+                if (window._editElapsedTimer) { clearInterval(window._editElapsedTimer); window._editElapsedTimer = null; }
+            };
             editPollingTimer = setInterval(async () => {
                 attempts++;
-                setLoadingStatus('edit', `Processing... ${Math.round(attempts * 100 / 120)}%`);
                 if (attempts > 120) {
-                    clearInterval(editPollingTimer); clearInterval(editProgressInterval);
+                    clearEditTimers();
                     stopLoadingAnimation('edit');
                     document.getElementById('editLoadingState').classList.add('hidden');
                     document.getElementById('editErrorState').classList.remove('hidden');
@@ -1388,7 +1430,7 @@
                     const r = await fetch(`${pollImageBase}/api/v1/images/${imageId}`);
                     const d = await r.json();
                     if (d.status === 'completed' && d.image_url) {
-                        clearInterval(editPollingTimer); clearInterval(editProgressInterval);
+                        clearEditTimers();
                         document.getElementById('editProgressBar').style.width = '100%';
                         setLoadingStatus('edit', 'Complete!');
                         const displayUrl = d.webp_url ? pollImageBase + d.webp_url : pollImageBase + d.image_url;
@@ -1402,7 +1444,7 @@
                         document.getElementById('editBtn').disabled = false;
                         stopLoadingAnimation('edit');
                     } else if (d.status === 'failed') {
-                        clearInterval(editPollingTimer); clearInterval(editProgressInterval);
+                        clearEditTimers();
                         stopLoadingAnimation('edit');
                         document.getElementById('editLoadingState').classList.add('hidden');
                         document.getElementById('editErrorState').classList.remove('hidden');
@@ -1417,6 +1459,7 @@
         function resetEditResult() {
             if (editPollingTimer) clearInterval(editPollingTimer);
             if (editProgressInterval) clearInterval(editProgressInterval);
+            if (window._editElapsedTimer) { clearInterval(window._editElapsedTimer); window._editElapsedTimer = null; }
             stopLoadingAnimation('edit');
             document.getElementById('editBtn').disabled = false;
             document.getElementById('editResultArea').classList.add('hidden');
